@@ -106,6 +106,8 @@ async function seed() {
         coverImage: game.coverImage,
         bannerImage: game.bannerImage,
         gallery: game.gallery,
+        platforms: game.platforms,
+        languages: game.languages,
         rating: game.rating,
         reviewCount: game.reviewCount,
         popularityScore: game.popularityScore,

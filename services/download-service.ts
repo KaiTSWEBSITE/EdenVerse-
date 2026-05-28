@@ -24,14 +24,28 @@ export async function recordDownloadClick(slug: string) {
   const nextClicks = getDownloadClickCount(slug) + 1;
   downloadClicks.set(slug, nextClicks);
 
-  if (prisma && process.env.ENABLE_PRISMA_DEMO_FALLBACK === "false") {
-    await prisma.game.update({
-      where: { slug },
-      data: {
-        downloadsCount: { increment: 1 },
-        popularityScore: { increment: 8 }
-      }
-    });
+  if (prisma) {
+    try {
+      const game = await prisma.game.update({
+        where: { slug },
+        data: {
+          downloadsCount: { increment: 1 },
+          popularityScore: { increment: 8 }
+        },
+        select: {
+          downloadsCount: true,
+          downloadUrl: true
+        }
+      });
+
+      return {
+        clicks: nextClicks,
+        downloads: game.downloadsCount,
+        downloadUrl: game.downloadUrl || `/games/${slug}#download`
+      };
+    } catch {
+      // Fall back to in-memory tracking when the clicked game is not in Prisma yet.
+    }
   }
 
   const game = demoGames.find((entry) => entry.slug === slug);

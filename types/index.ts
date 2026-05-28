@@ -48,6 +48,7 @@ export interface Game {
   bannerImage: string;
   gallery: string[];
   trailerUrl: string;
+  downloadUrl?: string;
   genres: string[];
   tags: string[];
   platforms: string[];

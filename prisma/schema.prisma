@@ -91,12 +91,15 @@ model Game {
   releaseDate     DateTime
   updatedAt       DateTime       @updatedAt
   trailerUrl      String?
+  downloadUrl     String?
   mature          Boolean        @default(false)
   featured        Boolean        @default(false)
   hero            Boolean        @default(false)
   coverImage      String
   bannerImage     String
   gallery         Json
+  platforms       Json           @default("[]")
+  languages       Json           @default("[]")
   rating          Float          @default(0)
   reviewCount     Int            @default(0)
   popularityScore Int            @default(0)

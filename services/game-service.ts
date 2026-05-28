@@ -88,10 +88,11 @@ function mapGameRecord(game: GameRecord): Game {
     bannerImage: game.bannerImage,
     gallery: toStringArray(game.gallery),
     trailerUrl: game.trailerUrl ?? "",
+    downloadUrl: game.downloadUrl ?? undefined,
     genres: game.genres.map((entry) => entry.genre),
     tags: game.tags.map((entry) => entry.tag.name),
-    platforms: fallback?.platforms ?? ["Windows"],
-    languages: fallback?.languages ?? ["English"]
+    platforms: toStringArray(game.platforms).length ? toStringArray(game.platforms) : fallback?.platforms ?? ["Windows"],
+    languages: toStringArray(game.languages).length ? toStringArray(game.languages) : fallback?.languages ?? ["English"]
   };
 }
 
