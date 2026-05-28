@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Noto_Serif_Display, Plus_Jakarta_Sans } from "next/font/google";
+import { Barlow, Chakra_Petch } from "next/font/google";
 import { AtmosphericBackdrop } from "@/components/layout/atmospheric-backdrop";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
@@ -7,17 +7,17 @@ import { AppProviders } from "@/context/providers";
 import { siteConfig } from "@/config/site";
 import "@/app/globals.css";
 
-const display = Noto_Serif_Display({
+const display = Chakra_Petch({
   subsets: ["latin", "vietnamese"],
   variable: "--font-display",
-  weight: ["500", "600", "700", "800"],
+  weight: ["500", "600", "700"],
   display: "swap"
 });
 
-const body = Plus_Jakarta_Sans({
+const body = Barlow({
   subsets: ["latin", "vietnamese"],
   variable: "--font-body",
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700"],
   display: "swap"
 });
 
