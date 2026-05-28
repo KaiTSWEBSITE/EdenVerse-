@@ -1,4 +1,4 @@
-import { demoGames, demoNewsPosts } from "@/database/demo-data";
+import { demoGames } from "@/database/demo-data";
 import type { SearchFilters } from "@/types";
 import { getAllGames } from "@/services/game-service";
 
@@ -28,15 +28,5 @@ export async function getSearchSuggestions(query: string) {
 
 export async function searchEverything(filters: SearchFilters) {
   const games = await getAllGames(filters);
-  const q = filters.q?.toLowerCase();
-  const posts = !q
-    ? demoNewsPosts.slice(0, 4)
-    : demoNewsPosts.filter(
-        (post) =>
-          post.title.toLowerCase().includes(q) ||
-          post.excerpt.toLowerCase().includes(q) ||
-          post.tags.join(" ").toLowerCase().includes(q)
-      );
-
-  return { games, posts };
+  return { games, posts: [] };
 }

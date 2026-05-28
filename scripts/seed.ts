@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import { TAGS } from "../constants/filters";
 import { authConfig } from "../config/auth";
-import { demoComments, demoGames, demoNewsPosts, demoReviews, demoUsers } from "../database/demo-data";
+import { demoComments, demoGames, demoReviews, demoUsers } from "../database/demo-data";
 import { prisma } from "../database/prisma";
 import { slugify } from "../lib/utils";
 
@@ -81,7 +81,6 @@ async function seed() {
     )
   );
 
-  const userByEmail = new Map(userRecords.map((user) => [user.email, user]));
   const categoryByName = new Map(categoryRecords.map((category) => [category.name, category]));
   const tagByName = new Map(tagRecords.map((tag) => [tag.name, tag]));
 
@@ -151,41 +150,7 @@ async function seed() {
     );
   }
 
-  for (const post of demoNewsPosts) {
-    const author = userByEmail.get(
-      post.author === "Eden Archivist" ? "admin@edenverse.gg" : post.author === "Riven Hart" ? "riven@edenverse.gg" : "lyra@edenverse.gg"
-    );
-
-    const created = await client.post.create({
-      data: {
-        slug: post.slug,
-        title: post.title,
-        excerpt: post.excerpt,
-        content: post.content,
-        coverImage: post.coverImage,
-        seoTitle: post.seoTitle,
-        seoDescription: post.seoDescription,
-        status: post.status,
-        publishedAt: new Date(post.publishedAt),
-        authorId: author?.id ?? userRecords[0].id,
-        categoryId: categoryByName.get(post.category)?.id
-      }
-    });
-
-    await Promise.all(
-      post.tags.map((tag) =>
-        client.postTag.create({
-          data: {
-            postId: created.id,
-            tagId: tagByName.get(tag)?.id ?? tagRecords[0].id
-          }
-        })
-      )
-    );
-  }
-
   const gameMap = new Map((await client.game.findMany()).map((game) => [game.slug, game]));
-  const postMap = new Map((await client.post.findMany()).map((post) => [post.slug, post]));
   const userMap = new Map(userRecords.map((user) => [user.username, user]));
 
   for (const review of demoReviews) {
@@ -208,7 +173,6 @@ async function seed() {
         likes: comment.likes,
         reports: comment.reports,
         gameId: comment.gameSlug ? gameMap.get(comment.gameSlug)?.id : undefined,
-        postId: comment.postSlug ? postMap.get(comment.postSlug)?.id : undefined,
         authorId: userMap.get(comment.author.username)?.id ?? userRecords[0].id
       }
     });

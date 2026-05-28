@@ -1,4 +1,3 @@
-import { EditorialStrip } from "@/components/home/editorial-strip";
 import { GameSection } from "@/components/home/game-section";
 import { HeroSection } from "@/components/home/hero-section";
 import {
@@ -10,7 +9,6 @@ import {
   getTopRatedGames,
   getTrendingGames
 } from "@/services/game-service";
-import { getLatestPosts } from "@/services/post-service";
 
 export default async function HomePage() {
   const [
@@ -23,8 +21,7 @@ export default async function HomePage() {
     rpgGames,
     choiceMatter,
     hiddenGems,
-    recommended,
-    latestPosts
+    recommended
   ] = await Promise.all([
     getHeroGame(),
     getTrendingGames(),
@@ -35,8 +32,7 @@ export default async function HomePage() {
     getGamesByGenre("RPG"),
     getGamesByGenre("Choice Matter"),
     getHiddenGems(),
-    getRecommendedGames(),
-    getLatestPosts(4)
+    getRecommendedGames()
   ]);
 
   return (
@@ -90,7 +86,6 @@ export default async function HomePage() {
         description="Các tựa chưa quá nổi nhưng có không khí, nhân vật và phong cách trình bày đáng nhớ."
         games={hiddenGems}
       />
-      <EditorialStrip posts={latestPosts} />
       <GameSection
         eyebrow="Đề xuất"
         title="Gợi ý cho người thích dark fantasy và story-rich"

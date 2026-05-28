@@ -46,7 +46,7 @@ export default async function GameDetailPage({ params }: { params: Promise<{ slu
     <div className="pb-16">
       <GameHero game={game} />
       <GameOverview game={game} />
-      <GameGallery gallery={game.gallery} trailerUrl={game.trailerUrl} />
+      <GameGallery gallery={game.gallery} />
       <section className="mx-auto grid max-w-7xl gap-6 px-4 py-6 sm:px-6 xl:grid-cols-2 lg:px-8">
         <ReviewList reviews={reviews} />
         <CommentThread comments={comments} />

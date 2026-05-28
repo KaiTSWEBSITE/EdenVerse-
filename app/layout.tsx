@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Manrope } from "next/font/google";
 import { AtmosphericBackdrop } from "@/components/layout/atmospheric-backdrop";
-import { AgeGate } from "@/components/layout/age-gate";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
 import { AppProviders } from "@/context/providers";
@@ -42,6 +41,11 @@ export const metadata: Metadata = {
     title: siteConfig.name,
     description: siteConfig.description,
     images: ["/backgrounds/eden-cathedral.png"]
+  },
+  icons: {
+    icon: "/logos/edenverse-mark.svg",
+    shortcut: "/logos/edenverse-mark.svg",
+    apple: "/logos/edenverse-mark.svg"
   }
 };
 
@@ -51,7 +55,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${display.variable} ${body.variable}`}>
         <AppProviders>
           <AtmosphericBackdrop />
-          <AgeGate />
           <div className="relative z-10 min-h-screen">
             <Header />
             <main>{children}</main>

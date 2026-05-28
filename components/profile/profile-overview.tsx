@@ -1,13 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { Bookmark, Clock3, Heart, ShieldHalf, Trophy } from "lucide-react";
+import { Bookmark, Clock3, Heart, Trophy } from "lucide-react";
 import type { ComponentType } from "react";
 import type { Game, UserProfile } from "@/types";
 import { useAppStore } from "@/context/app-store";
 import { Avatar } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
-import { Switch } from "@/components/ui/switch";
 
 export function ProfileOverview({
   user,
@@ -22,8 +21,6 @@ export function ProfileOverview({
   recent: Game[];
   watchlist: Game[];
 }) {
-  const safeMode = useAppStore((state) => state.safeMode);
-  const toggleSafeMode = useAppStore((state) => state.toggleSafeMode);
   const themeVariant = useAppStore((state) => state.themeVariant);
   const setThemeVariant = useAppStore((state) => state.setThemeVariant);
 
@@ -43,19 +40,10 @@ export function ProfileOverview({
         </div>
         <CardContent className="grid gap-6 p-6 lg:grid-cols-[1.1fr_0.9fr]">
           <p className="text-sm leading-7 text-muted-foreground">{user.bio}</p>
-          <div className="grid gap-4 md:grid-cols-2">
-            <Card className="bg-black/18">
-              <CardContent className="flex items-center justify-between p-4">
-                <div>
-                  <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Safe Mode</p>
-                  <p className="mt-1 text-sm text-foreground">{safeMode ? "Blur adult games until revealed" : "Adult cards visible"}</p>
-                </div>
-                <Switch checked={safeMode} onCheckedChange={toggleSafeMode} />
-              </CardContent>
-            </Card>
+          <div className="grid gap-4">
             <Card className="bg-black/18">
               <CardContent className="space-y-3 p-4">
-                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Theme Variant</p>
+                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Giao diện</p>
                 <div className="flex gap-2">
                   <button
                     type="button"
@@ -64,7 +52,7 @@ export function ProfileOverview({
                       themeVariant === "cathedral" ? "bg-primary/15 text-primary" : "bg-white/6 text-muted-foreground"
                     }`}
                   >
-                    Cathedral
+                    Nhà thờ
                   </button>
                   <button
                     type="button"
@@ -73,7 +61,7 @@ export function ProfileOverview({
                       themeVariant === "midnight" ? "bg-primary/15 text-primary" : "bg-white/6 text-muted-foreground"
                     }`}
                   >
-                    Midnight
+                    Đêm tối
                   </button>
                 </div>
               </CardContent>
@@ -86,7 +74,7 @@ export function ProfileOverview({
         <MiniShelf icon={Heart} title="Favorite games" items={favorites} />
         <MiniShelf icon={Bookmark} title="Saved games" items={saved} />
         <MiniShelf icon={Clock3} title="Recently viewed" items={recent} />
-        <MiniShelf icon={ShieldHalf} title="Watchlist" items={watchlist} />
+        <MiniShelf icon={Clock3} title="Watchlist" items={watchlist} />
       </div>
 
       <Card>

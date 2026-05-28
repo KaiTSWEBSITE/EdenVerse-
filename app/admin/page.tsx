@@ -1,10 +1,9 @@
 import { AdminPanel } from "@/components/admin/admin-panel";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { getDashboardMetrics } from "@/services/analytics-service";
-import { getAllPosts } from "@/services/post-service";
 
 export default async function AdminPage() {
-  const [metrics, posts] = await Promise.all([getDashboardMetrics(), getAllPosts()]);
+  const metrics = await getDashboardMetrics();
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
@@ -13,7 +12,7 @@ export default async function AdminPage() {
         title="Điều phối kiểm duyệt, xuất bản, upload và SEO trong một trung tâm"
         description="Khu admin được tổ chức như CMS thật: có số liệu tổng quan, trạng thái kiểm duyệt, soạn nháp, lịch đăng, metadata SEO và các thao tác vận hành nội dung."
       />
-      <AdminPanel metrics={metrics} posts={posts} />
+      <AdminPanel metrics={metrics} />
     </section>
   );
 }

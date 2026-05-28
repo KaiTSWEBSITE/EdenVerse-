@@ -4,13 +4,9 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 type AppStore = {
-  safeMode: boolean;
-  ageVerified: boolean;
   themeVariant: "midnight" | "cathedral";
   bookmarks: string[];
   recentlyViewed: string[];
-  toggleSafeMode: () => void;
-  verifyAge: () => void;
   setThemeVariant: (variant: "midnight" | "cathedral") => void;
   toggleBookmark: (slug: string) => void;
   addRecentlyViewed: (slug: string) => void;
@@ -19,13 +15,9 @@ type AppStore = {
 export const useAppStore = create<AppStore>()(
   persist(
     (set) => ({
-      safeMode: true,
-      ageVerified: false,
       themeVariant: "cathedral",
       bookmarks: [],
       recentlyViewed: [],
-      toggleSafeMode: () => set((state) => ({ safeMode: !state.safeMode })),
-      verifyAge: () => set({ ageVerified: true }),
       setThemeVariant: (themeVariant) => set({ themeVariant }),
       toggleBookmark: (slug) =>
         set((state) => ({

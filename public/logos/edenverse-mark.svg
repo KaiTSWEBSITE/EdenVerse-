@@ -1,6 +1,27 @@
 <svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="256" height="256" rx="72" fill="#0E1722"/>
-  <rect x="44" y="44" width="168" height="168" rx="56" fill="#132435" stroke="#7FD4FF" stroke-opacity="0.35" stroke-width="4"/>
-  <path d="M128 58L160 116H96L128 58Z" fill="#C9A867"/>
-  <path d="M128 92L170 204H86L128 92Z" fill="#8DDFFF"/>
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="36%" r="68%">
+      <stop offset="0%" stop-color="#8EE7FF" stop-opacity="0.55"/>
+      <stop offset="42%" stop-color="#0D2E42" stop-opacity="0.65"/>
+      <stop offset="100%" stop-color="#05070C"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="70" y1="32" x2="186" y2="218">
+      <stop stop-color="#F2D18A"/>
+      <stop offset="0.52" stop-color="#C9A867"/>
+      <stop offset="1" stop-color="#785A2B"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="70" y1="40" x2="186" y2="214">
+      <stop stop-color="#A7F1FF"/>
+      <stop offset="0.52" stop-color="#58C8FF"/>
+      <stop offset="1" stop-color="#0E6D95"/>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" rx="64" fill="#05070C"/>
+  <rect x="18" y="18" width="220" height="220" rx="54" fill="url(#glow)" stroke="#8EE7FF" stroke-opacity="0.28" stroke-width="3"/>
+  <path d="M128 30L156 74H100L128 30Z" fill="url(#gold)"/>
+  <path d="M64 214V86L128 52L192 86V214H160V104H96V214H64Z" fill="#08131D" stroke="#7FE0FF" stroke-opacity="0.44" stroke-width="4"/>
+  <path d="M112 214V122H144V214H112Z" fill="url(#glass)" opacity="0.95"/>
+  <path d="M82 214L128 96L174 214H151L128 153L105 214H82Z" fill="url(#gold)"/>
+  <path d="M82 92L128 68L174 92" stroke="#F2D18A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="128" cy="104" r="13" fill="#8EE7FF" fill-opacity="0.75"/>
 </svg>

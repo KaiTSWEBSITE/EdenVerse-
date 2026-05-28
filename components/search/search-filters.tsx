@@ -14,12 +14,12 @@ export function SearchFilters({
     <Card className="h-fit">
       <CardContent className="space-y-6 p-6">
         <div>
-          <p className="text-xs uppercase tracking-[0.22em] text-primary">Filters</p>
-          <h2 className="mt-2 font-display text-3xl text-foreground">Smart search</h2>
+          <p className="text-xs uppercase tracking-[0.22em] text-primary">Bộ lọc</p>
+          <h2 className="mt-2 font-display text-3xl text-foreground">Lọc game nhanh</h2>
         </div>
         <div className="space-y-5">
-          <FilterGroup title="Genres" options={GENRES} active={activeGenre} queryKey="genre" />
-          <FilterGroup title="Engines" options={ENGINES} active={activeEngine} queryKey="engine" />
+          <FilterGroup title="Thể loại" options={GENRES} active={activeGenre} queryKey="genre" />
+          <FilterGroup title="Engine" options={ENGINES} active={activeEngine} queryKey="engine" />
           <FilterGroup title="Tags" options={TAGS.slice(0, 8)} active={activeTag} queryKey="tag" />
         </div>
       </CardContent>

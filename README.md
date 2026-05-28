@@ -13,10 +13,10 @@ EdenVerse is a premium dark-fantasy discovery platform for visual novels, sandbo
 - NextAuth credentials flow with ready hooks for Google and Discord
 - Demo-safe runtime fallback so `npm install` and `npm run dev` work even before PostgreSQL is configured
 - Search system with suggestions, filters, and ranked results
-- Game detail pages with gallery, trailer, reviews, comments, metadata, and related recommendations
-- Profile, dashboard, newsroom, and admin CMS surfaces
-- 30 demo games, 10 demo posts, 5 demo users, seeded comments and reviews
-- Age gate, safe mode, rate-limit helpers, secure headers, upload API, sitemap, and robots setup
+- Game detail pages with gallery, reviews, comments, metadata, and related recommendations
+- Profile, dashboard, and admin game-publishing surfaces
+- 30 demo games, 5 demo users, seeded comments and reviews
+- Rate-limit helpers, secure headers, upload API, sitemap, and robots setup
 
 ## Tech Stack
 
@@ -114,11 +114,9 @@ project-root/
 - `/` home landing with curated sections
 - `/search` smart search + filter sidebar
 - `/games/[slug]` detailed game page
-- `/news` editorial hub
-- `/news/[slug]` article detail
 - `/profile/[username]` user profile
 - `/dashboard` member dashboard
-- `/admin` admin CMS / analytics panel
+- `/admin` admin game publishing / analytics panel
 - `/auth/login`
 - `/auth/register`
 - `/auth/forgot-password`
@@ -128,7 +126,7 @@ project-root/
 - `GET /api/games`
 - `GET /api/games/[slug]`
 - `GET /api/games/search`
-- `GET /api/posts`
+- `POST /api/admin/games`
 - `GET /api/search`
 - `GET|POST /api/comments`
 - `PATCH /api/comments/[id]`
@@ -151,12 +149,12 @@ project-root/
 - Password hashing uses `bcryptjs`
 - Input payloads are validated with Zod
 - Markdown/HTML rendering is sanitized before output
-- Safe mode and age verification are built into the client experience
+- Admin/API requests use role checks, rate limits, CSP, and validated upload payloads
 
 ## Production Notes
 
 - The included upload route saves files locally to `public/uploads` for easy development. For production, wire that route to S3, Cloudflare R2, Supabase Storage, or your preferred object store.
-- OAuth buttons are present now. Google and Discord become active when you provide credentials in `.env`.
+- Google and Discord login use real NextAuth OAuth providers. Add provider credentials in `.env` or Vercel environment variables, then use callbacks `/api/auth/callback/google` and `/api/auth/callback/discord`.
 - The app deliberately ships with local demo data fallback so development is smooth from the first clone.
 
 ## Commands
@@ -176,8 +174,8 @@ npm run db:seed
 
 1. Add production `DATABASE_URL`
 2. Set a strong `AUTH_SECRET`
-3. Configure `NEXTAUTH_URL`
-4. Provide Google/Discord OAuth credentials if needed
+3. Configure `NEXTAUTH_URL` and `AUTH_TRUST_HOST`
+4. Provide Google/Discord OAuth credentials
 5. Replace local upload storage with cloud storage
 6. Disable demo fallback with `ENABLE_PRISMA_DEMO_FALLBACK="false"`
 

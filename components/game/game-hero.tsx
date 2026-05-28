@@ -71,8 +71,8 @@ export function GameHero({ game }: { game: Game }) {
               </Card>
             </div>
             <div className="flex flex-wrap gap-3">
-              <Button>Go To Download Hub</Button>
-              <Button variant="secondary">Watch Trailer</Button>
+              <Button>Đến khu tải game</Button>
+              <Button variant="secondary">Lưu vào danh sách</Button>
             </div>
           </CardContent>
         </Card>

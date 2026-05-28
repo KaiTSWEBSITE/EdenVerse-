@@ -24,17 +24,17 @@ export default async function SearchPage({
   return (
     <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
       <SectionHeading
-        eyebrow="Search System"
-        title="Find by title, developer, engine, tag, or mood"
-        description="Smart search combines direct title matching with genre/tag/developer ranking so you can surface premium visual novels fast."
+        eyebrow="Tìm kiếm"
+        title="Tìm theo tên, developer, engine, tag hoặc mood"
+        description="Hệ thống tìm kiếm ưu tiên tên game, thể loại, tag và developer để bạn lọc game nhanh hơn."
       />
       <div className="grid gap-6 xl:grid-cols-[320px_1fr]">
         <SearchFilters activeGenre={parsed.genre} activeEngine={parsed.engine} activeTag={parsed.tag} />
         <div className="space-y-5">
           <div className="glass-panel rounded-[28px] p-6">
             <p className="text-sm text-muted-foreground">
-              <span className="font-semibold text-foreground">{games.length}</span> results
-              {parsed.q ? ` for "${parsed.q}"` : ""}.
+              <span className="font-semibold text-foreground">{games.length}</span> kết quả
+              {parsed.q ? ` cho "${parsed.q}"` : ""}.
             </p>
           </div>
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">

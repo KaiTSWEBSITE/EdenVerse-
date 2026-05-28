@@ -1,5 +1,5 @@
 import { ENGINES } from "@/constants/filters";
-import type { Comment, Game, Post, Review, UserProfile, UserSummary } from "@/types";
+import type { Comment, Game, Review, UserProfile, UserSummary } from "@/types";
 import { slugify } from "@/lib/utils";
 
 const coverPool = [
@@ -478,61 +478,6 @@ export const demoGames: Game[] = [...roster, ...extraGames].map((game, index) =>
 });
 
 export const demoUsers: UserProfile[] = [...userSeed];
-
-export const demoNewsPosts: Post[] = Array.from({ length: 10 }).map((_, index) => ({
-  id: `post-${index + 1}`,
-  slug: `edenverse-weekly-${index + 1}`,
-  title: [
-    "EdenVerse Weekly: The Premium Sandbox Wave",
-    "How Adult Safe Mode Curates Without Killing Mood",
-    "Visual Novel Renaissance: 6 New Gothic Releases",
-    "Behind the UI: Building a Launcher-Like Discover Page",
-    "Choice Matter Games Are Having a Dark Fantasy Moment",
-    "Hidden Gems: Five Routes You Should Not Skip",
-    "Patch Radar: What Updated This Week",
-    "Inside the Admin CMS: Editorial Workflow for Premium Hubs",
-    "Community Spotlight: Reviews Worth Reading",
-    "Why Cathedral Visuals Keep Winning the Mood War"
-  ][index],
-  excerpt:
-    "Editorial coverage crafted for a premium VN discovery platform, mixing updates, curation, and polished release notes.",
-  content: `
-# ${[
-    "Curated discovery, but cinematic.",
-    "The goal of safe mode is trust, not censorship.",
-    "Dark fantasy VNs are shipping with serious confidence.",
-    "A premium website needs interface rhythm, not noise.",
-    "Players want consequences they can feel.",
-    "These hidden gems punch far above their budget.",
-    "Version notes matter when the audience tracks route changes.",
-    "Editors need speed without sacrificing metadata quality.",
-    "The community elevates the whole platform.",
-    "A great background can become a full product identity."
-  ][index]}
-
-EdenVerse is designed to feel less like a blog and more like a curated launcher. This article explores how premium discovery, adult-safe presentation, editorial discipline, and community taste can live inside the same dark-fantasy shell.
-
-## What Changed
-
-- New curated sections now emphasize mood-first discovery.
-- Review modules prioritize route quality and consequence density.
-- Admin publishing keeps SEO, thumbnails, and scheduling in one surface.
-
-## Why It Matters
-
-Readers are not just browsing titles. They are browsing *vibes*, trust, route quality, update cadence, and the promise of a premium experience. Every release note, banner, and content card should reflect that.
-  `.trim(),
-  coverImage: coverPool[index % coverPool.length],
-  category: index % 2 === 0 ? "Updates" : "Editorial",
-  tags: index % 2 === 0 ? ["Patch Notes", "Curation", "Premium"] : ["Opinion", "UI", "Visual Novel"],
-  seoTitle: `EdenVerse Insight ${index + 1} | Premium VN Curation`,
-  seoDescription:
-    "Editorial insight into premium visual novel discovery, dark fantasy web design, and curated adult-safe game coverage.",
-  author: index % 3 === 0 ? "Eden Archivist" : index % 2 === 0 ? "Riven Hart" : "Lyra Vael",
-  createdAt: `2026-05-${String(index + 1).padStart(2, "0")}`,
-  publishedAt: `2026-05-${String(index + 2).padStart(2, "0")}T10:00:00Z`,
-  status: "PUBLISHED"
-}));
 
 const makeSummary = (userId: string): UserSummary => {
   const user = userLookup.get(userId);

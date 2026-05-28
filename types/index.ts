@@ -54,23 +54,6 @@ export interface Game {
   languages: string[];
 }
 
-export interface Post {
-  id: string;
-  slug: string;
-  title: string;
-  excerpt: string;
-  content: string;
-  coverImage: string;
-  category: string;
-  tags: string[];
-  seoTitle: string;
-  seoDescription: string;
-  author: string;
-  createdAt: string;
-  publishedAt: string;
-  status: "DRAFT" | "PUBLISHED" | "SCHEDULED";
-}
-
 export interface Comment {
   id: string;
   body: string;

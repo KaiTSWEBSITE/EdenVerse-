@@ -1,19 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { Menu, MoonStar, ShieldHalf, UserRound } from "lucide-react";
+import { Menu, MoonStar, UserRound } from "lucide-react";
 import { useState } from "react";
 import { primaryNavigation } from "@/config/navigation";
-import { useAppStore } from "@/context/app-store";
 import { Logo } from "@/components/layout/logo";
 import { SearchCommand } from "@/components/search/search-command";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { Switch } from "@/components/ui/switch";
 
 export function Header() {
-  const safeMode = useAppStore((state) => state.safeMode);
-  const toggleSafeMode = useAppStore((state) => state.toggleSafeMode);
   const [open, setOpen] = useState(false);
 
   return (
@@ -38,11 +34,6 @@ export function Header() {
         </div>
 
         <div className="hidden items-center gap-3 md:flex">
-          <div className="glass-panel flex items-center gap-3 rounded-lg px-3 py-2">
-            <ShieldHalf className="h-4 w-4 text-primary" />
-            <span className="text-xs uppercase tracking-[0.18em] text-muted-foreground">An toàn</span>
-            <Switch checked={safeMode} onCheckedChange={toggleSafeMode} />
-          </div>
           <Button variant="secondary" className="hidden xl:inline-flex">
             <MoonStar className="h-4 w-4" />
             Giao diện tối

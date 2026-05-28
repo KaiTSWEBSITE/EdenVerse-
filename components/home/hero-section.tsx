@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Flame, ShieldCheck, Sparkles, Star } from "lucide-react";
+import { ArrowRight, Flame, Sparkles, Star } from "lucide-react";
 import type { Game } from "@/types";
 import { SearchCommand } from "@/components/search/search-command";
 import { Button } from "@/components/ui/button";
@@ -19,10 +19,6 @@ export function HeroSection({
         <div className="max-w-4xl space-y-7">
           <div className="flex flex-wrap items-center gap-3">
             <Badge>Dark Fantasy VN Hub</Badge>
-            <span className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-black/30 px-3 py-1.5 text-xs text-muted-foreground">
-              <ShieldCheck className="h-3.5 w-3.5 text-primary" />
-              Có bộ lọc 18+
-            </span>
           </div>
 
           <div className="space-y-4">

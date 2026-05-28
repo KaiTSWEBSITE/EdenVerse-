@@ -100,7 +100,7 @@ export async function POST(request: Request) {
   await writeFile(path.join(uploadDir, safeName), buffer);
 
   return NextResponse.json({
-    message: "Đã lưu ảnh upload an toàn.",
+    message: "Đã lưu ảnh upload thành công.",
     url: `/${path.posix.join((process.env.UPLOAD_DIR ?? "public/uploads").replace(/^public\//, ""), safeName)}`,
     extension: safeExtension,
     size: file.size
