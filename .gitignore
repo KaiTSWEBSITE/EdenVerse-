@@ -1,5 +1,6 @@
 .next
 node_modules
+.vercel
 .env
 .env.local
 .env.production
@@ -12,3 +13,5 @@ public/uploads
 !public/uploads/.gitkeep
 prisma/dev.db
 *.tsbuildinfo
+
+.vercel

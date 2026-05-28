@@ -8,8 +8,8 @@ export function Logo({ className }: { className?: string }) {
         <div className="absolute inset-[7px] rounded-xl border border-primary/30 bg-gradient-to-br from-primary/30 via-white/10 to-transparent" />
       </div>
       <div>
-        <p className="font-display text-2xl leading-none tracking-[0.18em] text-foreground">EdenVerse</p>
-        <p className="text-[11px] uppercase tracking-[0.34em] text-muted-foreground">Premium VN Archive</p>
+        <p className="font-display text-2xl leading-none text-foreground">EdenVerse</p>
+        <p className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">VN Archive</p>
       </div>
     </Link>
   );

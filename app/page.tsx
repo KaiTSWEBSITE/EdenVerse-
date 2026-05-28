@@ -43,58 +43,58 @@ export default async function HomePage() {
     <>
       <HeroSection heroGame={heroGame} trending={trendingGames.slice(0, 4)} />
       <GameSection
-        eyebrow="Trending"
-        title="Curated titles everyone is chasing tonight"
-        description="Momentum-driven rankings combining popularity, reputation-weighted reviews, bookmark velocity, and recent update energy."
+        eyebrow="Đang hot"
+        title="Những tựa game được chú ý nhiều nhất"
+        description="Xếp hạng theo độ phổ biến, lượt lưu, đánh giá cộng đồng và nhịp cập nhật gần đây."
         games={trendingGames}
       />
       <GameSection
-        eyebrow="Newly Updated"
-        title="Fresh patches, route expansions, and version drops"
-        description="Track release cadence, adult scene additions, route reworks, and QoL improvements without digging through forum threads."
+        eyebrow="Mới cập nhật"
+        title="Bản vá, route mới và version vừa lên"
+        description="Theo dõi các thay đổi quan trọng mà không phải tự lục từng thread hoặc changelog rời rạc."
         games={newlyUpdated}
       />
       <GameSection
-        eyebrow="Top Rated"
-        title="Community champions with premium execution"
-        description="High reputation reviews, consistent route polish, and standout atmosphere put these at the top of the archive."
+        eyebrow="Đánh giá cao"
+        title="Game có chất lượng ổn định và đáng chơi"
+        description="Các tựa nổi bật nhờ route chắc tay, không khí tốt, UI đẹp và phản hồi tích cực từ cộng đồng."
         games={topRated}
       />
       <GameSection
-        eyebrow="Popular Visual Novel"
-        title="Elegant visual novels with serious narrative confidence"
-        description="A hand-curated shelf of premium VN releases, reactive romance writing, and gothic anime mood."
+        eyebrow="Visual Novel"
+        title="Visual Novel có cốt truyện và mood tốt"
+        description="Danh sách dành cho người thích romance route, lựa chọn có hậu quả và chất anime gothic."
         games={visualNovels}
       />
       <GameSection
-        eyebrow="Sandbox Games"
-        title="Route freedom, district exploration, and living systems"
-        description="Open-ended progression for players who want schedules, roaming maps, layered relationships, and meaningful agency."
+        eyebrow="Sandbox"
+        title="Tự do khám phá, lịch trình và nhiều route"
+        description="Dành cho người thích gameplay mở, nhiều địa điểm, quan hệ nhân vật và hệ thống tiến triển dài hơi."
         games={sandboxGames}
       />
       <GameSection
         eyebrow="RPG"
-        title="Story-rich RPG worlds with lush emotional stakes"
-        description="From dark pilgrimage survival to decadent throne simulators, these RPGs blend progression with heavy narrative payoff."
+        title="RPG giàu cốt truyện và cảm xúc"
+        description="Tập trung vào xây dựng nhân vật, tiến trình rõ ràng và những lựa chọn có sức nặng."
         games={rpgGames}
       />
       <GameSection
         eyebrow="Choice Matter"
-        title="Consequences that shape endings, factions, and intimacy"
-        description="These are the games where dialogue, route loyalty, and moral decisions echo across the whole narrative architecture."
+        title="Lựa chọn thật sự ảnh hưởng kết thúc"
+        description="Các game nơi hội thoại, độ thân thiết, phe phái và quyết định đạo đức đều để lại hậu quả."
         games={choiceMatter}
       />
       <GameSection
         eyebrow="Hidden Gems"
-        title="Smaller names with elite atmosphere and writing"
-        description="Underrated releases that overdeliver on mood, cast chemistry, and premium visual identity."
+        title="Những game ít ồn ào nhưng rất có chất"
+        description="Các tựa chưa quá nổi nhưng có không khí, nhân vật và phong cách trình bày đáng nhớ."
         games={hiddenGems}
       />
       <EditorialStrip posts={latestPosts} />
       <GameSection
-        eyebrow="Recommended For You"
-        title="A late-night shelf tuned for premium dark fantasy taste"
-        description="Handpicked from the archive to mirror the users who love story richness, route density, and cinematic presentation."
+        eyebrow="Đề xuất"
+        title="Gợi ý cho người thích dark fantasy và story-rich"
+        description="Tuyển chọn dựa trên điểm đánh giá, route density, chất lượng trình bày và độ hợp mood."
         games={recommended}
       />
     </>

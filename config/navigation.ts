@@ -1,26 +1,26 @@
 export const primaryNavigation = [
-  { label: "Discover", href: "/" },
-  { label: "Games", href: "/search" },
-  { label: "News", href: "/news" },
-  { label: "Community", href: "/dashboard" },
+  { label: "Khám phá", href: "/" },
+  { label: "Kho game", href: "/search" },
+  { label: "Tin tức", href: "/news" },
+  { label: "Cộng đồng", href: "/dashboard" },
   { label: "Admin", href: "/admin" }
 ] as const;
 
 export const footerNavigation = [
   {
-    title: "Platform",
+    title: "Nền tảng",
     links: [
-      { label: "Trending Releases", href: "/search?sort=trending" },
-      { label: "Adult Safe Mode", href: "/profile/demo-user" },
-      { label: "Recommended", href: "/search?collection=recommended" }
+      { label: "Game đang hot", href: "/search?sort=trending" },
+      { label: "Chế độ an toàn 18+", href: "/profile/aria" },
+      { label: "Đề xuất cho bạn", href: "/search?collection=recommended" }
     ]
   },
   {
-    title: "Studio",
+    title: "Quản trị",
     links: [
-      { label: "Newsroom", href: "/news" },
+      { label: "Bản tin", href: "/news" },
       { label: "Admin CMS", href: "/admin" },
-      { label: "User Dashboard", href: "/dashboard" }
+      { label: "Dashboard người dùng", href: "/dashboard" }
     ]
   }
 ] as const;

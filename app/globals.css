@@ -14,6 +14,10 @@ body {
 }
 
 * {
+  letter-spacing: 0 !important;
+}
+
+* {
   scrollbar-width: thin;
   scrollbar-color: rgba(87, 188, 255, 0.35) rgba(12, 16, 25, 0.7);
 }

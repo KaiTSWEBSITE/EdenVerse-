@@ -59,19 +59,19 @@ export function SearchCommand({
         <Input
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="Search by title, tag, developer, or engine..."
-          className={large ? "h-16 rounded-[28px] pl-12 text-base" : "pl-11"}
+          placeholder="Tìm theo tên game, tag, developer hoặc engine..."
+          className={large ? "h-14 rounded-lg pl-12 text-base" : "pl-11"}
         />
         <Sparkles className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-accent/80" />
       </div>
 
       {suggestions.length ? (
-        <div className="glass-panel absolute z-30 mt-3 w-full rounded-[24px] p-2">
+        <div className="glass-panel absolute z-30 mt-3 w-full rounded-lg p-2">
           {suggestions.map((suggestion) => (
             <Link
               key={suggestion.slug}
               href={`/games/${suggestion.slug}`}
-              className="flex items-center justify-between rounded-2xl px-4 py-3 transition hover:bg-white/6"
+              className="flex items-center justify-between rounded-md px-4 py-3 transition hover:bg-white/6"
             >
               <div>
                 <p className="text-sm font-semibold text-foreground">{suggestion.title}</p>

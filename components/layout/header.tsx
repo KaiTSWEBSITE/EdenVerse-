@@ -17,16 +17,16 @@ export function Header() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/6 bg-[rgba(5,7,12,0.58)] backdrop-blur-2xl">
-      <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-40 border-b border-white/8 bg-[rgba(5,7,12,0.72)] backdrop-blur-xl">
+      <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 sm:px-6 lg:px-8">
         <Logo className="shrink-0" />
 
-        <nav className="hidden items-center gap-1 lg:flex">
+        <nav className="hidden items-center gap-1 xl:flex">
           {primaryNavigation.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="rounded-full px-4 py-2 text-sm text-muted-foreground transition hover:bg-white/6 hover:text-foreground"
+              className="rounded-lg px-3 py-2 text-sm text-muted-foreground transition hover:bg-white/6 hover:text-foreground"
             >
               {item.label}
             </Link>
@@ -38,26 +38,26 @@ export function Header() {
         </div>
 
         <div className="hidden items-center gap-3 md:flex">
-          <div className="glass-panel flex items-center gap-3 rounded-full px-4 py-2">
+          <div className="glass-panel flex items-center gap-3 rounded-lg px-3 py-2">
             <ShieldHalf className="h-4 w-4 text-primary" />
-            <span className="text-xs uppercase tracking-[0.25em] text-muted-foreground">Safe</span>
+            <span className="text-xs uppercase tracking-[0.18em] text-muted-foreground">An toàn</span>
             <Switch checked={safeMode} onCheckedChange={toggleSafeMode} />
           </div>
-          <Button variant="secondary">
+          <Button variant="secondary" className="hidden xl:inline-flex">
             <MoonStar className="h-4 w-4" />
-            Dark Premium
+            Giao diện tối
           </Button>
           <Link href="/auth/login">
             <Button variant="default">
               <UserRound className="h-4 w-4" />
-              Sign In
+              Đăng nhập
             </Button>
           </Link>
         </div>
 
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild className="lg:hidden">
-            <button className="ml-auto rounded-full border border-white/10 bg-white/6 p-3 text-foreground">
+            <button className="ml-auto rounded-lg border border-white/10 bg-white/6 p-3 text-foreground">
               <Menu className="h-5 w-5" />
             </button>
           </DialogTrigger>
@@ -73,7 +73,7 @@ export function Header() {
                     key={item.href}
                     href={item.href}
                     onClick={() => setOpen(false)}
-                    className="block rounded-2xl border border-white/8 px-4 py-3 text-sm text-foreground transition hover:bg-white/6"
+                    className="block rounded-lg border border-white/8 px-4 py-3 text-sm text-foreground transition hover:bg-white/6"
                   >
                     {item.label}
                   </Link>

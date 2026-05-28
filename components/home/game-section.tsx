@@ -16,7 +16,7 @@ export function GameSection({
 }) {
   return (
     <Reveal>
-      <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <SectionHeading eyebrow={eyebrow} title={title} description={description} />
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
           {games.map((game) => (
