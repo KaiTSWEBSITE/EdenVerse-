@@ -4,20 +4,16 @@ import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { CaptchaField, type CaptchaValue } from "@/components/security/captcha-field";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
 export default function LoginPage() {
-  const [captcha, setCaptcha] = useState<CaptchaValue | null>(null);
   const [email, setEmail] = useState("admin@edenverse.gg");
   const [error, setError] = useState("");
   const [password, setPassword] = useState("Admin@123");
   const [submitting, setSubmitting] = useState(false);
   const router = useRouter();
-
-  const captchaReady = Boolean(captcha?.token && (captcha.provider === "turnstile" || captcha.answer));
 
   return (
     <section className="mx-auto max-w-xl px-4 py-20 sm:px-6 lg:px-8">
@@ -27,25 +23,22 @@ export default function LoginPage() {
             <p className="text-xs uppercase tracking-[0.22em] text-primary">Đăng nhập</p>
             <h1 className="mt-2 font-display text-5xl text-foreground">Chào mừng trở lại</h1>
             <p className="mt-3 text-sm leading-7 text-muted-foreground">
-              Đăng nhập bằng email và mật khẩu. EdenVerse đã thêm CAPTCHA, rate limit và cookie an toàn để giảm spam đăng nhập.
+              Đăng nhập bằng email và mật khẩu. Các lớp rate limit, cookie an toàn và kiểm tra quyền vẫn hoạt động.
             </p>
           </div>
 
           <div className="space-y-4">
             <Input value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Email" />
             <Input value={password} onChange={(event) => setPassword(event.target.value)} type="password" placeholder="Mật khẩu" />
-            <CaptchaField action="login" onChange={setCaptcha} />
             {error ? <p className="text-sm text-red-300">{error}</p> : null}
             <Button
               className="w-full"
-              disabled={!captchaReady || submitting}
+              disabled={submitting}
               onClick={async () => {
                 setSubmitting(true);
                 setError("");
 
                 const result = await signIn("credentials", {
-                  captchaAnswer: captcha?.answer ?? "",
-                  captchaToken: captcha?.token ?? "",
                   email,
                   password,
                   redirect: false
@@ -54,7 +47,7 @@ export default function LoginPage() {
                 setSubmitting(false);
 
                 if (result?.error) {
-                  setError("Email, mật khẩu hoặc CAPTCHA chưa đúng.");
+                  setError("Email hoặc mật khẩu chưa đúng.");
                   return;
                 }
 

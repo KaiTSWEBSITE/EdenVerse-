@@ -1,5 +1,6 @@
 import { GameSection } from "@/components/home/game-section";
 import { HeroSection } from "@/components/home/hero-section";
+import { cookies } from "next/headers";
 import {
   getHeroGame,
   getHotGames,
@@ -10,8 +11,22 @@ import { getHeroIntro } from "@/services/site-settings-service";
 
 export const dynamic = "force-dynamic";
 
+function decodeHeroIntroCookie(value?: string) {
+  if (!value) {
+    return "";
+  }
+
+  try {
+    return decodeURIComponent(value).trim();
+  } catch {
+    return "";
+  }
+}
+
 export default async function HomePage() {
-  const [heroGame, heroIntro, hotGames, newGames, qualityGames] = await Promise.all([
+  const cookieStore = await cookies();
+  const cookieHeroIntro = decodeHeroIntroCookie(cookieStore.get("edenverse_hero_intro")?.value);
+  const [heroGame, savedHeroIntro, hotGames, newGames, qualityGames] = await Promise.all([
     getHeroGame(),
     getHeroIntro(),
     getHotGames(8),
@@ -21,7 +36,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <HeroSection heroGame={heroGame} intro={heroIntro} trending={hotGames.slice(0, 4)} />
+      <HeroSection heroGame={heroGame} intro={cookieHeroIntro || savedHeroIntro} trending={hotGames.slice(0, 4)} />
       <GameSection
         eyebrow="Game Hot"
         title="Game được tải nhiều nhất"

@@ -46,10 +46,12 @@ export default async function GameDetailPage({ params }: { params: Promise<{ slu
       <GameHero game={game} />
       <GameOverview game={game} />
       <GameGallery gallery={game.gallery} />
-      <section className="mx-auto grid max-w-7xl gap-6 px-4 py-6 sm:px-6 xl:grid-cols-2 lg:px-8">
-        <ReviewList reviews={reviews} />
-        <CommentThread comments={comments} />
-      </section>
+      {reviews.length || comments.length ? (
+        <section className="mx-auto grid max-w-7xl gap-6 px-4 py-6 sm:px-6 xl:grid-cols-2 lg:px-8">
+          {reviews.length ? <ReviewList reviews={reviews} /> : null}
+          {comments.length ? <CommentThread comments={comments} /> : null}
+        </section>
+      ) : null}
       <GameSection
         eyebrow="Chất lượng tốt"
         title="Một vài game tốt khác"

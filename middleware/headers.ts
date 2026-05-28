@@ -2,7 +2,7 @@ import type { NextResponse } from "next/server";
 
 export function applySecurityHeaders(response: NextResponse) {
   const isProduction = process.env.NODE_ENV === "production";
-  const scriptSrc = ["script-src 'self' 'unsafe-inline'", "https://challenges.cloudflare.com"];
+  const scriptSrc = ["script-src 'self' 'unsafe-inline'"];
 
   if (!isProduction) {
     scriptSrc.push("'unsafe-eval'");
@@ -36,8 +36,8 @@ export function applySecurityHeaders(response: NextResponse) {
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
       scriptSrc.join(" "),
-      "connect-src 'self' https://api.github.com https://*.vercel-insights.com https://*.vercel.app https://challenges.cloudflare.com",
-      "frame-src 'self' https://challenges.cloudflare.com",
+      "connect-src 'self' https://api.github.com https://*.vercel-insights.com https://*.vercel.app",
+      "frame-src 'self'",
       "worker-src 'self' blob:",
       isProduction ? "upgrade-insecure-requests" : ""
     ].filter(Boolean).join("; ")

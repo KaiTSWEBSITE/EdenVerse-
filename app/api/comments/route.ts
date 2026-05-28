@@ -1,11 +1,9 @@
 import { NextResponse } from "next/server";
-import { demoComments } from "@/database/demo-data";
-import { verifyCaptcha } from "@/lib/captcha";
 import { applyRateLimit } from "@/middleware/rate-limit";
 import { commentSchema } from "@/lib/validators";
 
 export async function GET() {
-  return NextResponse.json({ comments: demoComments });
+  return NextResponse.json({ comments: [] });
 }
 
 export async function POST(request: Request) {
@@ -22,11 +20,6 @@ export async function POST(request: Request) {
   const parsed = commentSchema.safeParse(json);
   if (!parsed.success) {
     return NextResponse.json({ message: "Invalid payload", issues: parsed.error.flatten() }, { status: 400 });
-  }
-
-  const captcha = await verifyCaptcha(parsed.data, request);
-  if (!captcha.ok) {
-    return NextResponse.json({ message: captcha.message }, { status: 403 });
   }
 
   return NextResponse.json(

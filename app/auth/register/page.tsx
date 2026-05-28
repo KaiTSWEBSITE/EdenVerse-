@@ -2,20 +2,16 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { CaptchaField, type CaptchaValue } from "@/components/security/captcha-field";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
 export default function RegisterPage() {
-  const [captcha, setCaptcha] = useState<CaptchaValue | null>(null);
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [username, setUsername] = useState("");
-
-  const captchaReady = Boolean(captcha?.token && (captcha.provider === "turnstile" || captcha.answer));
 
   return (
     <section className="mx-auto max-w-xl px-4 py-20 sm:px-6 lg:px-8">
@@ -32,18 +28,15 @@ export default function RegisterPage() {
             <Input value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Email" />
             <Input value={username} onChange={(event) => setUsername(event.target.value)} placeholder="Tên người dùng" />
             <Input value={password} onChange={(event) => setPassword(event.target.value)} type="password" placeholder="Mật khẩu" />
-            <CaptchaField action="register" onChange={setCaptcha} />
             <Button
               className="w-full"
-              disabled={!captchaReady || submitting}
+              disabled={submitting}
               onClick={async () => {
                 setSubmitting(true);
                 const response = await fetch("/api/auth/register", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({
-                    captchaAnswer: captcha?.answer ?? "",
-                    captchaToken: captcha?.token ?? "",
                     email,
                     password,
                     username

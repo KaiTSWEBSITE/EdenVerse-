@@ -8,12 +8,13 @@ EdenVerse là website giới thiệu và đánh giá game theo phong cách dark 
 
 - Next.js 15 App Router, React 19, TypeScript, TailwindCSS và Framer Motion.
 - UI glassmorphism nhẹ, nền cathedral cinematic, fog/particles/parallax vừa đủ để mượt.
-- Prisma + PostgreSQL, migration, seed data và fallback demo để chạy ngay sau khi clone.
+- Prisma + PostgreSQL, migration, seed data game và fallback demo để chạy ngay sau khi clone.
 - NextAuth credentials login bằng email/password, đã bỏ Google/Discord theo yêu cầu.
-- CAPTCHA bảo vệ đăng nhập, đăng ký, quên mật khẩu, bình luận, review và admin actions.
+- Các lớp rate limit, role check, CSP, origin check, bcrypt, Zod validation và upload filter vẫn được giữ.
 - Admin có form đăng game và phần tự chỉnh câu giới thiệu trang chủ.
-- Bảo mật gồm CSP, security headers, origin check chống CSRF, rate limit, bcrypt, Zod validation và upload filter.
+- Khi chưa có PostgreSQL, câu giới thiệu admin lưu sẽ hiển thị ngay trong cùng trình duyệt bằng cookie/localStorage demo.
 - Tắt `X-Powered-By`, không xuất production source maps, chặn các đường dẫn nhạy cảm như `.env`, `.git`, `package.json`, `prisma`, `node_modules`.
+- Không còn bài viết, bình luận hoặc review demo mặc định.
 
 ## Chạy Nhanh
 
@@ -42,10 +43,7 @@ Các biến quan trọng:
 - `DATABASE_URL`: PostgreSQL thật cho production.
 - `AUTH_SECRET`: chuỗi bí mật mạnh cho NextAuth.
 - `NEXT_PUBLIC_SITE_INTRO`: câu giới thiệu mặc định trước khi admin lưu setting.
-- `NEXT_PUBLIC_TURNSTILE_SITE_KEY` và `TURNSTILE_SECRET_KEY`: bật Cloudflare Turnstile CAPTCHA.
-- `CAPTCHA_SECRET`: khóa ký CAPTCHA nội bộ nếu chưa dùng Turnstile.
-
-Nếu chưa có Turnstile key, EdenVerse dùng CAPTCHA nội bộ dạng phép tính được ký bằng server secret để vẫn test được local.
+- `UPLOAD_DIR`: thư mục upload local khi dev.
 
 ## PostgreSQL / Prisma
 
@@ -73,11 +71,10 @@ ENABLE_PRISMA_DEMO_FALLBACK="false"
 - `/profile/[username]`: hồ sơ người dùng.
 - `/dashboard`: dashboard thành viên.
 - `/admin`: quản trị, đăng game, chỉnh giới thiệu, bảo mật và SEO.
-- `/auth/login`, `/auth/register`, `/auth/forgot-password`: xác thực email/password có CAPTCHA.
+- `/auth/login`, `/auth/register`, `/auth/forgot-password`: xác thực email/password.
 
 ## API Chính
 
-- `GET /api/security/captcha`
 - `GET /api/games`
 - `GET /api/games/[slug]`
 - `POST /api/games/[slug]/download`
@@ -92,40 +89,14 @@ ENABLE_PRISMA_DEMO_FALLBACK="false"
 - `POST /api/auth/forgot-password`
 - `POST /api/upload`
 
-## Cấu Trúc
-
-```text
-project-root/
-├── app/
-├── components/
-├── config/
-├── constants/
-├── context/
-├── database/
-├── hooks/
-├── lib/
-├── middleware/
-├── prisma/
-├── public/
-├── scripts/
-├── services/
-├── styles/
-├── types/
-├── utils/
-├── .env.example
-├── package.json
-└── README.md
-```
-
 ## Production Checklist
 
-1. Thêm `DATABASE_URL` production.
-2. Đặt `AUTH_SECRET` và `CAPTCHA_SECRET` mạnh.
+1. Thêm `DATABASE_URL` production nếu muốn setting admin hiển thị cho mọi người dùng.
+2. Đặt `AUTH_SECRET` mạnh.
 3. Cấu hình `NEXTAUTH_URL` và `AUTH_TRUST_HOST`.
-4. Thêm Turnstile keys nếu muốn CAPTCHA provider thật.
-5. Chuyển upload local sang S3, Cloudflare R2 hoặc Supabase Storage.
-6. Chạy migration và seed.
-7. Tắt fallback demo nếu muốn dữ liệu hoàn toàn từ DB.
+4. Chuyển upload local sang S3, Cloudflare R2 hoặc Supabase Storage.
+5. Chạy migration và seed.
+6. Tắt fallback demo nếu muốn dữ liệu hoàn toàn từ DB.
 
 ## Background
 

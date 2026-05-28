@@ -1,5 +1,5 @@
 import { ENGINES } from "@/constants/filters";
-import type { Comment, Game, Review, UserProfile, UserSummary } from "@/types";
+import type { Comment, Game, Review, UserProfile } from "@/types";
 import { slugify } from "@/lib/utils";
 
 const coverPool = [
@@ -111,8 +111,6 @@ const userSeed = [
     allowMatureContent: true
   }
 ] as const satisfies UserProfile[];
-
-const userLookup = new Map<string, UserProfile>(userSeed.map((user) => [user.id, user]));
 
 const roster = [
   {
@@ -479,96 +477,6 @@ export const demoGames: Game[] = [...roster, ...extraGames].map((game, index) =>
 
 export const demoUsers: UserProfile[] = [...userSeed];
 
-const makeSummary = (userId: string): UserSummary => {
-  const user = userLookup.get(userId);
-  if (!user) {
-    throw new Error(`Unknown user ${userId}`);
-  }
+export const demoComments: Comment[] = [];
 
-  const { id, name, username, avatar, role, level, reputation } = user;
-  return { id, name, username, avatar, role, level, reputation };
-};
-
-export const demoComments: Comment[] = [
-  {
-    id: "comment-1",
-    gameSlug: "seraph-code",
-    body: "The district routing in chapter three is wild. I love how your companion banter changes based on the halo heat meter.",
-    createdAt: "2026-05-18T07:20:00Z",
-    likes: 92,
-    reports: 0,
-    author: makeSummary("user-sol"),
-    replies: [
-      {
-        id: "comment-1a",
-        parentId: "comment-1",
-        gameSlug: "seraph-code",
-        body: "Same. It feels premium in a way most sandbox VNs miss.",
-        createdAt: "2026-05-18T09:02:00Z",
-        likes: 24,
-        reports: 0,
-        author: makeSummary("user-lyra")
-      }
-    ]
-  },
-  {
-    id: "comment-2",
-    gameSlug: "eternum-reverie",
-    body: "The political route with House Mirren is the closest thing to Once in a Lifetime energy I've played this year.",
-    createdAt: "2026-05-16T14:15:00Z",
-    likes: 134,
-    reports: 1,
-    author: makeSummary("user-aria")
-  },
-  {
-    id: "comment-3",
-    gameSlug: "crown-of-ashes",
-    body: "I appreciate that EdenVerse surfaces the exact engine, version, and route complexity right in the hero panel.",
-    createdAt: "2026-05-20T11:00:00Z",
-    likes: 67,
-    reports: 0,
-    author: makeSummary("user-riven")
-  },
-  {
-    id: "comment-4",
-    postSlug: "edenverse-weekly-1",
-    body: "This editorial format is strong. Clean UI, but still moody.",
-    createdAt: "2026-05-12T12:00:00Z",
-    likes: 16,
-    reports: 0,
-    author: makeSummary("user-lyra")
-  }
-];
-
-export const demoReviews: Review[] = [
-  {
-    id: "review-1",
-    gameSlug: "eternum-reverie",
-    rating: 10,
-    title: "Luxurious route writing",
-    body: "This feels like a premium release in every sense: UI, soundtrack, relationship pacing, and consequence design. It never wastes a scene.",
-    helpful: 422,
-    createdAt: "2026-05-11T12:00:00Z",
-    author: makeSummary("user-aria")
-  },
-  {
-    id: "review-2",
-    gameSlug: "seraph-code",
-    rating: 9,
-    title: "A sandbox with real momentum",
-    body: "The city is dense, adult content is integrated instead of cheap, and every district gives you meaningful route variation. Excellent update cadence too.",
-    helpful: 318,
-    createdAt: "2026-05-14T17:40:00Z",
-    author: makeSummary("user-sol")
-  },
-  {
-    id: "review-3",
-    gameSlug: "cathedral-zero",
-    rating: 9,
-    title: "For mystery players first",
-    body: "A gorgeous time-loop mystery that trusts the player. The pacing is slow on purpose, and the atmosphere carries every reveal beautifully.",
-    helpful: 162,
-    createdAt: "2026-05-07T09:15:00Z",
-    author: makeSummary("user-riven")
-  }
-];
+export const demoReviews: Review[] = [];

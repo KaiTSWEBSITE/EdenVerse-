@@ -1,6 +1,5 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { verifyCaptcha } from "@/lib/captcha";
 import { loginSchema } from "@/lib/validators";
 import { verifyDemoCredentials } from "@/services/auth-service";
 
@@ -9,24 +8,15 @@ const providers = [
     name: "Email",
     credentials: {
       email: { label: "Email", type: "email" },
-      password: { label: "Password", type: "password" },
-      captchaAnswer: { label: "CAPTCHA answer", type: "text" },
-      captchaToken: { label: "CAPTCHA token", type: "text" }
+      password: { label: "Password", type: "password" }
     },
     async authorize(credentials) {
       const parsed = loginSchema.safeParse({
         email: credentials?.email,
-        password: credentials?.password,
-        captchaAnswer: credentials?.captchaAnswer,
-        captchaToken: credentials?.captchaToken
+        password: credentials?.password
       });
 
       if (!parsed.success) {
-        return null;
-      }
-
-      const captcha = await verifyCaptcha(parsed.data);
-      if (!captcha.ok) {
         return null;
       }
 

@@ -1,11 +1,9 @@
 import { NextResponse } from "next/server";
-import { demoReviews } from "@/database/demo-data";
-import { verifyCaptcha } from "@/lib/captcha";
 import { reviewSchema } from "@/lib/validators";
 import { applyRateLimit } from "@/middleware/rate-limit";
 
 export async function GET() {
-  return NextResponse.json({ reviews: demoReviews });
+  return NextResponse.json({ reviews: [] });
 }
 
 export async function POST(request: Request) {
@@ -26,11 +24,6 @@ export async function POST(request: Request) {
 
   if (!parsed.success) {
     return NextResponse.json({ message: "Invalid payload", issues: parsed.error.flatten() }, { status: 400 });
-  }
-
-  const captcha = await verifyCaptcha(parsed.data, request);
-  if (!captcha.ok) {
-    return NextResponse.json({ message: captcha.message }, { status: 403 });
   }
 
   return NextResponse.json({ message: "Review accepted in demo mode.", review: parsed.data }, { status: 201 });

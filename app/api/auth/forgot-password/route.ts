@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { verifyCaptcha } from "@/lib/captcha";
 import { forgotPasswordSchema } from "@/lib/validators";
 import { applyRateLimit } from "@/middleware/rate-limit";
 import { createCsrfToken } from "@/utils/security";
@@ -19,11 +18,6 @@ export async function POST(request: Request) {
 
   if (!parsed.success) {
     return NextResponse.json({ message: "Invalid request payload" }, { status: 400 });
-  }
-
-  const captcha = await verifyCaptcha(parsed.data, request);
-  if (!captcha.ok) {
-    return NextResponse.json({ message: captcha.message }, { status: 403 });
   }
 
   return NextResponse.json({

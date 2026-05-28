@@ -1,13 +1,10 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { auth } from "@/auth";
-import { verifyCaptcha } from "@/lib/captcha";
 import { applyRateLimit } from "@/middleware/rate-limit";
 import { setHeroIntro } from "@/services/site-settings-service";
 
 const settingsSchema = z.object({
-  captchaAnswer: z.string().trim().max(64).optional(),
-  captchaToken: z.string().trim().max(4096).optional(),
   heroIntro: z.string().trim().min(40).max(320)
 });
 
@@ -43,15 +40,19 @@ export async function POST(request: Request) {
     );
   }
 
-  const captcha = await verifyCaptcha(parsed.data, request);
-  if (!captcha.ok) {
-    return NextResponse.json({ message: captcha.message }, { status: 403 });
-  }
-
   await setHeroIntro(parsed.data.heroIntro);
 
-  return NextResponse.json({
+  const response = NextResponse.json({
     heroIntro: parsed.data.heroIntro,
     message: "Đã cập nhật câu giới thiệu trang chủ."
   });
+  response.cookies.set("edenverse_hero_intro", encodeURIComponent(parsed.data.heroIntro), {
+    httpOnly: false,
+    maxAge: 60 * 60 * 24 * 365,
+    path: "/",
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production"
+  });
+
+  return response;
 }

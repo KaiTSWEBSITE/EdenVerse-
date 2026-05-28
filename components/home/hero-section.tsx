@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, Flame, Sparkles, Star } from "lucide-react";
 import type { Game } from "@/types";
 import { SearchCommand } from "@/components/search/search-command";
+import { HeroIntroText } from "@/components/home/hero-intro-text";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatCompactNumber, formatRating } from "@/lib/utils";
@@ -27,7 +28,7 @@ export function HeroSection({
             <h1 className="font-display text-6xl leading-none text-foreground sm:text-7xl lg:text-8xl">
               EdenVerse
             </h1>
-            <p className="max-w-3xl text-lg leading-8 text-foreground/86 sm:text-xl">{intro}</p>
+            <HeroIntroText intro={intro} />
           </div>
 
           <div className="relative max-w-2xl">

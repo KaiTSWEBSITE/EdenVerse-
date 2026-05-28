@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import { verifyCaptcha } from "@/lib/captcha";
 import { registerSchema } from "@/lib/validators";
 import { prisma } from "@/database/prisma";
 import { applyRateLimit } from "@/middleware/rate-limit";
@@ -19,11 +18,6 @@ export async function POST(request: Request) {
   const parsed = registerSchema.safeParse(json);
   if (!parsed.success) {
     return NextResponse.json({ message: "Invalid registration payload", issues: parsed.error.flatten() }, { status: 400 });
-  }
-
-  const captcha = await verifyCaptcha(parsed.data, request);
-  if (!captcha.ok) {
-    return NextResponse.json({ message: captcha.message }, { status: 403 });
   }
 
   if (!prisma) {

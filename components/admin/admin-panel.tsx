@@ -19,7 +19,6 @@ import type { ComponentType, FormEvent } from "react";
 import { useState } from "react";
 import type { DashboardMetric } from "@/types";
 import { ENGINES, GENRES, TAGS } from "@/constants/filters";
-import { CaptchaField, type CaptchaValue } from "@/components/security/captcha-field";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -56,7 +55,6 @@ const auditEvents = [
 export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics: DashboardMetric[] }) {
   const [intro, setIntro] = useState(heroIntro);
   const [message, setMessage] = useState("");
-  const [settingsCaptcha, setSettingsCaptcha] = useState<CaptchaValue | null>(null);
   const [settingsMessage, setSettingsMessage] = useState("");
 
   async function submitSettings(event: FormEvent<HTMLFormElement>) {
@@ -67,12 +65,14 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        captchaAnswer: settingsCaptcha?.answer ?? "",
-        captchaToken: settingsCaptcha?.token ?? "",
         heroIntro: intro
       })
     });
     const data = await response.json();
+    if (response.ok && typeof data.heroIntro === "string") {
+      localStorage.setItem("edenverse.heroIntro", data.heroIntro);
+      window.dispatchEvent(new CustomEvent("edenverse:hero-intro-updated", { detail: data.heroIntro }));
+    }
     setSettingsMessage(data.message ?? "Đã gửi yêu cầu cập nhật.");
   }
 
@@ -116,7 +116,7 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
               Lưu giới thiệu
             </Button>
           </div>
-          <form id="admin-site-settings-form" onSubmit={submitSettings} className="grid gap-4 lg:grid-cols-[1fr_360px]">
+          <form id="admin-site-settings-form" onSubmit={submitSettings} className="space-y-4">
             <Textarea
               maxLength={320}
               minLength={40}
@@ -125,7 +125,6 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
               required
               value={intro}
             />
-            <CaptchaField action="admin-settings" label="Xác minh trước khi lưu" onChange={setSettingsCaptcha} />
           </form>
           <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-muted-foreground">
             <span>{intro.length}/320 ký tự</span>
@@ -217,8 +216,6 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
                 <Input name="seoTitle" placeholder="SEO title" />
               </div>
               <Textarea name="seoDescription" placeholder="SEO description..." />
-
-              <CaptchaField action="admin-game" label="Xác minh trước khi đăng game" />
 
               {message ? (
                 <div className="rounded-lg border border-primary/25 bg-primary/8 px-4 py-3 text-sm text-primary">
