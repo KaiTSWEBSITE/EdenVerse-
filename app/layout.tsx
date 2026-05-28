@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Barlow, Chakra_Petch } from "next/font/google";
+import { Cormorant_SC, Spectral } from "next/font/google";
 import { AtmosphericBackdrop } from "@/components/layout/atmospheric-backdrop";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
@@ -7,14 +7,14 @@ import { AppProviders } from "@/context/providers";
 import { siteConfig } from "@/config/site";
 import "@/app/globals.css";
 
-const display = Chakra_Petch({
+const display = Cormorant_SC({
   subsets: ["latin", "vietnamese"],
   variable: "--font-display",
   weight: ["500", "600", "700"],
   display: "swap"
 });
 
-const body = Barlow({
+const body = Spectral({
   subsets: ["latin", "vietnamese"],
   variable: "--font-body",
   weight: ["400", "500", "600", "700"],
