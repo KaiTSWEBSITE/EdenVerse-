@@ -1,7 +1,20 @@
+import type { Prisma } from "@prisma/client";
 import { demoGames } from "@/database/demo-data";
 import { prisma } from "@/database/prisma";
+import { isDemoCatalogHidden } from "@/services/demo-catalog-service";
 import { getTrackedDownloadCount } from "@/services/download-service";
 import type { Game, SearchFilters } from "@/types";
+
+const gameInclude = {
+  genres: true,
+  tags: {
+    include: {
+      tag: true
+    }
+  }
+} satisfies Prisma.GameInclude;
+
+type GameRecord = Prisma.GameGetPayload<{ include: typeof gameInclude }>;
 
 function sortGames(games: Game[], sort: SearchFilters["sort"]) {
   switch (sort) {
@@ -43,24 +56,73 @@ function filterGames(games: Game[], filters: SearchFilters = {}) {
   );
 }
 
-export async function getAllGames(filters: SearchFilters = {}) {
-  if (!prisma || process.env.ENABLE_PRISMA_DEMO_FALLBACK !== "false") {
-    return filterGames(demoGames, filters);
+function toStringArray(value: unknown) {
+  return Array.isArray(value) ? value.filter((entry): entry is string => typeof entry === "string") : [];
+}
+
+function mapGameRecord(game: GameRecord): Game {
+  const fallback = demoGames.find((entry) => entry.slug === game.slug);
+
+  return {
+    id: game.id,
+    slug: game.slug,
+    title: game.title,
+    tagline: game.tagline,
+    shortDescription: game.shortDescription,
+    description: game.description,
+    story: game.story,
+    version: game.version,
+    developer: game.developer,
+    engine: game.engine,
+    releaseDate: game.releaseDate.toISOString(),
+    updatedAt: game.updatedAt.toISOString(),
+    rating: game.rating,
+    reviewCount: game.reviewCount,
+    popularityScore: game.popularityScore,
+    bookmarks: game.bookmarksCount,
+    downloads: game.downloadsCount,
+    mature: game.mature,
+    featured: game.featured,
+    hero: game.hero,
+    coverImage: game.coverImage,
+    bannerImage: game.bannerImage,
+    gallery: toStringArray(game.gallery),
+    trailerUrl: game.trailerUrl ?? "",
+    genres: game.genres.map((entry) => entry.genre),
+    tags: game.tags.map((entry) => entry.tag.name),
+    platforms: fallback?.platforms ?? ["Windows"],
+    languages: fallback?.languages ?? ["English"]
+  };
+}
+
+async function getDatabaseGames() {
+  if (!prisma) {
+    return [];
   }
 
   try {
     const games = await prisma.game.findMany({
-      orderBy: { popularityScore: "desc" }
+      include: gameInclude,
+      orderBy: [{ popularityScore: "desc" }, { updatedAt: "desc" }]
     });
 
-    if (!games.length) {
-      return filterGames(demoGames, filters);
-    }
+    return games.map(mapGameRecord);
   } catch {
+    return [];
+  }
+}
+
+export async function getAllGames(filters: SearchFilters = {}) {
+  const databaseGames = await getDatabaseGames();
+  if (databaseGames.length) {
+    return filterGames(databaseGames, filters);
+  }
+
+  if (!(await isDemoCatalogHidden())) {
     return filterGames(demoGames, filters);
   }
 
-  return filterGames(demoGames, filters);
+  return [];
 }
 
 export async function getFeaturedGames() {
@@ -68,7 +130,8 @@ export async function getFeaturedGames() {
 }
 
 export async function getHeroGame() {
-  return (await getAllGames()).find((game) => game.hero) ?? demoGames[0];
+  const games = await getAllGames();
+  return games.find((game) => game.hero) ?? games[0] ?? null;
 }
 
 export async function getHotGames(limit = 8) {
@@ -103,20 +166,30 @@ export async function getGamesByGenre(genre: string, limit = 8) {
 }
 
 export async function getHiddenGems() {
-  return demoGames
+  return (await getAllGames())
     .filter((game) => game.reviewCount < 700 && game.rating >= 8.4)
     .sort((a, b) => b.rating - a.rating)
     .slice(0, 8);
 }
 
 export async function getRecommendedGames() {
-  return demoGames
+  return (await getAllGames())
     .filter((game) => game.rating >= 8.8)
     .sort((a, b) => b.rating * b.popularityScore - a.rating * a.popularityScore)
     .slice(0, 8);
 }
 
 export async function getGameBySlug(slug: string) {
+  const databaseGames = await getDatabaseGames();
+  const databaseGame = databaseGames.find((game) => game.slug === slug);
+  if (databaseGame) {
+    return databaseGame;
+  }
+
+  if (await isDemoCatalogHidden()) {
+    return null;
+  }
+
   return demoGames.find((game) => game.slug === slug) ?? null;
 }
 
@@ -126,7 +199,7 @@ export async function getSimilarGames(slug: string) {
     return [];
   }
 
-  return demoGames
+  return (await getAllGames())
     .filter((game) => game.slug !== slug)
     .map((game) => ({
       game,

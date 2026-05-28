@@ -79,6 +79,7 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
   const [intro, setIntro] = useState(heroIntro);
   const [message, setMessage] = useState("");
   const [postDeleteMessage, setPostDeleteMessage] = useState("");
+  const [gameDemoMessage, setGameDemoMessage] = useState("");
   const [postListMessage, setPostListMessage] = useState("");
   const [posts, setPosts] = useState<AdminPostSummary[]>([]);
   const [postsLoading, setPostsLoading] = useState(true);
@@ -164,6 +165,25 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
     }
   }
 
+  async function deleteDemoGames() {
+    const confirmed = window.confirm(
+      "Xóa hoặc ẩn toàn bộ game demo/mẫu? Hành động này sẽ làm các game mẫu biến mất khỏi trang chủ."
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    setGameDemoMessage("Đang dọn game demo/mẫu...");
+
+    const response = await fetch("/api/admin/games/demo", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" }
+    });
+    const data = await response.json();
+    setGameDemoMessage(data.message ?? "Đã gửi yêu cầu dọn game demo.");
+  }
+
   async function submitGame(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setMessage("Đang kiểm tra dữ liệu game...");
@@ -225,15 +245,34 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
         <CardContent className="space-y-5 p-6">
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div>
+              <p className="text-xs uppercase tracking-[0.2em] text-primary">Dữ liệu demo</p>
+              <h2 className="mt-2 font-display text-4xl text-foreground">Xóa game demo/mẫu khỏi trang web</h2>
+              <p className="mt-2 max-w-2xl text-sm leading-7 text-muted-foreground">
+                Nút này dọn các game mẫu đang hiện ở trang chủ. Nếu chưa có database, hệ thống sẽ ẩn demo bằng cookie trên trình duyệt hiện tại; nếu có database, game demo sẽ bị xóa và fallback mẫu sẽ tắt.
+              </p>
+            </div>
+            <Button type="button" variant="secondary" onClick={deleteDemoGames}>
+              <Trash2 className="h-4 w-4" />
+              Xóa game demo/mẫu
+            </Button>
+          </div>
+          {gameDemoMessage ? <p className="text-sm text-primary">{gameDemoMessage}</p> : null}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="space-y-5 p-6">
+          <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+            <div>
               <p className="text-xs uppercase tracking-[0.2em] text-primary">Quản lý bài viết</p>
               <h2 className="mt-2 font-display text-4xl text-foreground">Xóa bài và dọn bài demo</h2>
               <p className="mt-2 max-w-2xl text-sm leading-7 text-muted-foreground">
-                Xóa bài theo slug hoặc dọn sạch các bài demo cũ như `demo-*`, `edenverse-weekly*` và bài có trạng thái `DEMO`.
+                Xóa bài viết theo slug hoặc dọn sạch các bài viết demo cũ như `demo-*`, `edenverse-weekly*` và bài có trạng thái `DEMO`.
               </p>
             </div>
             <Button type="button" variant="secondary" onClick={() => deletePosts("demo")}>
               <Trash2 className="h-4 w-4" />
-              Xóa toàn bộ bài demo
+              Xóa toàn bộ bài viết demo
             </Button>
           </div>
           <div className="grid gap-3 md:grid-cols-[1fr_auto]">
