@@ -26,8 +26,8 @@ export function HeroSection({
               EdenVerse
             </h1>
             <p className="max-w-3xl text-lg leading-8 text-foreground/86 sm:text-xl">
-              EdenVerse chỉ tập trung vào 3 kệ chính: Game Hot theo lượt tải, game mới ra mắt và game có chất lượng tốt.
-              Dễ tìm, dễ chọn, không bị rối bởi quá nhiều danh mục.
+              Khám phá EdenVerse qua ba lối vào gọn gàng: game đang được tải nhiều, game vừa ra mắt
+              và những lựa chọn chất lượng cao được cộng đồng đánh giá tốt.
             </p>
           </div>
 
