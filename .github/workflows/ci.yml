@@ -1,0 +1,44 @@
+name: EdenVerse CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  AUTH_SECRET: github-actions-demo-secret
+  DATABASE_URL: postgresql://postgres:postgres@localhost:5432/edenverse
+  ENABLE_PRISMA_DEMO_FALLBACK: "true"
+  NEXT_TELEMETRY_DISABLED: "1"
+  NEXTAUTH_URL: http://localhost:3000
+
+jobs:
+  build:
+    name: Typecheck, lint, and build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
