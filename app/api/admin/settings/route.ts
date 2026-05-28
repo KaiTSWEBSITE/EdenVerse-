@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { auth } from "@/auth";
 import { applyRateLimit } from "@/middleware/rate-limit";
@@ -41,6 +42,7 @@ export async function POST(request: Request) {
   }
 
   await setHeroIntro(parsed.data.heroIntro);
+  revalidatePath("/");
 
   const response = NextResponse.json({
     heroIntro: parsed.data.heroIntro,

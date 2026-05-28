@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import type { Route } from "next";
 import {
   BarChart3,
   FileCheck2,
@@ -75,6 +77,22 @@ type AdminPostSummary = {
   };
 };
 
+type AdminGameSummary = {
+  id: string;
+  slug: string;
+  title: string;
+  version: string;
+  developer: string;
+  downloadsCount: number;
+  coverImage: string;
+  updatedAt: string;
+  createdAt: string;
+  _count?: {
+    comments: number;
+    reviews: number;
+  };
+};
+
 export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics: DashboardMetric[] }) {
   const [intro, setIntro] = useState(heroIntro);
   const [message, setMessage] = useState("");
@@ -83,6 +101,10 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
   const [postListMessage, setPostListMessage] = useState("");
   const [posts, setPosts] = useState<AdminPostSummary[]>([]);
   const [postsLoading, setPostsLoading] = useState(true);
+  const [games, setGames] = useState<AdminGameSummary[]>([]);
+  const [gamesLoading, setGamesLoading] = useState(true);
+  const [gameListMessage, setGameListMessage] = useState("");
+  const [gameDeleteMessage, setGameDeleteMessage] = useState("");
   const [postSlug, setPostSlug] = useState("");
   const [settingsMessage, setSettingsMessage] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
@@ -109,8 +131,28 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
     }
   }
 
+  async function loadGames() {
+    setGamesLoading(true);
+
+    try {
+      const response = await fetch("/api/admin/games", { cache: "no-store" });
+      const data = await response.json();
+
+      if (Array.isArray(data.games)) {
+        setGames(data.games);
+      }
+
+      setGameListMessage(data.message ?? "");
+    } catch {
+      setGameListMessage("Không thể tải danh sách game lúc này.");
+    } finally {
+      setGamesLoading(false);
+    }
+  }
+
   useEffect(() => {
     void loadPosts();
+    void loadGames();
   }, []);
 
   async function submitSettings(event: FormEvent<HTMLFormElement>) {
@@ -186,6 +228,32 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
     });
     const data = await response.json();
     setGameDemoMessage(data.message ?? "Đã gửi yêu cầu dọn game demo.");
+
+    if (response.ok) {
+      await loadGames();
+    }
+  }
+
+  async function deleteGame(slug: string, title: string) {
+    const confirmed = window.confirm(`Xóa game "${title}"? Hành động này không thể hoàn tác.`);
+
+    if (!confirmed) {
+      return;
+    }
+
+    setGameDeleteMessage(`Đang xóa game "${title}"...`);
+
+    const response = await fetch("/api/admin/games", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ slug })
+    });
+    const data = await response.json();
+    setGameDeleteMessage(data.message ?? "Đã gửi yêu cầu xóa game.");
+
+    if (response.ok) {
+      await loadGames();
+    }
   }
 
   async function submitPassword(event: FormEvent<HTMLFormElement>) {
@@ -219,14 +287,25 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
 
   async function submitGame(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setMessage("Đang kiểm tra dữ liệu game...");
+    const form = event.currentTarget;
+    setMessage("Đang lưu game vào database...");
 
     const response = await fetch("/api/admin/games", {
       method: "POST",
-      body: new FormData(event.currentTarget)
+      body: new FormData(form)
     });
     const data = await response.json();
-    setMessage(data.message ?? "Đã nhận dữ liệu game.");
+    const fallbackMessage =
+      response.status === 401 || response.status === 403
+        ? "Phiên đăng nhập admin đã hết hạn hoặc chưa đủ quyền. Vui lòng đăng nhập lại."
+        : "Đã nhận dữ liệu game.";
+
+    setMessage(data.message ?? fallbackMessage);
+
+    if (response.ok) {
+      form.reset();
+      await loadGames();
+    }
   }
 
   return (
@@ -339,6 +418,67 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
         <CardContent className="space-y-5 p-6">
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div>
+              <p className="text-xs uppercase tracking-[0.2em] text-primary">Game đã đăng</p>
+              <h2 className="mt-2 font-display text-4xl text-foreground">Quản lý game thật trên website</h2>
+              <p className="mt-2 max-w-2xl text-sm leading-7 text-muted-foreground">
+                Sau khi bấm đăng game, game sẽ xuất hiện ngay ở đây để bạn mở trang chi tiết hoặc xóa nếu nhập sai.
+              </p>
+            </div>
+            <Button type="button" variant="ghost" onClick={loadGames} disabled={gamesLoading}>
+              {gamesLoading ? "Đang tải..." : "Tải lại danh sách"}
+            </Button>
+          </div>
+
+          <div className="rounded-lg border border-white/8 bg-black/18">
+            <div className="divide-y divide-white/8">
+              {gamesLoading ? (
+                <PostListNotice text="Đang tải danh sách game..." />
+              ) : games.length ? (
+                games.map((game) => (
+                  <div key={game.id} className="grid gap-4 p-4 lg:grid-cols-[1fr_auto] lg:items-center">
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="truncate font-semibold text-foreground">{game.title}</p>
+                        <span className="rounded-full border border-primary/20 bg-primary/10 px-2 py-1 text-[11px] uppercase tracking-[0.16em] text-primary">
+                          {game.version}
+                        </span>
+                      </div>
+                      <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                        <span>Slug: {game.slug}</span>
+                        <span>Studio: {game.developer}</span>
+                        <span>Lượt tải: {game.downloadsCount}</span>
+                        <span>Bình luận: {game._count?.comments ?? 0}</span>
+                        <span>Đánh giá: {game._count?.reviews ?? 0}</span>
+                        <span>Cập nhật: {formatAdminDate(game.updatedAt)}</span>
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap gap-2 lg:justify-end">
+                      <Link
+                        href={`/games/${game.slug}` as Route}
+                        className="inline-flex h-9 items-center justify-center rounded-lg bg-white/8 px-4 text-xs font-semibold text-foreground ring-1 ring-white/10 transition hover:bg-white/12 hover:ring-primary/30"
+                      >
+                        Xem game
+                      </Link>
+                      <Button type="button" variant="secondary" size="sm" onClick={() => deleteGame(game.slug, game.title)}>
+                        <Trash2 className="h-4 w-4" />
+                        Xóa
+                      </Button>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <PostListNotice text={gameListMessage || "Chưa có game thật nào trong database. Hãy đăng game đầu tiên ở form bên dưới."} />
+              )}
+            </div>
+          </div>
+          {gameDeleteMessage ? <p className="text-sm text-primary">{gameDeleteMessage}</p> : null}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="space-y-5 p-6">
+          <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+            <div>
               <p className="text-xs uppercase tracking-[0.2em] text-primary">Quản lý bài viết</p>
               <h2 className="mt-2 font-display text-4xl text-foreground">Xóa bài và dọn bài demo</h2>
               <p className="mt-2 max-w-2xl text-sm leading-7 text-muted-foreground">
@@ -411,8 +551,8 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
                 <h2 className="mt-2 font-display text-4xl text-foreground">Nhập thông tin game để xuất bản</h2>
               </div>
               <div className="flex gap-2">
-                <Button type="button" variant="secondary">
-                  Lưu nháp
+                <Button type="reset" form="admin-game-form" variant="secondary">
+                  Xóa form
                 </Button>
                 <Button type="submit" form="admin-game-form">
                   <FileCheck2 className="h-4 w-4" />

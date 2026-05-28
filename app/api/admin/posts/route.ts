@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { auth } from "@/auth";
 import { prisma } from "@/database/prisma";
@@ -121,7 +122,10 @@ export async function DELETE(request: Request) {
           where: {
             slug: parsed.data.slug
           }
-        });
+      });
+
+  revalidatePath("/");
+  revalidatePath("/admin");
 
   return NextResponse.json({
     deletedCount: result.count,

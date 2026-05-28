@@ -1,3 +1,4 @@
+import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { auth } from "@/auth";
@@ -29,9 +30,29 @@ const gameDraftSchema = z.object({
   tags: z.array(z.string()).optional()
 });
 
+const deleteGameSchema = z.object({
+  slug: z.string().trim().min(2).max(140)
+});
+
 function getClientKey(request: Request) {
   const forwardedFor = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
   return `admin-game:${forwardedFor || request.headers.get("x-real-ip") || "local"}`;
+}
+
+function canManageGames(role: string) {
+  return ["ADMIN", "SUPER_ADMIN"].includes(role);
+}
+
+function revalidateGameShelves(slug?: string) {
+  revalidatePath("/");
+  revalidatePath("/games/hot");
+  revalidatePath("/games/new");
+  revalidatePath("/games/quality");
+  revalidatePath("/search");
+
+  if (slug) {
+    revalidatePath(`/games/${slug}`);
+  }
 }
 
 function getText(formData: FormData, key: string) {
@@ -107,10 +128,93 @@ async function createUniqueGameSlug(title: string) {
   return slug;
 }
 
+export async function GET() {
+  const session = await auth();
+  const role = session?.user?.role ?? "USER";
+
+  if (!canManageGames(role)) {
+    return NextResponse.json({ message: "Bạn không có quyền xem danh sách game." }, { status: 403 });
+  }
+
+  if (!prisma) {
+    return NextResponse.json({
+      games: [],
+      message: "Chưa cấu hình database nên hiện chưa có game thật để quản lý."
+    });
+  }
+
+  const games = await prisma.game.findMany({
+    orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
+    select: {
+      id: true,
+      slug: true,
+      title: true,
+      version: true,
+      developer: true,
+      downloadsCount: true,
+      coverImage: true,
+      updatedAt: true,
+      createdAt: true,
+      _count: {
+        select: {
+          comments: true,
+          reviews: true
+        }
+      }
+    },
+    take: 50
+  });
+
+  return NextResponse.json({ games });
+}
+
+export async function DELETE(request: Request) {
+  const session = await auth();
+  const role = session?.user?.role ?? "USER";
+
+  if (!canManageGames(role)) {
+    return NextResponse.json({ message: "Bạn không có quyền xóa game." }, { status: 403 });
+  }
+
+  const limited = applyRateLimit(`${getClientKey(request)}:delete`, {
+    max: 12,
+    windowMs: 10 * 60_000
+  });
+
+  if (!limited.success) {
+    return NextResponse.json({ message: "Bạn thao tác quá nhanh, vui lòng thử lại sau." }, { status: 429 });
+  }
+
+  const parsed = deleteGameSchema.safeParse(await request.json());
+  if (!parsed.success) {
+    return NextResponse.json({ message: "Yêu cầu xóa game chưa hợp lệ.", issues: parsed.error.flatten() }, { status: 400 });
+  }
+
+  if (!prisma) {
+    return NextResponse.json({
+      deletedCount: 0,
+      message: `Đã nhận yêu cầu xóa "${parsed.data.slug}", nhưng website chưa kết nối database.`
+    });
+  }
+
+  const result = await prisma.game.deleteMany({
+    where: {
+      slug: parsed.data.slug
+    }
+  });
+
+  revalidateGameShelves(parsed.data.slug);
+
+  return NextResponse.json({
+    deletedCount: result.count,
+    message: result.count ? `Đã xóa game "${parsed.data.slug}".` : `Không tìm thấy game "${parsed.data.slug}".`
+  });
+}
+
 export async function POST(request: Request) {
   const session = await auth();
   const role = session?.user?.role ?? "USER";
-  if (!["ADMIN", "SUPER_ADMIN"].includes(role)) {
+  if (!canManageGames(role)) {
     return NextResponse.json({ message: "Bạn không có quyền đăng game." }, { status: 403 });
   }
 
@@ -232,9 +336,14 @@ export async function POST(request: Request) {
       }
     });
 
+    revalidateGameShelves(game.slug);
+
     return NextResponse.json({
       message: `Đã đăng game "${game.title}" ${game.version} thành công.`,
-      game
+      game: {
+        ...game,
+        url: `/games/${game.slug}`
+      }
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Không thể lưu game lúc này.";

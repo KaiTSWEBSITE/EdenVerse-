@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { demoGames } from "@/database/demo-data";
 import { prisma } from "@/database/prisma";
@@ -31,6 +32,14 @@ function withHiddenDemoCookie(response: NextResponse) {
   return response;
 }
 
+function revalidateDemoShelves() {
+  revalidatePath("/");
+  revalidatePath("/games/hot");
+  revalidatePath("/games/new");
+  revalidatePath("/games/quality");
+  revalidatePath("/search");
+}
+
 export async function DELETE(request: Request) {
   const session = await auth();
   const role = session?.user?.role ?? "USER";
@@ -49,6 +58,7 @@ export async function DELETE(request: Request) {
   }
 
   if (!prisma) {
+    revalidateDemoShelves();
     return withHiddenDemoCookie(
       NextResponse.json({
         deletedCount: 0,
@@ -73,6 +83,8 @@ export async function DELETE(request: Request) {
     ON CONFLICT ("key")
     DO UPDATE SET "value" = 'true', "updatedAt" = NOW()
   `;
+
+  revalidateDemoShelves();
 
   return withHiddenDemoCookie(
     NextResponse.json({
