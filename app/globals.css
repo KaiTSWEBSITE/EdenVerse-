@@ -1,0 +1,40 @@
+@import "../styles/theme.css";
+@import "../styles/prose.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-background font-body text-foreground antialiased;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(87, 188, 255, 0.35) rgba(12, 16, 25, 0.7);
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: rgba(12, 16, 25, 0.7);
+}
+
+*::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(87, 188, 255, 0.35);
+}
+
+a,
+button,
+input,
+textarea,
+select {
+  @apply outline-none ring-0;
+}

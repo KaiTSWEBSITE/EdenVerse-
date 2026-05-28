@@ -1,0 +1,14 @@
+.next
+node_modules
+.env
+.env.local
+.env.production
+dist
+coverage
+*.log
+pnpm-lock.yaml
+yarn.lock
+public/uploads
+!public/uploads/.gitkeep
+prisma/dev.db
+*.tsbuildinfo

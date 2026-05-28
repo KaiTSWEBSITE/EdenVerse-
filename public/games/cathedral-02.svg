@@ -1,0 +1,17 @@
+<svg width="900" height="1200" viewBox="0 0 900 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="1200" fill="#05070C"/>
+  <rect width="900" height="1200" fill="url(#bg)"/>
+  <ellipse cx="640" cy="250" rx="180" ry="240" fill="#FFDB9C" fill-opacity="0.13"/>
+  <path d="M150 1180C200 910 306 722 450 300C595 722 700 910 750 1180H150Z" fill="#0D1724" stroke="#C8A86D" stroke-opacity="0.4" stroke-width="2"/>
+  <circle cx="450" cy="420" r="110" fill="#16293B" stroke="#7DD3FF" stroke-opacity="0.4"/>
+  <path d="M450 324L472 410L560 410L487 462L513 548L450 494L387 548L413 462L340 410L428 410L450 324Z" fill="#FFCC77" fill-opacity="0.85"/>
+  <text x="84" y="104" fill="#7DD3FF" font-family="Georgia, serif" font-size="38" letter-spacing="8">OBSIDIAN ARCHIVE</text>
+  <text x="82" y="1030" fill="#F5F0E2" font-family="Georgia, serif" font-size="84">Blackthorn</text>
+  <text x="82" y="1110" fill="#C8A86D" font-family="Arial, sans-serif" font-size="42" letter-spacing="6">PROTOCOL</text>
+  <defs>
+    <linearGradient id="bg" x1="450" y1="0" x2="450" y2="1200" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#071118"/>
+      <stop offset="1" stop-color="#020305"/>
+    </linearGradient>
+  </defs>
+</svg>

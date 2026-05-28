@@ -1,0 +1,19 @@
+<svg width="900" height="1200" viewBox="0 0 900 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="1200" fill="#05070C"/>
+  <rect width="900" height="1200" fill="url(#bg)"/>
+  <ellipse cx="450" cy="260" rx="210" ry="320" fill="#4DB6FF" fill-opacity="0.18"/>
+  <path d="M286 1186V318L450 148L614 318V1186H286Z" fill="#0F1824" stroke="#73CCFF" stroke-opacity="0.35" stroke-width="2"/>
+  <path d="M384 1040V414H450H516V1040H384Z" fill="#102636"/>
+  <path d="M412 384V196H488V384H412Z" fill="#92E3FF" fill-opacity="0.85"/>
+  <path d="M328 490V258H382V490H328Z" fill="#69BEFF" fill-opacity="0.55"/>
+  <path d="M518 490V258H572V490H518Z" fill="#69BEFF" fill-opacity="0.55"/>
+  <text x="82" y="104" fill="#C8A86D" font-family="Georgia, serif" font-size="38" letter-spacing="8">EDENVERSE</text>
+  <text x="82" y="1032" fill="#F5F0E2" font-family="Georgia, serif" font-size="84">Eternum</text>
+  <text x="82" y="1110" fill="#8BCFFF" font-family="Arial, sans-serif" font-size="42" letter-spacing="6">REVERIE</text>
+  <defs>
+    <linearGradient id="bg" x1="450" y1="0" x2="450" y2="1200" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#08101A"/>
+      <stop offset="1" stop-color="#030406"/>
+    </linearGradient>
+  </defs>
+</svg>
