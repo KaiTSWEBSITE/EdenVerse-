@@ -18,11 +18,12 @@ function run(command, args, options = {}) {
 }
 
 const hasDatabaseUrl = Boolean(process.env.DATABASE_URL?.trim());
+const shouldRunMigrations = hasDatabaseUrl && process.env.VERCEL === "1";
 const runtimeDatabaseUrl = process.env.DATABASE_URL;
 
 run("npx", ["prisma", "generate"]);
 
-if (hasDatabaseUrl) {
+if (shouldRunMigrations) {
   if (process.env.DATABASE_URL_UNPOOLED?.trim()) {
     process.env.DATABASE_URL = process.env.DATABASE_URL_UNPOOLED;
   }
