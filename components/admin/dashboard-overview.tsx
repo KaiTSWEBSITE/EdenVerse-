@@ -25,8 +25,8 @@ export function DashboardOverview({
       <Card>
         <CardContent className="space-y-5 p-6">
           <div>
-            <p className="text-xs uppercase tracking-[0.22em] text-primary">Recommended for you</p>
-            <h2 className="mt-2 font-display text-4xl text-foreground">Continue where the mood is strongest</h2>
+            <p className="text-xs uppercase tracking-[0.22em] text-primary">Đề xuất cho bạn</p>
+            <h2 className="mt-2 font-display text-4xl text-foreground">Tiếp tục với những game hợp mood nhất</h2>
           </div>
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             {recommendations.map((game) => (

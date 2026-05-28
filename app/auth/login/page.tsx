@@ -19,10 +19,10 @@ export default function LoginPage() {
       <Card>
         <CardContent className="space-y-6 p-8">
           <div>
-            <p className="text-xs uppercase tracking-[0.22em] text-primary">Authentication</p>
-            <h1 className="mt-2 font-display text-5xl text-foreground">Welcome back</h1>
+            <p className="text-xs uppercase tracking-[0.22em] text-primary">Đăng nhập</p>
+            <h1 className="mt-2 font-display text-5xl text-foreground">Chào mừng trở lại</h1>
             <p className="mt-3 text-sm leading-7 text-muted-foreground">
-              Demo credentials are prefilled. Email/password works immediately, while Google and Discord become available once you add OAuth secrets.
+              Tài khoản demo đã được điền sẵn. Email/password dùng được ngay, Google và Discord sẽ bật khi bạn thêm OAuth secrets.
             </p>
           </div>
           <div className="space-y-4">
@@ -39,27 +39,27 @@ export default function LoginPage() {
                 });
 
                 if (result?.error) {
-                  setError("Invalid credentials.");
+                  setError("Email hoặc mật khẩu không đúng.");
                   return;
                 }
 
                 router.push("/dashboard");
               }}
             >
-              Login
+              Đăng nhập
             </Button>
             <div className="grid gap-3 sm:grid-cols-2">
               <Button variant="secondary" onClick={() => signIn("google")}>
-                Continue with Google
+                Tiếp tục với Google
               </Button>
               <Button variant="secondary" onClick={() => signIn("discord")}>
-                Continue with Discord
+                Tiếp tục với Discord
               </Button>
             </div>
           </div>
           <div className="flex items-center justify-between text-sm text-muted-foreground">
-            <Link href="/auth/register" className="hover:text-foreground">Create account</Link>
-            <Link href="/auth/forgot-password" className="hover:text-foreground">Forgot password</Link>
+            <Link href="/auth/register" className="hover:text-foreground">Tạo tài khoản</Link>
+            <Link href="/auth/forgot-password" className="hover:text-foreground">Quên mật khẩu</Link>
           </div>
         </CardContent>
       </Card>

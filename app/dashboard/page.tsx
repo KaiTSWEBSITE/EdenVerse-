@@ -9,9 +9,9 @@ export default async function DashboardPage() {
   return (
     <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
       <SectionHeading
-        eyebrow="Dashboard"
-        title="Personal pulse, recommendations, and community momentum"
-        description="A premium member dashboard ready to evolve into a logged-in control center for watchlists, recently viewed releases, and adaptive suggestions."
+        eyebrow="Bảng cá nhân"
+        title="Gợi ý riêng, nhịp cộng đồng và danh sách theo dõi"
+        description="Dashboard thành viên được dựng sẵn để phát triển thành trung tâm đăng nhập thật cho watchlist, game vừa xem và đề xuất cá nhân hóa."
       />
       <DashboardOverview metrics={metrics} recommendations={recommendations.slice(0, 4)} />
     </section>

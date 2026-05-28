@@ -3,7 +3,7 @@ export const primaryNavigation = [
   { label: "Kho game", href: "/search" },
   { label: "Tin tức", href: "/news" },
   { label: "Cộng đồng", href: "/dashboard" },
-  { label: "Admin", href: "/admin" }
+  { label: "Quản trị", href: "/admin" }
 ] as const;
 
 export const footerNavigation = [
@@ -19,7 +19,7 @@ export const footerNavigation = [
     title: "Quản trị",
     links: [
       { label: "Bản tin", href: "/news" },
-      { label: "Admin CMS", href: "/admin" },
+      { label: "CMS quản trị", href: "/admin" },
       { label: "Dashboard người dùng", href: "/dashboard" }
     ]
   }

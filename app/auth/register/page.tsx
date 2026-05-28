@@ -14,16 +14,16 @@ export default function RegisterPage() {
       <Card>
         <CardContent className="space-y-6 p-8">
           <div>
-            <p className="text-xs uppercase tracking-[0.22em] text-primary">Register</p>
-            <h1 className="mt-2 font-display text-5xl text-foreground">Join the archive</h1>
+            <p className="text-xs uppercase tracking-[0.22em] text-primary">Đăng ký</p>
+            <h1 className="mt-2 font-display text-5xl text-foreground">Gia nhập kho lưu trữ</h1>
             <p className="mt-3 text-sm leading-7 text-muted-foreground">
-              Registration route is fully wired for validation and can be switched from demo fallback to Prisma-backed persistence by setting `DATABASE_URL`.
+              Luồng đăng ký đã có validation đầy đủ và có thể chuyển từ demo sang lưu thật bằng Prisma/PostgreSQL khi bạn cấu hình `DATABASE_URL`.
             </p>
           </div>
           <div className="space-y-4">
             <Input placeholder="Email" />
-            <Input placeholder="Username" />
-            <Input type="password" placeholder="Password" />
+            <Input placeholder="Tên người dùng" />
+            <Input type="password" placeholder="Mật khẩu" />
             <Button
               className="w-full"
               onClick={async () => {
@@ -40,12 +40,12 @@ export default function RegisterPage() {
                 setMessage(data.message);
               }}
             >
-              Create account
+              Tạo tài khoản
             </Button>
             {message ? <p className="text-sm text-primary">{message}</p> : null}
           </div>
           <Link href="/auth/login" className="text-sm text-muted-foreground hover:text-foreground">
-            Already have an account? Sign in
+            Đã có tài khoản? Đăng nhập
           </Link>
         </CardContent>
       </Card>

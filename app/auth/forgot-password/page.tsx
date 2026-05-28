@@ -13,14 +13,14 @@ export default function ForgotPasswordPage() {
       <Card>
         <CardContent className="space-y-6 p-8">
           <div>
-            <p className="text-xs uppercase tracking-[0.22em] text-primary">Recovery</p>
-            <h1 className="mt-2 font-display text-5xl text-foreground">Reset your access</h1>
+            <p className="text-xs uppercase tracking-[0.22em] text-primary">Khôi phục</p>
+            <h1 className="mt-2 font-display text-5xl text-foreground">Đặt lại quyền truy cập</h1>
             <p className="mt-3 text-sm leading-7 text-muted-foreground">
-              Demo flow returns a success message immediately. In production, this route is ready to connect to your email service and verification token pipeline.
+              Bản demo trả về thông báo thành công ngay. Khi production, route này đã sẵn sàng nối với dịch vụ email và pipeline token xác minh.
             </p>
           </div>
           <div className="space-y-4">
-            <Input placeholder="Email address" />
+            <Input placeholder="Địa chỉ email" />
             <Button
               className="w-full"
               onClick={async () => {
@@ -33,7 +33,7 @@ export default function ForgotPasswordPage() {
                 setMessage(data.message);
               }}
             >
-              Send reset link
+              Gửi link đặt lại
             </Button>
             {message ? <p className="text-sm text-primary">{message}</p> : null}
           </div>
