@@ -12,6 +12,7 @@ import {
   ShieldBan,
   ShieldCheck,
   Tag,
+  Trash2,
   UploadCloud,
   UsersRound
 } from "lucide-react";
@@ -55,6 +56,8 @@ const auditEvents = [
 export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics: DashboardMetric[] }) {
   const [intro, setIntro] = useState(heroIntro);
   const [message, setMessage] = useState("");
+  const [postDeleteMessage, setPostDeleteMessage] = useState("");
+  const [postSlug, setPostSlug] = useState("");
   const [settingsMessage, setSettingsMessage] = useState("");
 
   async function submitSettings(event: FormEvent<HTMLFormElement>) {
@@ -74,6 +77,22 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
       window.dispatchEvent(new CustomEvent("edenverse:hero-intro-updated", { detail: data.heroIntro }));
     }
     setSettingsMessage(data.message ?? "Đã gửi yêu cầu cập nhật.");
+  }
+
+  async function deletePosts(mode: "demo" | "slug") {
+    setPostDeleteMessage("Đang xử lý yêu cầu xóa bài...");
+
+    const response = await fetch("/api/admin/posts", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(mode === "demo" ? { mode } : { mode, slug: postSlug })
+    });
+    const data = await response.json();
+    setPostDeleteMessage(data.message ?? "Đã gửi yêu cầu xóa bài.");
+
+    if (response.ok && mode === "slug") {
+      setPostSlug("");
+    }
   }
 
   async function submitGame(event: FormEvent<HTMLFormElement>) {
@@ -130,6 +149,31 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
             <span>{intro.length}/320 ký tự</span>
             {settingsMessage ? <span className="text-primary">{settingsMessage}</span> : null}
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="space-y-5 p-6">
+          <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+            <div>
+              <p className="text-xs uppercase tracking-[0.2em] text-primary">Quản lý bài viết</p>
+              <h2 className="mt-2 font-display text-4xl text-foreground">Xóa bài và dọn bài demo</h2>
+              <p className="mt-2 max-w-2xl text-sm leading-7 text-muted-foreground">
+                Xóa bài theo slug hoặc dọn sạch các bài demo cũ như `demo-*`, `edenverse-weekly*` và bài có trạng thái `DEMO`.
+              </p>
+            </div>
+            <Button type="button" variant="secondary" onClick={() => deletePosts("demo")}>
+              <Trash2 className="h-4 w-4" />
+              Xóa toàn bộ bài demo
+            </Button>
+          </div>
+          <div className="grid gap-3 md:grid-cols-[1fr_auto]">
+            <Input value={postSlug} onChange={(event) => setPostSlug(event.target.value)} placeholder="Nhập slug bài cần xóa, ví dụ: edenverse-weekly-1" />
+            <Button type="button" disabled={!postSlug.trim()} onClick={() => deletePosts("slug")}>
+              Xóa bài này
+            </Button>
+          </div>
+          {postDeleteMessage ? <p className="text-sm text-primary">{postDeleteMessage}</p> : null}
         </CardContent>
       </Card>
 

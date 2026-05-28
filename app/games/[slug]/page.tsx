@@ -5,6 +5,7 @@ import { ReviewList } from "@/components/community/review-list";
 import { GameGallery } from "@/components/game/game-gallery";
 import { GameHero } from "@/components/game/game-hero";
 import { GameOverview } from "@/components/game/game-overview";
+import { GameReportForm } from "@/components/game/game-report-form";
 import { GameSection } from "@/components/home/game-section";
 import { getCommentsForGame, getReviewsForGame } from "@/services/community-service";
 import { getGameBySlug, getQualityGames } from "@/services/game-service";
@@ -46,6 +47,7 @@ export default async function GameDetailPage({ params }: { params: Promise<{ slu
       <GameHero game={game} />
       <GameOverview game={game} />
       <GameGallery gallery={game.gallery} />
+      <GameReportForm gameSlug={game.slug} gameTitle={game.title} />
       {reviews.length || comments.length ? (
         <section className="mx-auto grid max-w-7xl gap-6 px-4 py-6 sm:px-6 xl:grid-cols-2 lg:px-8">
           {reviews.length ? <ReviewList reviews={reviews} /> : null}

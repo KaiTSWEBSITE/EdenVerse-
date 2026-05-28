@@ -239,6 +239,20 @@ model Watchlist {
   @@id([userId, gameId])
 }
 
+model GameReport {
+  id           String   @id @default(cuid())
+  gameSlug     String
+  issueType    String
+  title        String
+  description  String
+  contactEmail String?
+  status       String   @default("OPEN")
+  createdAt    DateTime @default(now())
+
+  @@index([gameSlug])
+  @@index([status])
+}
+
 model SiteSetting {
   key       String   @id
   value     String

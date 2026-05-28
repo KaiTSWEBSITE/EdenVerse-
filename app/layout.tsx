@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Manrope } from "next/font/google";
+import { Be_Vietnam_Pro, Playfair_Display } from "next/font/google";
 import { AtmosphericBackdrop } from "@/components/layout/atmospheric-backdrop";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
@@ -7,14 +7,14 @@ import { AppProviders } from "@/context/providers";
 import { siteConfig } from "@/config/site";
 import "@/app/globals.css";
 
-const display = Cormorant_Garamond({
-  subsets: ["latin"],
+const display = Playfair_Display({
+  subsets: ["latin", "vietnamese"],
   variable: "--font-display",
-  weight: ["400", "500", "600", "700"]
+  weight: ["500", "600", "700", "800"]
 });
 
-const body = Manrope({
-  subsets: ["latin"],
+const body = Be_Vietnam_Pro({
+  subsets: ["latin", "vietnamese"],
   variable: "--font-body",
   weight: ["400", "500", "600", "700", "800"]
 });
