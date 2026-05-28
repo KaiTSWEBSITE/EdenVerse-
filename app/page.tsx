@@ -6,12 +6,14 @@ import {
   getNewlyReleasedGames,
   getQualityGames
 } from "@/services/game-service";
+import { getHeroIntro } from "@/services/site-settings-service";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const [heroGame, hotGames, newGames, qualityGames] = await Promise.all([
+  const [heroGame, heroIntro, hotGames, newGames, qualityGames] = await Promise.all([
     getHeroGame(),
+    getHeroIntro(),
     getHotGames(8),
     getNewlyReleasedGames(8),
     getQualityGames(8)
@@ -19,7 +21,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <HeroSection heroGame={heroGame} trending={hotGames.slice(0, 4)} />
+      <HeroSection heroGame={heroGame} intro={heroIntro} trending={hotGames.slice(0, 4)} />
       <GameSection
         eyebrow="Game Hot"
         title="Game được tải nhiều nhất"

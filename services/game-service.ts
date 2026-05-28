@@ -35,10 +35,7 @@ function filterGames(games: Game[], filters: SearchFilters = {}) {
       const matchesGenre = !filters.genre || game.genres.includes(filters.genre);
       const matchesEngine = !filters.engine || game.engine === filters.engine;
       const matchesTag = !filters.tag || game.tags.includes(filters.tag);
-      const matchesMature =
-        !filters.mature ||
-        filters.mature === "all" ||
-        (filters.mature === "adult" ? game.mature : !game.mature);
+      const matchesMature = !filters.mature || filters.mature === "all" || (filters.mature === "adult" && game.mature);
 
       return matchesQuery && matchesGenre && matchesEngine && matchesTag && matchesMature;
     }),

@@ -1,188 +1,132 @@
 # EdenVerse
 
-EdenVerse is a premium dark-fantasy discovery platform for visual novels, sandbox titles, RPGs, anime games, choice-matter stories, and optional 18+ content curation. It is built as a real Next.js application with App Router, TypeScript, TailwindCSS, Framer Motion, Prisma, demo APIs, seed data, CMS/admin surfaces, and a full premium UI using the supplied cathedral background image.
+EdenVerse là website giới thiệu và đánh giá game theo phong cách dark fantasy, gothic và visual novel premium. Trang chủ chỉ tập trung vào 3 kệ chính: Game Hot theo lượt click tải, game mới ra mắt và game chất lượng tốt.
 
 ![EdenVerse Preview](./public/backgrounds/eden-cathedral.png)
 
-## Highlights
+## Điểm Chính
 
-- Next.js 15 App Router with TypeScript
-- TailwindCSS + shadcn-inspired UI component system
-- Framer Motion backdrop, parallax, reveal, glow, fog, and cinematic layering
-- Prisma schema for PostgreSQL with migration + seed script
-- NextAuth credentials flow with ready hooks for Google and Discord
-- Demo-safe runtime fallback so `npm install` and `npm run dev` work even before PostgreSQL is configured
-- Search system with suggestions, filters, and ranked results
-- Game detail pages with gallery, reviews, comments, metadata, and related recommendations
-- Profile, dashboard, and admin game-publishing surfaces
-- 30 demo games, 5 demo users, seeded comments and reviews
-- Rate-limit helpers, secure headers, upload API, sitemap, and robots setup
+- Next.js 15 App Router, React 19, TypeScript, TailwindCSS và Framer Motion.
+- UI glassmorphism nhẹ, nền cathedral cinematic, fog/particles/parallax vừa đủ để mượt.
+- Prisma + PostgreSQL, migration, seed data và fallback demo để chạy ngay sau khi clone.
+- NextAuth credentials login bằng email/password, đã bỏ Google/Discord theo yêu cầu.
+- CAPTCHA bảo vệ đăng nhập, đăng ký, quên mật khẩu, bình luận, review và admin actions.
+- Admin có form đăng game và phần tự chỉnh câu giới thiệu trang chủ.
+- Bảo mật gồm CSP, security headers, origin check chống CSRF, rate limit, bcrypt, Zod validation và upload filter.
+- Tắt `X-Powered-By`, không xuất production source maps, chặn các đường dẫn nhạy cảm như `.env`, `.git`, `package.json`, `prisma`, `node_modules`.
 
-## Tech Stack
-
-- Frontend: Next.js 15, React 19, TypeScript, TailwindCSS, Framer Motion
-- UI: shadcn-style component patterns with Radix primitives
-- Auth: NextAuth
-- Database: PostgreSQL + Prisma ORM
-- State: Zustand
-- Validation: Zod
-- Security helpers: bcryptjs, CSP headers, rate limiting, sanitization
-
-## Quick Start
-
-### 1. Install dependencies
+## Chạy Nhanh
 
 ```bash
 npm install
-```
-
-### 2. Run locally
-
-```bash
 npm run dev
 ```
 
-The app runs immediately in demo fallback mode, even if you do not configure PostgreSQL yet.
+Mở [http://localhost:3000](http://localhost:3000). App chạy được ngay bằng demo fallback nếu chưa cấu hình PostgreSQL.
 
-Open [http://localhost:3000](http://localhost:3000)
+## Tài Khoản Demo
 
-## Demo Accounts
+- Admin: `admin@edenverse.gg` / `Admin@123`
+- Member: `aria@edenverse.gg` / `Demo@123`
 
-- Admin
-  - Email: `admin@edenverse.gg`
-  - Password: `Admin@123`
-- Member
-  - Email: `aria@edenverse.gg`
-  - Password: `Demo@123`
+## Cấu Hình Môi Trường
 
-## Optional PostgreSQL Setup
-
-If you want real Prisma-backed persistence instead of demo fallback:
-
-1. Copy the env template:
+Copy file env:
 
 ```bash
 copy .env.example .env
 ```
 
-2. Start PostgreSQL, either with your own server or Docker:
+Các biến quan trọng:
+
+- `DATABASE_URL`: PostgreSQL thật cho production.
+- `AUTH_SECRET`: chuỗi bí mật mạnh cho NextAuth.
+- `NEXT_PUBLIC_SITE_INTRO`: câu giới thiệu mặc định trước khi admin lưu setting.
+- `NEXT_PUBLIC_TURNSTILE_SITE_KEY` và `TURNSTILE_SECRET_KEY`: bật Cloudflare Turnstile CAPTCHA.
+- `CAPTCHA_SECRET`: khóa ký CAPTCHA nội bộ nếu chưa dùng Turnstile.
+
+Nếu chưa có Turnstile key, EdenVerse dùng CAPTCHA nội bộ dạng phép tính được ký bằng server secret để vẫn test được local.
+
+## PostgreSQL / Prisma
 
 ```bash
 docker-compose up -d postgres
-```
-
-3. Run Prisma generate + migrate + seed:
-
-```bash
 npm run db:generate
 npm run db:migrate
 npm run db:seed
 ```
 
-4. Set `ENABLE_PRISMA_DEMO_FALLBACK="false"` in `.env` if you want the app to stop using local demo fallback.
+Muốn tắt fallback demo:
 
-## Project Structure
-
-```text
-project-root/
-├── app/                  # App Router pages, route handlers, SEO files
-├── components/           # UI, layout, game, profile, admin, search modules
-├── hooks/                # Client hooks
-├── context/              # Zustand-powered providers and app store
-├── services/             # Data access / business logic layer
-├── lib/                  # Utilities, markdown renderer, validators
-├── prisma/               # Prisma schema + migration
-├── middleware/           # Security headers and rate-limit utilities
-├── public/               # Background image, covers, avatars, screenshots, logos
-├── admin/                # Admin metadata barrel
-├── auth/                 # Auth metadata barrel
-├── profile/              # Profile metadata barrel
-├── dashboard/            # Dashboard metadata barrel
-├── api/                  # API namespace barrel
-├── styles/               # Theme and prose styling
-├── config/               # Site, auth, navigation config
-├── types/                # Shared application types
-├── constants/            # Roles, filters, tags
-├── utils/                # Security + formatting helpers
-├── database/             # Demo dataset + Prisma client wrapper
-├── scripts/              # Seed logic
-└── README.md
+```bash
+ENABLE_PRISMA_DEMO_FALLBACK="false"
 ```
 
-## Main Routes
+## Routes Chính
 
-- `/` home landing with curated sections
-- `/games/hot` hot games ranked by download clicks
-- `/games/new` newly released games
-- `/games/quality` high-quality games
-- `/search` smart search + filter sidebar
-- `/games/[slug]` detailed game page
-- `/profile/[username]` user profile
-- `/dashboard` member dashboard
-- `/admin` admin game publishing / analytics panel
-- `/auth/login`
-- `/auth/register`
-- `/auth/forgot-password`
+- `/`: trang chủ với 3 kệ game chính.
+- `/games/hot`: Game Hot, xếp hạng theo lượt click tải.
+- `/games/new`: game mới ra mắt.
+- `/games/quality`: game chất lượng tốt.
+- `/games/[slug]`: chi tiết game.
+- `/search`: tìm kiếm và lọc game.
+- `/profile/[username]`: hồ sơ người dùng.
+- `/dashboard`: dashboard thành viên.
+- `/admin`: quản trị, đăng game, chỉnh giới thiệu, bảo mật và SEO.
+- `/auth/login`, `/auth/register`, `/auth/forgot-password`: xác thực email/password có CAPTCHA.
 
-## API Routes
+## API Chính
 
+- `GET /api/security/captcha`
 - `GET /api/games`
 - `GET /api/games/[slug]`
 - `POST /api/games/[slug]/download`
 - `GET /api/games/search`
 - `POST /api/admin/games`
+- `POST /api/admin/settings`
 - `GET /api/search`
 - `GET|POST /api/comments`
-- `PATCH /api/comments/[id]`
 - `GET|POST /api/reviews`
-- `PATCH /api/reviews/[id]`
 - `POST /api/auth/login`
 - `POST /api/auth/register`
 - `POST /api/auth/forgot-password`
-- `POST /api/auth/verify`
-- `GET /api/auth/session`
 - `POST /api/upload`
-- `GET /api/analytics`
-- `GET /api/users`
-- `GET /api/profile`
 
-## Security Notes
+## Cấu Trúc
 
-- CSP, referrer, and browser security headers are applied in middleware
-- Rate limiting is included for comments, reviews, and login attempts
-- Password hashing uses `bcryptjs`
-- Input payloads are validated with Zod
-- Markdown/HTML rendering is sanitized before output
-- Admin/API requests use role checks, rate limits, CSP, and validated upload payloads
-
-## Production Notes
-
-- The included upload route saves files locally to `public/uploads` for easy development. For production, wire that route to S3, Cloudflare R2, Supabase Storage, or your preferred object store.
-- Google and Discord login use real NextAuth OAuth providers. Add provider credentials in `.env` or Vercel environment variables, then use callbacks `/api/auth/callback/google` and `/api/auth/callback/discord`.
-- The app deliberately ships with local demo data fallback so development is smooth from the first clone.
-
-## Commands
-
-```bash
-npm run dev
-npm run build
-npm run start
-npm run lint
-npm run typecheck
-npm run db:generate
-npm run db:migrate
-npm run db:seed
+```text
+project-root/
+├── app/
+├── components/
+├── config/
+├── constants/
+├── context/
+├── database/
+├── hooks/
+├── lib/
+├── middleware/
+├── prisma/
+├── public/
+├── scripts/
+├── services/
+├── styles/
+├── types/
+├── utils/
+├── .env.example
+├── package.json
+└── README.md
 ```
 
-## Deployment Checklist
+## Production Checklist
 
-1. Add production `DATABASE_URL`
-2. Set a strong `AUTH_SECRET`
-3. Configure `NEXTAUTH_URL` and `AUTH_TRUST_HOST`
-4. Provide Google/Discord OAuth credentials
-5. Replace local upload storage with cloud storage
-6. Disable demo fallback with `ENABLE_PRISMA_DEMO_FALLBACK="false"`
+1. Thêm `DATABASE_URL` production.
+2. Đặt `AUTH_SECRET` và `CAPTCHA_SECRET` mạnh.
+3. Cấu hình `NEXTAUTH_URL` và `AUTH_TRUST_HOST`.
+4. Thêm Turnstile keys nếu muốn CAPTCHA provider thật.
+5. Chuyển upload local sang S3, Cloudflare R2 hoặc Supabase Storage.
+6. Chạy migration và seed.
+7. Tắt fallback demo nếu muốn dữ liệu hoàn toàn từ DB.
 
-## Notes About the Included Background
+## Background
 
-The main site backdrop uses the user-provided cathedral image from `public/backgrounds/eden-cathedral.png`, layered with blur, dark gradient overlays, vignette, parallax movement, glass glow, subtle particles, and light ray effects to keep the entire UI inside the requested dark fantasy premium mood.
+Ảnh nền chính nằm tại `public/backgrounds/eden-cathedral.png` và được dùng xuyên suốt website với blur nhẹ, overlay tối, vignette, ánh xanh kính cathedral, fog và particles rất nhẹ.

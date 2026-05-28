@@ -1,10 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { Bookmark, Clock3, Heart, Trophy } from "lucide-react";
+import { Bookmark, Clock3, Heart, ShieldCheck, Trophy } from "lucide-react";
 import type { ComponentType } from "react";
 import type { Game, UserProfile } from "@/types";
-import { useAppStore } from "@/context/app-store";
 import { Avatar } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -21,9 +20,6 @@ export function ProfileOverview({
   recent: Game[];
   watchlist: Game[];
 }) {
-  const themeVariant = useAppStore((state) => state.themeVariant);
-  const setThemeVariant = useAppStore((state) => state.setThemeVariant);
-
   return (
     <div className="space-y-8">
       <Card className="overflow-hidden">
@@ -34,61 +30,59 @@ export function ProfileOverview({
             <div className="space-y-2">
               <p className="text-xs uppercase tracking-[0.28em] text-primary">{user.role}</p>
               <h1 className="font-display text-5xl text-white">{user.name}</h1>
-              <p className="text-sm text-white/80">@{user.username} • Level {user.level} • {user.reputation} reputation</p>
+              <p className="text-sm text-white/80">
+                @{user.username} • Level {user.level} • {user.reputation} danh tiếng
+              </p>
             </div>
           </div>
         </div>
         <CardContent className="grid gap-6 p-6 lg:grid-cols-[1.1fr_0.9fr]">
           <p className="text-sm leading-7 text-muted-foreground">{user.bio}</p>
-          <div className="grid gap-4">
-            <Card className="bg-black/18">
-              <CardContent className="space-y-3 p-4">
-                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Giao diện</p>
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setThemeVariant("cathedral")}
-                    className={`rounded-full px-3 py-2 text-xs uppercase tracking-[0.18em] ${
-                      themeVariant === "cathedral" ? "bg-primary/15 text-primary" : "bg-white/6 text-muted-foreground"
-                    }`}
-                  >
-                    Nhà thờ
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setThemeVariant("midnight")}
-                    className={`rounded-full px-3 py-2 text-xs uppercase tracking-[0.18em] ${
-                      themeVariant === "midnight" ? "bg-primary/15 text-primary" : "bg-white/6 text-muted-foreground"
-                    }`}
-                  >
-                    Đêm tối
-                  </button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          <Card className="bg-black/18">
+            <CardContent className="space-y-4 p-4">
+              <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-primary">
+                <ShieldCheck className="h-4 w-4" />
+                Hồ sơ cộng đồng
+              </div>
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <ProfileStat label="Level" value={String(user.level)} />
+                <ProfileStat label="Danh tiếng" value={String(user.reputation)} />
+                <ProfileStat label="Đã lưu" value={String(saved.length)} />
+                <ProfileStat label="Theo dõi" value={String(watchlist.length)} />
+              </div>
+            </CardContent>
+          </Card>
         </CardContent>
       </Card>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <MiniShelf icon={Heart} title="Favorite games" items={favorites} />
-        <MiniShelf icon={Bookmark} title="Saved games" items={saved} />
-        <MiniShelf icon={Clock3} title="Recently viewed" items={recent} />
-        <MiniShelf icon={Clock3} title="Watchlist" items={watchlist} />
+        <MiniShelf icon={Heart} title="Game yêu thích" items={favorites} />
+        <MiniShelf icon={Bookmark} title="Game đã lưu" items={saved} />
+        <MiniShelf icon={Clock3} title="Vừa xem gần đây" items={recent} />
+        <MiniShelf icon={Clock3} title="Danh sách theo dõi" items={watchlist} />
       </div>
 
       <Card>
         <CardContent className="flex items-center justify-between p-6">
           <div>
-            <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Reputation System</p>
-            <h2 className="mt-2 font-display text-3xl text-foreground">Community standing</h2>
+            <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Danh tiếng</p>
+            <h2 className="mt-2 font-display text-3xl text-foreground">Uy tín trong cộng đồng</h2>
           </div>
           <div className="inline-flex items-center gap-3 rounded-full border border-accent/20 bg-accent/10 px-5 py-3 text-accent">
             <Trophy className="h-5 w-5" />
-            <span className="font-semibold">{user.reputation} rep</span>
+            <span className="font-semibold">{user.reputation} điểm</span>
           </div>
         </CardContent>
       </Card>
+    </div>
+  );
+}
+
+function ProfileStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-lg border border-white/8 bg-white/5 p-3">
+      <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">{label}</p>
+      <p className="mt-1 font-display text-2xl text-foreground">{value}</p>
     </div>
   );
 }

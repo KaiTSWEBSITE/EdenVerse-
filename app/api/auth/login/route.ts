@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { verifyCaptcha } from "@/lib/captcha";
 import { loginSchema } from "@/lib/validators";
 import { verifyDemoCredentials } from "@/services/auth-service";
 import { applyRateLimit } from "@/middleware/rate-limit";
@@ -18,6 +19,11 @@ export async function POST(request: Request) {
 
   if (!parsed.success) {
     return NextResponse.json({ message: "Invalid credentials payload" }, { status: 400 });
+  }
+
+  const captcha = await verifyCaptcha(parsed.data, request);
+  if (!captcha.ok) {
+    return NextResponse.json({ message: captcha.message }, { status: 403 });
   }
 
   const user = await verifyDemoCredentials(parsed.data.email, parsed.data.password);

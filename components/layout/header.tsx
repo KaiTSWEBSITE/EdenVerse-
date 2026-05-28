@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Menu, MoonStar, UserRound } from "lucide-react";
+import { Menu, UserRound } from "lucide-react";
 import { useState } from "react";
 import { primaryNavigation } from "@/config/navigation";
 import { Logo } from "@/components/layout/logo";
@@ -34,10 +34,6 @@ export function Header() {
         </div>
 
         <div className="hidden items-center gap-3 md:flex">
-          <Button variant="secondary" className="hidden xl:inline-flex">
-            <MoonStar className="h-4 w-4" />
-            Giao diện tối
-          </Button>
           <Link href="/auth/login">
             <Button variant="default">
               <UserRound className="h-4 w-4" />

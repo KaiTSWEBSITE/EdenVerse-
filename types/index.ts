@@ -83,7 +83,7 @@ export interface SearchFilters {
   genre?: string;
   engine?: string;
   tag?: string;
-  mature?: "all" | "safe" | "adult";
+  mature?: "all" | "adult";
   sort?: "trending" | "rating" | "updated" | "popular";
 }
 

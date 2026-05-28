@@ -2,15 +2,17 @@ import Link from "next/link";
 import { ArrowRight, Flame, Sparkles, Star } from "lucide-react";
 import type { Game } from "@/types";
 import { SearchCommand } from "@/components/search/search-command";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { formatCompactNumber, formatRating } from "@/lib/utils";
 
 export function HeroSection({
   heroGame,
+  intro,
   trending
 }: {
   heroGame: Game;
+  intro: string;
   trending: Game[];
 }) {
   return (
@@ -18,17 +20,14 @@ export function HeroSection({
       <div className="mx-auto flex min-h-[calc(100vh-76px)] max-w-7xl flex-col justify-center px-4 pb-10 pt-14 sm:px-6 lg:px-8">
         <div className="max-w-4xl space-y-7">
           <div className="flex flex-wrap items-center gap-3">
-            <Badge>Dark Fantasy VN Hub</Badge>
+            <Badge>Visual Novel Hub</Badge>
           </div>
 
           <div className="space-y-4">
             <h1 className="font-display text-6xl leading-none text-foreground sm:text-7xl lg:text-8xl">
               EdenVerse
             </h1>
-            <p className="max-w-3xl text-lg leading-8 text-foreground/86 sm:text-xl">
-              Khám phá EdenVerse qua ba lối vào gọn gàng: game đang được tải nhiều, game vừa ra mắt
-              và những lựa chọn chất lượng cao được cộng đồng đánh giá tốt.
-            </p>
+            <p className="max-w-3xl text-lg leading-8 text-foreground/86 sm:text-xl">{intro}</p>
           </div>
 
           <div className="relative max-w-2xl">

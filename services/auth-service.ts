@@ -21,10 +21,3 @@ export async function verifyDemoCredentials(email: string, password: string) {
 
   return password === expectedPassword ? user : null;
 }
-
-export function listEnabledProviders() {
-  return {
-    google: Boolean(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET),
-    discord: Boolean(process.env.DISCORD_CLIENT_ID && process.env.DISCORD_CLIENT_SECRET)
-  };
-}

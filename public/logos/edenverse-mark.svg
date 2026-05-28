@@ -1,27 +1,37 @@
 <svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <radialGradient id="glow" cx="50%" cy="36%" r="68%">
-      <stop offset="0%" stop-color="#8EE7FF" stop-opacity="0.55"/>
-      <stop offset="42%" stop-color="#0D2E42" stop-opacity="0.65"/>
-      <stop offset="100%" stop-color="#05070C"/>
+    <radialGradient id="aura" cx="50%" cy="36%" r="70%">
+      <stop offset="0%" stop-color="#B9F6FF" stop-opacity="0.82"/>
+      <stop offset="38%" stop-color="#175A73" stop-opacity="0.58"/>
+      <stop offset="100%" stop-color="#04060B"/>
     </radialGradient>
-    <linearGradient id="gold" x1="70" y1="32" x2="186" y2="218">
-      <stop stop-color="#F2D18A"/>
-      <stop offset="0.52" stop-color="#C9A867"/>
-      <stop offset="1" stop-color="#785A2B"/>
+    <linearGradient id="glass" x1="128" y1="38" x2="128" y2="220">
+      <stop stop-color="#D8FBFF"/>
+      <stop offset="0.42" stop-color="#67D7FF"/>
+      <stop offset="1" stop-color="#0D6E8E"/>
     </linearGradient>
-    <linearGradient id="glass" x1="70" y1="40" x2="186" y2="214">
-      <stop stop-color="#A7F1FF"/>
-      <stop offset="0.52" stop-color="#58C8FF"/>
-      <stop offset="1" stop-color="#0E6D95"/>
+    <linearGradient id="gold" x1="58" y1="38" x2="198" y2="222">
+      <stop stop-color="#FFE3A0"/>
+      <stop offset="0.56" stop-color="#C49A4E"/>
+      <stop offset="1" stop-color="#68451D"/>
     </linearGradient>
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.28 0 0 0 0 0.84 0 0 0 0 1 0 0 0 0.55 0"/>
+      <feBlend in="SourceGraphic"/>
+    </filter>
   </defs>
-  <rect width="256" height="256" rx="64" fill="#05070C"/>
-  <rect x="18" y="18" width="220" height="220" rx="54" fill="url(#glow)" stroke="#8EE7FF" stroke-opacity="0.28" stroke-width="3"/>
-  <path d="M128 30L156 74H100L128 30Z" fill="url(#gold)"/>
-  <path d="M64 214V86L128 52L192 86V214H160V104H96V214H64Z" fill="#08131D" stroke="#7FE0FF" stroke-opacity="0.44" stroke-width="4"/>
-  <path d="M112 214V122H144V214H112Z" fill="url(#glass)" opacity="0.95"/>
-  <path d="M82 214L128 96L174 214H151L128 153L105 214H82Z" fill="url(#gold)"/>
-  <path d="M82 92L128 68L174 92" stroke="#F2D18A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="128" cy="104" r="13" fill="#8EE7FF" fill-opacity="0.75"/>
+  <rect width="256" height="256" rx="58" fill="#03050A"/>
+  <rect x="16" y="16" width="224" height="224" rx="50" fill="url(#aura)" stroke="#86E8FF" stroke-opacity="0.32" stroke-width="2"/>
+  <path d="M128 31L196 75V218H60V75L128 31Z" fill="#07101A" stroke="url(#gold)" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M88 212V91C88 70.01 104.96 53 126 53H130C151.04 53 168 70.01 168 91V212H88Z" fill="url(#glass)" fill-opacity="0.88" filter="url(#softGlow)"/>
+  <path d="M128 54V214" stroke="#042331" stroke-width="5" stroke-linecap="round" opacity="0.66"/>
+  <path d="M91 117H165" stroke="#D7FAFF" stroke-opacity="0.52" stroke-width="4" stroke-linecap="round"/>
+  <path d="M102 80L128 54L154 80" stroke="#D7FAFF" stroke-opacity="0.58" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M53 218H203" stroke="url(#gold)" stroke-width="8" stroke-linecap="round"/>
+  <path d="M71 73L128 38L185 73" stroke="#FFE1A0" stroke-opacity="0.72" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M78 178H111V192H94V202H113V216H78V178Z" fill="#FFE6A6"/>
+  <path d="M145 178H161L170 200L179 178H195L177 216H163L145 178Z" fill="#FFE6A6"/>
+  <circle cx="128" cy="131" r="15" fill="#08121B" stroke="#F5D68B" stroke-width="5"/>
+  <path d="M128 120V142M117 131H139" stroke="#8DEAFF" stroke-width="4" stroke-linecap="round"/>
 </svg>

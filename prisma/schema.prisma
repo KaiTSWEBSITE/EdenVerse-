@@ -238,3 +238,10 @@ model Watchlist {
 
   @@id([userId, gameId])
 }
+
+model SiteSetting {
+  key       String   @id
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

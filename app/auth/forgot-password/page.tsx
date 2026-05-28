@@ -1,12 +1,17 @@
 "use client";
 
 import { useState } from "react";
+import { CaptchaField, type CaptchaValue } from "@/components/security/captcha-field";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
 export default function ForgotPasswordPage() {
+  const [captcha, setCaptcha] = useState<CaptchaValue | null>(null);
+  const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const captchaReady = Boolean(captcha?.token && (captcha.provider === "turnstile" || captcha.answer));
 
   return (
     <section className="mx-auto max-w-xl px-4 py-20 sm:px-6 lg:px-8">
@@ -16,24 +21,32 @@ export default function ForgotPasswordPage() {
             <p className="text-xs uppercase tracking-[0.22em] text-primary">Khôi phục</p>
             <h1 className="mt-2 font-display text-5xl text-foreground">Đặt lại quyền truy cập</h1>
             <p className="mt-3 text-sm leading-7 text-muted-foreground">
-              Bản demo trả về thông báo thành công ngay. Khi production, route này đã sẵn sàng nối với dịch vụ email và pipeline token xác minh.
+              Nhập email tài khoản. CAPTCHA giúp chặn spam gửi mail đặt lại mật khẩu.
             </p>
           </div>
           <div className="space-y-4">
-            <Input placeholder="Địa chỉ email" />
+            <Input value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Địa chỉ email" />
+            <CaptchaField action="forgot-password" onChange={setCaptcha} />
             <Button
               className="w-full"
+              disabled={!captchaReady || submitting}
               onClick={async () => {
+                setSubmitting(true);
                 const response = await fetch("/api/auth/forgot-password", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ email: "aria@edenverse.gg" })
+                  body: JSON.stringify({
+                    captchaAnswer: captcha?.answer ?? "",
+                    captchaToken: captcha?.token ?? "",
+                    email
+                  })
                 });
                 const data = await response.json();
-                setMessage(data.message);
+                setSubmitting(false);
+                setMessage(data.message ?? "Không thể gửi yêu cầu lúc này.");
               }}
             >
-              Gửi link đặt lại
+              {submitting ? "Đang gửi..." : "Gửi link đặt lại"}
             </Button>
             {message ? <p className="text-sm text-primary">{message}</p> : null}
           </div>

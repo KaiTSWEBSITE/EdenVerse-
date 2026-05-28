@@ -22,7 +22,7 @@ const body = Manrope({
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
-    default: `${siteConfig.name} | Premium Visual Novel Discovery`,
+    default: `${siteConfig.name} | Thư viện game Visual Novel`,
     template: `%s | ${siteConfig.name}`
   },
   description: siteConfig.description,
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     url: siteConfig.url,
     siteName: siteConfig.name,
     images: [{ url: "/backgrounds/eden-cathedral.png", width: 2048, height: 819 }],
-    locale: "en_US",
+    locale: "vi_VN",
     type: "website"
   },
   twitter: {
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="vi">
       <body className={`${display.variable} ${body.variable}`}>
         <AppProviders>
           <AtmosphericBackdrop />

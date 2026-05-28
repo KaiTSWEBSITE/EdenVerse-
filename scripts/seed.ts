@@ -4,6 +4,7 @@ import { authConfig } from "../config/auth";
 import { demoComments, demoGames, demoReviews, demoUsers } from "../database/demo-data";
 import { prisma } from "../database/prisma";
 import { slugify } from "../lib/utils";
+import { DEFAULT_HERO_INTRO, HERO_INTRO_SETTING_KEY } from "../services/site-settings-service";
 
 async function seed() {
   const client = prisma;
@@ -40,6 +41,7 @@ async function seed() {
   await client.category.deleteMany();
   await client.account.deleteMany();
   await client.session.deleteMany();
+  await client.$executeRaw`DELETE FROM "SiteSetting"`;
   await client.user.deleteMany();
 
   const tagRecords = await Promise.all(
@@ -190,6 +192,13 @@ async function seed() {
       });
     }
   }
+
+  await client.$executeRaw`
+    INSERT INTO "SiteSetting" ("key", "value", "updatedAt")
+    VALUES (${HERO_INTRO_SETTING_KEY}, ${DEFAULT_HERO_INTRO}, NOW())
+    ON CONFLICT ("key")
+    DO UPDATE SET "value" = ${DEFAULT_HERO_INTRO}, "updatedAt" = NOW()
+  `;
 
   console.log("EdenVerse seed complete.");
 }

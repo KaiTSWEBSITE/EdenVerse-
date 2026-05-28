@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { auth } from "@/auth";
+import { verifyCaptcha } from "@/lib/captcha";
 import { applyRateLimit } from "@/middleware/rate-limit";
 
 export const runtime = "nodejs";
@@ -69,6 +70,18 @@ export async function POST(request: Request) {
   }
 
   const formData = await request.formData();
+  const captcha = await verifyCaptcha(
+    {
+      captchaAnswer: getText(formData, "captchaAnswer"),
+      captchaToken: getText(formData, "captchaToken")
+    },
+    request
+  );
+
+  if (!captcha.ok) {
+    return NextResponse.json({ message: captcha.message }, { status: 403 });
+  }
+
   const files = ["cover", "background", "gallery"].flatMap((key) =>
     formData.getAll(key).filter((value): value is File => value instanceof File)
   );

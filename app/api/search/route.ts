@@ -16,7 +16,7 @@ export async function GET(request: Request) {
     genre: searchParams.get("genre") ?? undefined,
     engine: searchParams.get("engine") ?? undefined,
     tag: searchParams.get("tag") ?? undefined,
-    mature: (searchParams.get("mature") as "all" | "safe" | "adult" | null) ?? "all",
+    mature: (searchParams.get("mature") as "all" | "adult" | null) ?? "all",
     sort: (searchParams.get("sort") as "trending" | "rating" | "updated" | "popular" | null) ?? "trending"
   });
 

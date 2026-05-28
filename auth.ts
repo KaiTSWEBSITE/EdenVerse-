@@ -1,25 +1,32 @@
 import NextAuth from "next-auth";
-import type { Provider } from "next-auth/providers";
 import Credentials from "next-auth/providers/credentials";
-import Discord from "next-auth/providers/discord";
-import Google from "next-auth/providers/google";
+import { verifyCaptcha } from "@/lib/captcha";
 import { loginSchema } from "@/lib/validators";
 import { verifyDemoCredentials } from "@/services/auth-service";
 
-const providers: Provider[] = [
+const providers = [
   Credentials({
     name: "Email",
     credentials: {
       email: { label: "Email", type: "email" },
-      password: { label: "Password", type: "password" }
+      password: { label: "Password", type: "password" },
+      captchaAnswer: { label: "CAPTCHA answer", type: "text" },
+      captchaToken: { label: "CAPTCHA token", type: "text" }
     },
     async authorize(credentials) {
       const parsed = loginSchema.safeParse({
         email: credentials?.email,
-        password: credentials?.password
+        password: credentials?.password,
+        captchaAnswer: credentials?.captchaAnswer,
+        captchaToken: credentials?.captchaToken
       });
 
       if (!parsed.success) {
+        return null;
+      }
+
+      const captcha = await verifyCaptcha(parsed.data);
+      if (!captcha.ok) {
         return null;
       }
 
@@ -42,26 +49,6 @@ const providers: Provider[] = [
     }
   })
 ];
-
-if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
-  providers.push(
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      allowDangerousEmailAccountLinking: true
-    })
-  );
-}
-
-if (process.env.DISCORD_CLIENT_ID && process.env.DISCORD_CLIENT_SECRET) {
-  providers.push(
-    Discord({
-      clientId: process.env.DISCORD_CLIENT_ID,
-      clientSecret: process.env.DISCORD_CLIENT_SECRET,
-      allowDangerousEmailAccountLinking: true
-    })
-  );
-}
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   secret: process.env.AUTH_SECRET ?? "edenverse-development-secret",

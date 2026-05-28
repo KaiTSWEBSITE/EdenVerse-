@@ -5,12 +5,40 @@ import { applySecurityHeaders } from "@/middleware/headers";
 const blockedPathPatterns = [
   /^\/\.env/i,
   /^\/\.git/i,
+  /^\/\.next/i,
+  /^\/auth\.ts$/i,
+  /^\/database(?:\/|$)/i,
+  /^\/middleware\.ts$/i,
+  /^\/next\.config\.(?:js|mjs|ts)$/i,
+  /^\/node_modules(?:\/|$)/i,
+  /^\/package(?:-lock)?\.json$/i,
+  /^\/prisma(?:\/|$)/i,
+  /^\/scripts(?:\/|$)/i,
+  /^\/src(?:\/|$)/i,
+  /^\/source(?:\/|$)/i,
+  /^\/tsconfig\.json$/i,
   /^\/wp-admin/i,
   /^\/wp-login\.php/i,
   /^\/phpmyadmin/i,
   /^\/server-status/i,
   /^\/xmlrpc\.php/i
 ];
+
+const unsafeMethods = new Set(["DELETE", "PATCH", "POST", "PUT"]);
+
+function isSameOriginRequest(request: Request) {
+  const origin = request.headers.get("origin");
+
+  if (!origin) {
+    return true;
+  }
+
+  try {
+    return new URL(origin).host === new URL(request.url).host;
+  } catch {
+    return false;
+  }
+}
 
 export default auth((request) => {
   const response = NextResponse.next();
@@ -19,6 +47,12 @@ export default auth((request) => {
   const pathname = request.nextUrl.pathname;
   if (blockedPathPatterns.some((pattern) => pattern.test(pathname))) {
     const blocked = NextResponse.json({ message: "Yeu cau bi chan boi EdenVerse Shield." }, { status: 404 });
+    applySecurityHeaders(blocked);
+    return blocked;
+  }
+
+  if (unsafeMethods.has(request.method) && !isSameOriginRequest(request)) {
+    const blocked = NextResponse.json({ message: "Yeu cau khong dung nguon hop le." }, { status: 403 });
     applySecurityHeaders(blocked);
     return blocked;
   }

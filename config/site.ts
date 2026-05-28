@@ -1,13 +1,8 @@
 export const siteConfig = {
-  name: "EdenVerse",
-  shortName: "EdenVerse",
-  description:
-    "Thư viện game Visual Novel, Sandbox, RPG và Anime Games theo phong cách dark fantasy cao cấp.",
-  url: "https://edenverse-gilt.vercel.app",
   author: "KaiTSWEBSITE",
-  owner: "KaiTSWEBSITE",
-  supportEmail: "support@edenverse.vn",
   copyright: "© 2026 EdenVerse. All rights reserved.",
+  description:
+    "Thư viện game Visual Novel, Sandbox, RPG và Anime Games với giao diện gothic cao cấp, dễ tìm và dễ chọn.",
   keywords: [
     "visual novel",
     "adult vn",
@@ -16,5 +11,10 @@ export const siteConfig = {
     "dating sim",
     "story rich games",
     "choice matter"
-  ]
+  ],
+  name: "EdenVerse",
+  owner: "KaiTSWEBSITE",
+  shortName: "EdenVerse",
+  supportEmail: "support@edenverse.vn",
+  url: "https://edenverse-gilt.vercel.app"
 } as const;
