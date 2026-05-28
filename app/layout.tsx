@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Be_Vietnam_Pro, Playfair_Display } from "next/font/google";
+import { Noto_Serif_Display, Plus_Jakarta_Sans } from "next/font/google";
 import { AtmosphericBackdrop } from "@/components/layout/atmospheric-backdrop";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
@@ -7,16 +7,18 @@ import { AppProviders } from "@/context/providers";
 import { siteConfig } from "@/config/site";
 import "@/app/globals.css";
 
-const display = Playfair_Display({
+const display = Noto_Serif_Display({
   subsets: ["latin", "vietnamese"],
   variable: "--font-display",
-  weight: ["500", "600", "700", "800"]
+  weight: ["500", "600", "700", "800"],
+  display: "swap"
 });
 
-const body = Be_Vietnam_Pro({
+const body = Plus_Jakarta_Sans({
   subsets: ["latin", "vietnamese"],
   variable: "--font-body",
-  weight: ["400", "500", "600", "700", "800"]
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap"
 });
 
 export const metadata: Metadata = {

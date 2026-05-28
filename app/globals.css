@@ -11,10 +11,15 @@ html {
 
 body {
   @apply bg-background font-body text-foreground antialiased;
+  font-feature-settings:
+    "kern" 1,
+    "liga" 1,
+    "calt" 1;
 }
 
-* {
-  letter-spacing: 0 !important;
+.font-display {
+  letter-spacing: -0.035em;
+  text-wrap: balance;
 }
 
 * {
