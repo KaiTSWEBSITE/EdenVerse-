@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Route } from "next";
 import { footerNavigation } from "@/config/navigation";
 import { siteConfig } from "@/config/site";
 import { Logo } from "@/components/layout/logo";
@@ -24,7 +25,7 @@ export function Footer() {
             <p className="mb-4 font-display text-xl text-foreground">{group.title}</p>
             <div className="space-y-3">
               {group.links.map((link) => (
-                <Link key={link.href} href={link.href} className="block text-sm text-muted-foreground transition hover:text-foreground">
+                <Link key={link.href} href={link.href as Route} className="block text-sm text-muted-foreground transition hover:text-foreground">
                   {link.label}
                 </Link>
               ))}

@@ -2,7 +2,7 @@ export const primaryNavigation = [
   { label: "Game Hot", href: "/games/hot" },
   { label: "Game mới", href: "/games/new" },
   { label: "Game chất lượng", href: "/games/quality" },
-  { label: "Cộng đồng", href: "/dashboard" },
+  { label: "Hồ sơ", href: "/profile" },
   { label: "Quản trị", href: "/admin" }
 ] as const;
 
@@ -16,10 +16,11 @@ export const footerNavigation = [
     ]
   },
   {
-    title: "Quản trị",
+    title: "Cộng đồng",
     links: [
-      { label: "CMS quản trị", href: "/admin" },
-      { label: "Dashboard người dùng", href: "/dashboard" }
+      { label: "Hồ sơ thành viên", href: "/profile" },
+      { label: "Dashboard người dùng", href: "/dashboard" },
+      { label: "CMS quản trị", href: "/admin" }
     ]
   }
 ] as const;

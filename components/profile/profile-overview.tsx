@@ -106,12 +106,18 @@ function MiniShelf({
           <h2 className="font-display text-3xl text-foreground">{title}</h2>
         </div>
         <div className="space-y-3">
-          {items.map((game) => (
-            <Link key={game.slug} href={`/games/${game.slug}`} className="block rounded-[20px] border border-white/8 bg-black/18 p-4 transition hover:bg-white/6">
-              <p className="font-semibold text-foreground">{game.title}</p>
-              <p className="text-sm text-muted-foreground">{game.developer}</p>
-            </Link>
-          ))}
+          {items.length ? (
+            items.map((game) => (
+              <Link key={game.slug} href={`/games/${game.slug}`} className="block rounded-[20px] border border-white/8 bg-black/18 p-4 transition hover:bg-white/6">
+                <p className="font-semibold text-foreground">{game.title}</p>
+                <p className="text-sm text-muted-foreground">{game.developer}</p>
+              </Link>
+            ))
+          ) : (
+            <div className="rounded-[20px] border border-white/8 bg-black/18 p-4 text-sm text-muted-foreground">
+              Chưa có game nào trong mục này.
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>

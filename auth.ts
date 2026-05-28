@@ -44,7 +44,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   secret: process.env.AUTH_SECRET ?? "edenverse-development-secret",
   trustHost: true,
   session: {
-    strategy: "jwt"
+    strategy: "jwt",
+    maxAge: 60 * 60 * 24 * 60,
+    updateAge: 60 * 60 * 24
   },
   pages: {
     signIn: "/auth/login"
