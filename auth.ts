@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { loginSchema } from "@/lib/validators";
-import { verifyDemoCredentials } from "@/services/auth-service";
+import { verifyCredentials } from "@/services/auth-service";
 
 const providers = [
   Credentials({
@@ -20,7 +20,7 @@ const providers = [
         return null;
       }
 
-      const user = await verifyDemoCredentials(parsed.data.email, parsed.data.password);
+      const user = await verifyCredentials(parsed.data.email, parsed.data.password);
       if (!user) {
         return null;
       }

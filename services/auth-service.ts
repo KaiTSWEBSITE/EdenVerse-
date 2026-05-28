@@ -5,10 +5,14 @@ const demoAccountPasswords = new Map<string, string>(
   [
     [authConfig.demoAdmin.email, authConfig.demoAdmin.password],
     [authConfig.demoUser.email, authConfig.demoUser.password]
-  ].map(([email, password]) => [email, password])
+  ].filter((entry): entry is [string, string] => Boolean(entry[0] && entry[1]))
 );
 
-export async function verifyDemoCredentials(email: string, password: string) {
+function allowDemoAuth() {
+  return process.env.ENABLE_DEMO_AUTH === "true" || (!process.env.DATABASE_URL && process.env.NODE_ENV !== "production");
+}
+
+export async function verifyCredentials(email: string, password: string) {
   if (process.env.DATABASE_URL) {
     const [{ default: bcrypt }, { prisma }] = await Promise.all([import("bcryptjs"), import("@/database/prisma")]);
     const databaseUser = await prisma?.user.findUnique({
@@ -34,6 +38,10 @@ export async function verifyDemoCredentials(email: string, password: string) {
         allowMatureContent: databaseUser.allowMatureContent
       };
     }
+  }
+
+  if (!allowDemoAuth()) {
+    return null;
   }
 
   const expectedPassword = demoAccountPasswords.get(email);

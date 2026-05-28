@@ -9,9 +9,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("admin@edenverse.gg");
+  const [email, setEmail] = useState("");
   const [error, setError] = useState("");
-  const [password, setPassword] = useState("Admin@123");
+  const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const router = useRouter();
 
@@ -23,12 +23,12 @@ export default function LoginPage() {
             <p className="text-xs uppercase tracking-[0.22em] text-primary">Đăng nhập</p>
             <h1 className="mt-2 font-display text-5xl text-foreground">Chào mừng trở lại</h1>
             <p className="mt-3 text-sm leading-7 text-muted-foreground">
-              Đăng nhập bằng email và mật khẩu. Các lớp rate limit, cookie an toàn và kiểm tra quyền vẫn hoạt động.
+              Đăng nhập bằng tài khoản đã được cấp trong database. EdenVerse không dùng mật khẩu admin demo công khai trên production.
             </p>
           </div>
 
           <div className="space-y-4">
-            <Input value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Email" />
+            <Input value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Email quản trị" />
             <Input value={password} onChange={(event) => setPassword(event.target.value)} type="password" placeholder="Mật khẩu" />
             {error ? <p className="text-sm text-red-300">{error}</p> : null}
             <Button
@@ -51,7 +51,7 @@ export default function LoginPage() {
                   return;
                 }
 
-                router.push("/dashboard");
+                router.push("/admin");
               }}
             >
               {submitting ? "Đang kiểm tra..." : "Đăng nhập"}

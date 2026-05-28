@@ -1,10 +1,10 @@
 export const authConfig = {
   demoAdmin: {
-    email: "admin@edenverse.gg",
-    password: "Admin@123"
+    email: process.env.DEMO_ADMIN_EMAIL ?? "",
+    password: process.env.DEMO_ADMIN_PASSWORD ?? ""
   },
   demoUser: {
-    email: "aria@edenverse.gg",
-    password: "Demo@123"
+    email: process.env.DEMO_USER_EMAIL ?? "",
+    password: process.env.DEMO_USER_PASSWORD ?? ""
   }
 } as const;

@@ -85,6 +85,10 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
   const [postsLoading, setPostsLoading] = useState(true);
   const [postSlug, setPostSlug] = useState("");
   const [settingsMessage, setSettingsMessage] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordMessage, setPasswordMessage] = useState("");
 
   async function loadPosts() {
     setPostsLoading(true);
@@ -184,6 +188,35 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
     setGameDemoMessage(data.message ?? "Đã gửi yêu cầu dọn game demo.");
   }
 
+  async function submitPassword(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (newPassword !== confirmPassword) {
+      setPasswordMessage("Mật khẩu mới và xác nhận chưa khớp.");
+      return;
+    }
+
+    setPasswordMessage("Đang đổi mật khẩu quản trị...");
+
+    const response = await fetch("/api/admin/password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        currentPassword,
+        newPassword
+      })
+    });
+    const data = await response.json();
+
+    if (response.ok) {
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    }
+
+    setPasswordMessage(data.message ?? "Đã gửi yêu cầu đổi mật khẩu.");
+  }
+
   async function submitGame(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setMessage("Đang kiểm tra dữ liệu game...");
@@ -209,6 +242,48 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
           </Card>
         ))}
       </div>
+
+      <Card>
+        <CardContent className="space-y-5 p-6">
+          <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+            <div>
+              <p className="text-xs uppercase tracking-[0.2em] text-primary">Bảo mật tài khoản</p>
+              <h2 className="mt-2 font-display text-4xl text-foreground">Đổi mật khẩu quản trị</h2>
+              <p className="mt-2 max-w-2xl text-sm leading-7 text-muted-foreground">
+                Mật khẩu mới cần tối thiểu 14 ký tự, có chữ hoa, chữ thường, số và ký tự đặc biệt. Hãy đổi ngay sau khi nhận mật khẩu tạm.
+              </p>
+            </div>
+            <Button type="submit" form="admin-password-form">
+              <LockKeyhole className="h-4 w-4" />
+              Cập nhật mật khẩu
+            </Button>
+          </div>
+          <form id="admin-password-form" onSubmit={submitPassword} className="grid gap-3 md:grid-cols-3">
+            <Input
+              value={currentPassword}
+              onChange={(event) => setCurrentPassword(event.target.value)}
+              type="password"
+              placeholder="Mật khẩu hiện tại"
+              required
+            />
+            <Input
+              value={newPassword}
+              onChange={(event) => setNewPassword(event.target.value)}
+              type="password"
+              placeholder="Mật khẩu mới mạnh"
+              required
+            />
+            <Input
+              value={confirmPassword}
+              onChange={(event) => setConfirmPassword(event.target.value)}
+              type="password"
+              placeholder="Nhập lại mật khẩu mới"
+              required
+            />
+          </form>
+          {passwordMessage ? <p className="text-sm text-primary">{passwordMessage}</p> : null}
+        </CardContent>
+      </Card>
 
       <Card>
         <CardContent className="space-y-5 p-6">

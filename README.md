@@ -1,36 +1,29 @@
 # EdenVerse
 
-EdenVerse là website giới thiệu và đánh giá game theo phong cách dark fantasy, gothic và visual novel premium. Trang chủ chỉ tập trung vào 3 kệ chính: Game Hot theo lượt click tải, game mới ra mắt và game chất lượng tốt.
+EdenVerse là website giới thiệu và quản lý game theo phong cách dark fantasy, gothic và visual novel premium. Trang chủ tập trung vào 3 kệ chính: Game Hot theo lượt click tải, game mới ra mắt và game chất lượng tốt.
 
 ![EdenVerse Preview](./public/backgrounds/eden-cathedral.png)
 
 ## Điểm Chính
 
 - Next.js 15 App Router, React 19, TypeScript, TailwindCSS và Framer Motion.
-- UI glassmorphism nhẹ, nền cathedral cinematic, fog/particles/parallax vừa đủ để mượt.
-- Prisma + PostgreSQL, migration, seed data game và fallback demo để chạy ngay sau khi clone.
-- NextAuth credentials login bằng email/password, đã bỏ Google/Discord theo yêu cầu.
-- Các lớp rate limit, role check, CSP, origin check, bcrypt, Zod validation và upload filter vẫn được giữ.
-- Admin có form đăng game và phần tự chỉnh câu giới thiệu trang chủ.
-- Khi chưa có PostgreSQL, câu giới thiệu admin lưu sẽ hiển thị ngay trong cùng trình duyệt bằng cookie/localStorage demo.
-- Tắt `X-Powered-By`, không xuất production source maps, chặn các đường dẫn nhạy cảm như `.env`, `.git`, `package.json`, `prisma`, `node_modules`.
-- Không còn bài viết, bình luận hoặc review demo mặc định.
+- Prisma + PostgreSQL với migration production tự chạy trên Vercel.
+- NextAuth credentials login bằng email/password, không dùng Google/Discord.
+- Không hard-code tài khoản admin production trong source hoặc README.
+- Super Admin được tạo bằng `ADMIN_SETUP_TOKEN` bí mật một lần.
+- Admin có form đăng game thật vào PostgreSQL, chỉnh giới thiệu trang chủ, xóa bài, xóa game demo và đổi mật khẩu.
+- Có rate limit, role check, origin check, bcrypt hash, Zod validation, upload filter và security headers.
 
-## Chạy Nhanh
+## Chạy Local
 
 ```bash
 npm install
 npm run dev
 ```
 
-Mở [http://localhost:3000](http://localhost:3000). App chạy được ngay bằng demo fallback nếu chưa cấu hình PostgreSQL.
+Mở [http://localhost:3000](http://localhost:3000).
 
-## Tài Khoản Demo
-
-- Admin: `admin@edenverse.gg` / `Admin@123`
-- Member: `aria@edenverse.gg` / `Demo@123`
-
-## Cấu Hình Môi Trường
+## Biến Môi Trường
 
 Copy file env:
 
@@ -38,12 +31,15 @@ Copy file env:
 copy .env.example .env
 ```
 
-Các biến quan trọng:
+Biến quan trọng:
 
-- `DATABASE_URL`: PostgreSQL thật cho production.
+- `DATABASE_URL`: PostgreSQL production hoặc local.
+- `DATABASE_URL_UNPOOLED`: URL direct/unpooled cho migration trên Vercel nếu có.
 - `AUTH_SECRET`: chuỗi bí mật mạnh cho NextAuth.
+- `ADMIN_SETUP_TOKEN`: token bí mật chỉ dùng để bootstrap Super Admin lần đầu.
+- `ENABLE_DEMO_AUTH`: chỉ bật `true` cho local demo, không bật production.
+- `ENABLE_PRISMA_DEMO_FALLBACK`: bật/tắt game fallback demo.
 - `NEXT_PUBLIC_SITE_INTRO`: câu giới thiệu mặc định trước khi admin lưu setting.
-- `UPLOAD_DIR`: thư mục upload local khi dev.
 
 ## PostgreSQL / Prisma
 
@@ -54,50 +50,40 @@ npm run db:migrate
 npm run db:seed
 ```
 
-Muốn tắt fallback demo:
+Trên Vercel, `npm run build` sẽ tự chạy `prisma generate` và `prisma migrate deploy` khi có `VERCEL=1` và `DATABASE_URL`.
 
-```bash
-ENABLE_PRISMA_DEMO_FALLBACK="false"
-```
+## Admin Production
+
+Không có mật khẩu admin mặc định. Quy trình đúng là:
+
+1. Tạo `ADMIN_SETUP_TOKEN` mạnh trong Vercel.
+2. Deploy.
+3. Gọi `POST /api/admin/bootstrap` với token bí mật để tạo Super Admin.
+4. Gỡ `ADMIN_SETUP_TOKEN` và redeploy để khóa bootstrap.
+5. Đăng nhập bằng tài khoản Super Admin thật và đổi mật khẩu trong `/admin`.
 
 ## Routes Chính
 
 - `/`: trang chủ với 3 kệ game chính.
-- `/games/hot`: Game Hot, xếp hạng theo lượt click tải.
+- `/games/hot`: Game Hot theo lượt click tải.
 - `/games/new`: game mới ra mắt.
 - `/games/quality`: game chất lượng tốt.
 - `/games/[slug]`: chi tiết game.
 - `/search`: tìm kiếm và lọc game.
-- `/profile/[username]`: hồ sơ người dùng.
-- `/dashboard`: dashboard thành viên.
-- `/admin`: quản trị, đăng game, chỉnh giới thiệu, bảo mật và SEO.
-- `/auth/login`, `/auth/register`, `/auth/forgot-password`: xác thực email/password.
+- `/admin`: quản trị game, nội dung, bảo mật và SEO.
+- `/auth/login`: đăng nhập email/password.
 
 ## API Chính
 
 - `GET /api/games`
-- `GET /api/games/[slug]`
 - `POST /api/games/[slug]/download`
-- `GET /api/games/search`
+- `POST /api/admin/bootstrap`
 - `POST /api/admin/games`
+- `POST /api/admin/password`
 - `POST /api/admin/settings`
-- `GET /api/search`
-- `GET|POST /api/comments`
-- `GET|POST /api/reviews`
-- `POST /api/auth/login`
-- `POST /api/auth/register`
-- `POST /api/auth/forgot-password`
+- `GET|DELETE /api/admin/posts`
 - `POST /api/upload`
-
-## Production Checklist
-
-1. Thêm `DATABASE_URL` production nếu muốn setting admin hiển thị cho mọi người dùng.
-2. Đặt `AUTH_SECRET` mạnh.
-3. Cấu hình `NEXTAUTH_URL` và `AUTH_TRUST_HOST`.
-4. Chuyển upload local sang S3, Cloudflare R2 hoặc Supabase Storage.
-5. Chạy migration và seed.
-6. Tắt fallback demo nếu muốn dữ liệu hoàn toàn từ DB.
 
 ## Background
 
-Ảnh nền chính nằm tại `public/backgrounds/eden-cathedral.png` và được dùng xuyên suốt website với blur nhẹ, overlay tối, vignette, ánh xanh kính cathedral, fog và particles rất nhẹ.
+Ảnh nền chính nằm tại `public/backgrounds/eden-cathedral.png` và được dùng xuyên suốt website với blur nhẹ, overlay tối, vignette, ánh xanh kính cathedral, fog và particles nhẹ.

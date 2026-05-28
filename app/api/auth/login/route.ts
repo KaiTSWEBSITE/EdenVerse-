@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { loginSchema } from "@/lib/validators";
-import { verifyDemoCredentials } from "@/services/auth-service";
+import { verifyCredentials } from "@/services/auth-service";
 import { applyRateLimit } from "@/middleware/rate-limit";
 
 export async function POST(request: Request) {
@@ -20,7 +20,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: "Invalid credentials payload" }, { status: 400 });
   }
 
-  const user = await verifyDemoCredentials(parsed.data.email, parsed.data.password);
+  const user = await verifyCredentials(parsed.data.email, parsed.data.password);
   if (!user) {
     return NextResponse.json({ message: "Invalid email or password" }, { status: 401 });
   }
