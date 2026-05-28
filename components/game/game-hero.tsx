@@ -2,11 +2,15 @@ import Image from "next/image";
 import { Download, Heart, Star, Tag } from "lucide-react";
 import type { Game } from "@/types";
 import { formatCompactNumber, formatDate, formatRating } from "@/lib/utils";
+import { getTrackedDownloadCount } from "@/services/download-service";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { DownloadButton } from "@/components/game/download-button";
 
 export function GameHero({ game }: { game: Game }) {
+  const trackedDownloads = getTrackedDownloadCount(game);
+
   return (
     <section className="mx-auto max-w-7xl px-4 pt-14 sm:px-6 lg:px-8">
       <div className="grid gap-6 xl:grid-cols-[0.62fr_1.38fr]">
@@ -33,37 +37,37 @@ export function GameHero({ game }: { game: Game }) {
                 <CardContent className="space-y-2">
                   <span className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.22em] text-muted-foreground">
                     <Star className="h-4 w-4 text-accent" />
-                    Rating
+                    Đánh giá
                   </span>
                   <p className="font-display text-4xl text-foreground">{formatRating(game.rating)}</p>
-                  <p className="text-sm text-muted-foreground">{formatCompactNumber(game.reviewCount)} reviews</p>
+                  <p className="text-sm text-muted-foreground">{formatCompactNumber(game.reviewCount)} review</p>
                 </CardContent>
               </Card>
               <Card className="bg-black/18">
                 <CardContent className="space-y-2">
                   <span className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.22em] text-muted-foreground">
                     <Heart className="h-4 w-4 text-primary" />
-                    Bookmarks
+                    Lượt lưu
                   </span>
                   <p className="font-display text-4xl text-foreground">{formatCompactNumber(game.bookmarks)}</p>
-                  <p className="text-sm text-muted-foreground">community saves</p>
+                  <p className="text-sm text-muted-foreground">người dùng lưu</p>
                 </CardContent>
               </Card>
               <Card className="bg-black/18">
                 <CardContent className="space-y-2">
                   <span className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.22em] text-muted-foreground">
                     <Download className="h-4 w-4 text-primary" />
-                    Downloads
+                    Lượt tải
                   </span>
-                  <p className="font-display text-4xl text-foreground">{formatCompactNumber(game.downloads)}</p>
-                  <p className="text-sm text-muted-foreground">tracked off-site</p>
+                  <p className="font-display text-4xl text-foreground">{formatCompactNumber(trackedDownloads)}</p>
+                  <p className="text-sm text-muted-foreground">lượt click tải</p>
                 </CardContent>
               </Card>
               <Card className="bg-black/18">
                 <CardContent className="space-y-2">
                   <span className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.22em] text-muted-foreground">
                     <Tag className="h-4 w-4 text-accent" />
-                    Updated
+                    Cập nhật
                   </span>
                   <p className="font-display text-2xl text-foreground">{formatDate(game.updatedAt)}</p>
                   <p className="text-sm text-muted-foreground">{game.version}</p>
@@ -71,7 +75,7 @@ export function GameHero({ game }: { game: Game }) {
               </Card>
             </div>
             <div className="flex flex-wrap gap-3">
-              <Button>Đến khu tải game</Button>
+              <DownloadButton slug={game.slug} initialDownloads={trackedDownloads} />
               <Button variant="secondary">Lưu vào danh sách</Button>
             </div>
           </CardContent>

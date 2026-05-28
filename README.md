@@ -112,6 +112,9 @@ project-root/
 ## Main Routes
 
 - `/` home landing with curated sections
+- `/games/hot` hot games ranked by download clicks
+- `/games/new` newly released games
+- `/games/quality` high-quality games
 - `/search` smart search + filter sidebar
 - `/games/[slug]` detailed game page
 - `/profile/[username]` user profile
@@ -125,6 +128,7 @@ project-root/
 
 - `GET /api/games`
 - `GET /api/games/[slug]`
+- `POST /api/games/[slug]/download`
 - `GET /api/games/search`
 - `POST /api/admin/games`
 - `GET /api/search`

@@ -8,6 +8,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     "",
     "/search",
+    "/games/hot",
+    "/games/new",
+    "/games/quality",
     "/dashboard",
     "/admin",
     ...games.map((game) => `/games/${game.slug}`)

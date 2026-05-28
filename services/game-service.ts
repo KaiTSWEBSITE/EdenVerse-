@@ -1,5 +1,6 @@
 import { demoGames } from "@/database/demo-data";
 import { prisma } from "@/database/prisma";
+import { getTrackedDownloadCount } from "@/services/download-service";
 import type { Game, SearchFilters } from "@/types";
 
 function sortGames(games: Game[], sort: SearchFilters["sort"]) {
@@ -12,7 +13,11 @@ function sortGames(games: Game[], sort: SearchFilters["sort"]) {
       return [...games].sort((a, b) => b.bookmarks - a.bookmarks);
     case "trending":
     default:
-      return [...games].sort((a, b) => b.popularityScore - a.popularityScore);
+      return [...games].sort(
+        (a, b) =>
+          getTrackedDownloadCount(b) - getTrackedDownloadCount(a) ||
+          b.popularityScore - a.popularityScore
+      );
   }
 }
 
@@ -69,8 +74,16 @@ export async function getHeroGame() {
   return (await getAllGames()).find((game) => game.hero) ?? demoGames[0];
 }
 
+export async function getHotGames(limit = 8) {
+  return (await getAllGames({ sort: "trending" })).slice(0, limit);
+}
+
 export async function getTrendingGames() {
-  return (await getAllGames({ sort: "trending" })).slice(0, 8);
+  return getHotGames();
+}
+
+export async function getNewlyReleasedGames(limit = 8) {
+  return (await getAllGames()).sort((a, b) => +new Date(b.releaseDate) - +new Date(a.releaseDate)).slice(0, limit);
 }
 
 export async function getNewlyUpdatedGames() {
@@ -79,6 +92,13 @@ export async function getNewlyUpdatedGames() {
 
 export async function getTopRatedGames() {
   return (await getAllGames({ sort: "rating" })).slice(0, 8);
+}
+
+export async function getQualityGames(limit = 8) {
+  return (await getAllGames())
+    .filter((game) => game.rating >= 8.7)
+    .sort((a, b) => b.rating * Math.log10(b.reviewCount + 10) - a.rating * Math.log10(a.reviewCount + 10))
+    .slice(0, limit);
 }
 
 export async function getGamesByGenre(genre: string, limit = 8) {

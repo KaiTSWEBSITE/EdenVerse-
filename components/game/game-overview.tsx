@@ -9,19 +9,19 @@ export function GameOverview({ game }: { game: Game }) {
       <Card>
         <CardContent className="space-y-8 p-8">
           <div>
-            <p className="text-xs uppercase tracking-[0.22em] text-primary">Story</p>
+            <p className="text-xs uppercase tracking-[0.22em] text-primary">Cốt truyện</p>
             <p className="mt-3 text-base leading-8 text-muted-foreground">{game.story}</p>
           </div>
           <Separator />
           <div>
-            <p className="text-xs uppercase tracking-[0.22em] text-primary">Description</p>
+            <p className="text-xs uppercase tracking-[0.22em] text-primary">Giới thiệu</p>
             <p className="mt-3 text-base leading-8 text-muted-foreground">{game.description}</p>
           </div>
           <Separator />
-          <div>
-            <p className="text-xs uppercase tracking-[0.22em] text-primary">Download Notes</p>
+          <div id="download">
+            <p className="text-xs uppercase tracking-[0.22em] text-primary">Khu tải game</p>
             <p className="mt-3 text-base leading-8 text-muted-foreground">
-              Mirrors, changelogs, and checksum fields can be wired to your real release pipeline. This production-ready demo already includes the card structure, version handling, and secure file-upload hooks for future CMS integration.
+              Mỗi lần người dùng bấm nút tải, EdenVerse sẽ ghi nhận một lượt click. Bảng Game Hot sẽ dùng số liệu này để tự sắp xếp game nổi bật hơn.
             </p>
           </div>
         </CardContent>
@@ -32,10 +32,10 @@ export function GameOverview({ game }: { game: Game }) {
           {[
             ["Developer", game.developer],
             ["Engine", game.engine],
-            ["Release date", formatDate(game.releaseDate)],
-            ["Platforms", game.platforms.join(", ")],
-            ["Languages", game.languages.join(", ")],
-            ["Genres", game.genres.join(", ")],
+            ["Ngày ra mắt", formatDate(game.releaseDate)],
+            ["Thiết bị", game.platforms.join(", ")],
+            ["Ngôn ngữ", game.languages.join(", ")],
+            ["Thể loại", game.genres.join(", ")],
             ["Tags", game.tags.join(", ")]
           ].map(([label, value]) => (
             <div key={label} className="space-y-1">

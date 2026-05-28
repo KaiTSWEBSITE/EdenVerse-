@@ -26,8 +26,8 @@ export function HeroSection({
               EdenVerse
             </h1>
             <p className="max-w-3xl text-lg leading-8 text-foreground/86 sm:text-xl">
-              Kho game Visual Novel, Sandbox, RPG và Anime Games theo phong cách gothic cao cấp.
-              Tìm game hay, theo dõi bản cập nhật, đọc đánh giá và lưu lại những tựa đáng chơi.
+              EdenVerse chỉ tập trung vào 3 kệ chính: Game Hot theo lượt tải, game mới ra mắt và game có chất lượng tốt.
+              Dễ tìm, dễ chọn, không bị rối bởi quá nhiều danh mục.
             </p>
           </div>
 
@@ -36,15 +36,15 @@ export function HeroSection({
           </div>
 
           <div className="flex flex-wrap gap-3">
-            <Link href={`/games/${heroGame.slug}`}>
+            <Link href="/games/hot">
               <Button size="lg">
-                Xem game nổi bật
+                Xem Game Hot
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
-            <Link href="/search?sort=trending">
+            <Link href="/games/new">
               <Button variant="secondary" size="lg">
-                Duyệt kho game
+                Game mới ra mắt
               </Button>
             </Link>
           </div>
