@@ -19,11 +19,65 @@ function getClientKey(request: Request) {
   return `admin-posts:${forwardedFor || request.headers.get("x-real-ip") || "local"}`;
 }
 
+function canManagePosts(role: string) {
+  return ["ADMIN", "SUPER_ADMIN"].includes(role);
+}
+
+export async function GET() {
+  const session = await auth();
+  const role = session?.user?.role ?? "USER";
+
+  if (!canManagePosts(role)) {
+    return NextResponse.json({ message: "Bạn không có quyền xem danh sách bài viết." }, { status: 403 });
+  }
+
+  if (!prisma) {
+    return NextResponse.json({
+      message: "Chưa cấu hình database nên hiện chưa có bài viết để quản lý.",
+      posts: []
+    });
+  }
+
+  const posts = await prisma.post.findMany({
+    orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
+    select: {
+      id: true,
+      slug: true,
+      title: true,
+      status: true,
+      publishedAt: true,
+      updatedAt: true,
+      createdAt: true,
+      author: {
+        select: {
+          name: true,
+          username: true
+        }
+      },
+      category: {
+        select: {
+          name: true,
+          slug: true
+        }
+      },
+      _count: {
+        select: {
+          comments: true,
+          tags: true
+        }
+      }
+    },
+    take: 30
+  });
+
+  return NextResponse.json({ posts });
+}
+
 export async function DELETE(request: Request) {
   const session = await auth();
   const role = session?.user?.role ?? "USER";
 
-  if (!["ADMIN", "SUPER_ADMIN"].includes(role)) {
+  if (!canManagePosts(role)) {
     return NextResponse.json({ message: "Bạn không có quyền xóa bài viết." }, { status: 403 });
   }
 

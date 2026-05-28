@@ -17,7 +17,7 @@ import {
   UsersRound
 } from "lucide-react";
 import type { ComponentType, FormEvent } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { DashboardMetric } from "@/types";
 import { ENGINES, GENRES, TAGS } from "@/constants/filters";
 import { Button } from "@/components/ui/button";
@@ -53,12 +53,60 @@ const auditEvents = [
   { time: "11:05", actor: "riven", action: "Cập nhật meta SEO cho Glass Eclipse" }
 ];
 
+type AdminPostSummary = {
+  id: string;
+  slug: string;
+  title: string;
+  status: string;
+  publishedAt: string | null;
+  updatedAt: string;
+  createdAt: string;
+  author?: {
+    name: string;
+    username: string;
+  } | null;
+  category?: {
+    name: string;
+    slug: string;
+  } | null;
+  _count?: {
+    comments: number;
+    tags: number;
+  };
+};
+
 export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics: DashboardMetric[] }) {
   const [intro, setIntro] = useState(heroIntro);
   const [message, setMessage] = useState("");
   const [postDeleteMessage, setPostDeleteMessage] = useState("");
+  const [postListMessage, setPostListMessage] = useState("");
+  const [posts, setPosts] = useState<AdminPostSummary[]>([]);
+  const [postsLoading, setPostsLoading] = useState(true);
   const [postSlug, setPostSlug] = useState("");
   const [settingsMessage, setSettingsMessage] = useState("");
+
+  async function loadPosts() {
+    setPostsLoading(true);
+
+    try {
+      const response = await fetch("/api/admin/posts", { cache: "no-store" });
+      const data = await response.json();
+
+      if (Array.isArray(data.posts)) {
+        setPosts(data.posts);
+      }
+
+      setPostListMessage(data.message ?? "");
+    } catch {
+      setPostListMessage("Không thể tải danh sách bài viết lúc này.");
+    } finally {
+      setPostsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    void loadPosts();
+  }, []);
 
   async function submitSettings(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -79,19 +127,40 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
     setSettingsMessage(data.message ?? "Đã gửi yêu cầu cập nhật.");
   }
 
-  async function deletePosts(mode: "demo" | "slug") {
+  async function deletePosts(mode: "demo" | "slug", slugOverride?: string) {
+    const slugToDelete = slugOverride ?? postSlug.trim();
+
+    if (mode === "slug" && !slugToDelete) {
+      setPostDeleteMessage("Vui lòng nhập slug bài cần xóa.");
+      return;
+    }
+
+    const confirmed =
+      mode === "demo"
+        ? window.confirm("Xóa toàn bộ bài demo? Hành động này không thể hoàn tác.")
+        : window.confirm(`Xóa bài "${slugToDelete}"? Hành động này không thể hoàn tác.`);
+
+    if (!confirmed) {
+      return;
+    }
+
     setPostDeleteMessage("Đang xử lý yêu cầu xóa bài...");
 
     const response = await fetch("/api/admin/posts", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(mode === "demo" ? { mode } : { mode, slug: postSlug })
+      body: JSON.stringify(mode === "demo" ? { mode } : { mode, slug: slugToDelete })
     });
     const data = await response.json();
     setPostDeleteMessage(data.message ?? "Đã gửi yêu cầu xóa bài.");
 
     if (response.ok && mode === "slug") {
       setPostSlug("");
+      setPosts((currentPosts) => currentPosts.filter((post) => post.slug !== slugToDelete));
+    }
+
+    if (response.ok && mode === "demo") {
+      await loadPosts();
     }
   }
 
@@ -172,6 +241,48 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
             <Button type="button" disabled={!postSlug.trim()} onClick={() => deletePosts("slug")}>
               Xóa bài này
             </Button>
+          </div>
+          <div className="rounded-lg border border-white/8 bg-black/18">
+            <div className="flex flex-col gap-3 border-b border-white/8 p-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm font-semibold text-foreground">Danh sách bài viết gần đây</p>
+                <p className="mt-1 text-xs text-muted-foreground">Bấm xóa ngay trên từng bài, không cần nhập slug thủ công.</p>
+              </div>
+              <Button type="button" variant="ghost" size="sm" onClick={loadPosts} disabled={postsLoading}>
+                {postsLoading ? "Đang tải..." : "Tải lại"}
+              </Button>
+            </div>
+            <div className="divide-y divide-white/8">
+              {postsLoading ? (
+                <PostListNotice text="Đang tải danh sách bài viết..." />
+              ) : posts.length ? (
+                posts.map((post) => (
+                  <div key={post.id} className="grid gap-4 p-4 lg:grid-cols-[1fr_auto] lg:items-center">
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="truncate font-semibold text-foreground">{post.title}</p>
+                        <span className="rounded-full border border-primary/20 bg-primary/10 px-2 py-1 text-[11px] uppercase tracking-[0.16em] text-primary">
+                          {post.status}
+                        </span>
+                      </div>
+                      <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                        <span>Slug: {post.slug}</span>
+                        <span>Tác giả: {post.author?.name ?? post.author?.username ?? "Không rõ"}</span>
+                        <span>Danh mục: {post.category?.name ?? "Chưa gắn"}</span>
+                        <span>Bình luận: {post._count?.comments ?? 0}</span>
+                        <span>Cập nhật: {formatAdminDate(post.updatedAt)}</span>
+                      </div>
+                    </div>
+                    <Button type="button" variant="secondary" size="sm" onClick={() => deletePosts("slug", post.slug)}>
+                      <Trash2 className="h-4 w-4" />
+                      Xóa
+                    </Button>
+                  </div>
+                ))
+              ) : (
+                <PostListNotice text={postListMessage || "Chưa có bài viết nào để xóa."} />
+              )}
+            </div>
           </div>
           {postDeleteMessage ? <p className="text-sm text-primary">{postDeleteMessage}</p> : null}
         </CardContent>
@@ -413,6 +524,17 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
       </div>
     </div>
   );
+}
+
+function formatAdminDate(value: string) {
+  return new Intl.DateTimeFormat("vi-VN", {
+    dateStyle: "short",
+    timeStyle: "short"
+  }).format(new Date(value));
+}
+
+function PostListNotice({ text }: { text: string }) {
+  return <p className="p-4 text-sm text-muted-foreground">{text}</p>;
 }
 
 function UploadBox({ label, name, multiple = false }: { label: string; name: string; multiple?: boolean }) {
