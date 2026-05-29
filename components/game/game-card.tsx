@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Bookmark, Star } from "lucide-react";
+import { Bookmark, Download, Star } from "lucide-react";
 import type { Game } from "@/types";
 import { formatCompactNumber, formatRating } from "@/lib/utils";
 import { useAppStore } from "@/context/app-store";
@@ -13,6 +13,7 @@ export function GameCard({ game }: { game: Game }) {
   const toggleBookmark = useAppStore((state) => state.toggleBookmark);
 
   const bookmarked = bookmarks.includes(game.slug);
+  const visibleTags = Array.from(new Set(game.tags.filter((tag) => tag !== "18+"))).slice(0, game.mature ? 3 : 4);
 
   return (
     <article className="group relative transition duration-200 hover:-translate-y-1">
@@ -36,13 +37,13 @@ export function GameCard({ game }: { game: Game }) {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
           <div className="absolute inset-x-0 bottom-0 p-5">
-            <div className="mb-3 flex flex-wrap gap-2">
-              {game.tags.slice(0, 2).map((tag) => (
-                <Badge key={tag} className="bg-black/25 text-[10px] text-white/80">
+            <div className="mb-3 flex flex-wrap gap-1.5">
+              {visibleTags.map((tag) => (
+                <Badge key={tag} className="border-white/10 bg-black/35 px-2 py-1 text-[9px] leading-none text-white/82">
                   {tag}
                 </Badge>
               ))}
-              {game.mature ? <Badge className="border-accent/30 bg-accent/10 text-accent">18+</Badge> : null}
+              {game.mature ? <Badge className="border-accent/30 bg-accent/10 px-2 py-1 text-[9px] leading-none text-accent">18+</Badge> : null}
             </div>
             <h3 className="font-display text-2xl leading-tight text-white">{game.title}</h3>
             <p className="mt-2 line-clamp-2 text-sm leading-6 text-white/72">{game.shortDescription}</p>
@@ -56,7 +57,10 @@ export function GameCard({ game }: { game: Game }) {
               {formatRating(game.rating)}
             </span>
             <span className="truncate">{game.developer}</span>
-            <span className="hidden sm:inline">{formatCompactNumber(game.bookmarks)} lưu</span>
+            <span className="hidden items-center gap-1.5 sm:inline-flex">
+              <Download className="h-3.5 w-3.5 text-primary" />
+              {formatCompactNumber(game.downloads)} tải
+            </span>
           </div>
           <button
             type="button"
