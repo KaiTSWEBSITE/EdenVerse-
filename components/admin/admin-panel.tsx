@@ -12,6 +12,7 @@ import {
   Loader2,
   LockKeyhole,
   MessageSquareWarning,
+  Pencil,
   SearchCheck,
   ShieldBan,
   ShieldCheck,
@@ -82,10 +83,21 @@ type AdminGameSummary = {
   id: string;
   slug: string;
   title: string;
+  tagline: string;
+  shortDescription: string;
+  description: string;
   version: string;
   developer: string;
+  engine: string;
+  downloadUrl: string | null;
   downloadsCount: number;
   coverImage: string;
+  bannerImage: string;
+  gallery: string[];
+  platforms: string[];
+  languages: string[];
+  genres: string[];
+  tags: string[];
   updatedAt: string;
   createdAt: string;
   _count?: {
@@ -113,6 +125,11 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordMessage, setPasswordMessage] = useState("");
   const [isSubmittingGame, setIsSubmittingGame] = useState(false);
+  const [editingGame, setEditingGame] = useState<AdminGameSummary | null>(null);
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [genreSearch, setGenreSearch] = useState("");
+  const [customGenre, setCustomGenre] = useState("");
 
   async function loadPosts() {
     setPostsLoading(true);
@@ -156,6 +173,90 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
     void loadPosts();
     void loadGames();
   }, []);
+
+  const genreOptions = Array.from(new Set([...GENRES, ...selectedGenres])).sort((first, second) =>
+    first.localeCompare(second)
+  );
+  const filteredGenres = genreOptions
+    .filter((genre) => genre.toLowerCase().includes(genreSearch.trim().toLowerCase()))
+    .slice(0, 36);
+
+  function toggleGenre(genre: string) {
+    setSelectedGenres((currentGenres) =>
+      currentGenres.includes(genre)
+        ? currentGenres.filter((currentGenre) => currentGenre !== genre)
+        : [...currentGenres, genre]
+    );
+  }
+
+  function toggleTag(tag: string) {
+    setSelectedTags((currentTags) =>
+      currentTags.includes(tag) ? currentTags.filter((currentTag) => currentTag !== tag) : [...currentTags, tag]
+    );
+  }
+
+  function addCustomGenre() {
+    const genre = customGenre.trim();
+
+    if (!genre) {
+      return;
+    }
+
+    setSelectedGenres((currentGenres) => (currentGenres.includes(genre) ? currentGenres : [...currentGenres, genre]));
+    setCustomGenre("");
+    setGenreSearch("");
+  }
+
+  function setFormValue(form: HTMLFormElement, name: string, value: string) {
+    const field = form.elements.namedItem(name);
+
+    if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement || field instanceof HTMLSelectElement) {
+      field.value = value;
+    }
+  }
+
+  function resetGameForm(form?: HTMLFormElement | null) {
+    form?.reset();
+    setEditingGame(null);
+    setSelectedGenres([]);
+    setSelectedTags([]);
+    setGenreSearch("");
+    setCustomGenre("");
+    setMessage("");
+  }
+
+  function startEditingGame(game: AdminGameSummary) {
+    setEditingGame(game);
+    setSelectedGenres(game.genres);
+    setSelectedTags(game.tags);
+    setGenreSearch("");
+    setCustomGenre("");
+    setMessage(`Đang chỉnh sửa "${game.title}". Cập nhật xong bấm "Lưu chỉnh sửa".`);
+
+    window.requestAnimationFrame(() => {
+      const form = document.getElementById("admin-game-form") as HTMLFormElement | null;
+
+      if (!form) {
+        return;
+      }
+
+      setFormValue(form, "title", game.title);
+      setFormValue(form, "version", game.version);
+      setFormValue(form, "developer", game.developer);
+      setFormValue(form, "engine", game.engine);
+      setFormValue(form, "platforms", game.platforms.join(", "));
+      setFormValue(form, "languages", game.languages.join(", "));
+      setFormValue(form, "shortDescription", game.shortDescription);
+      setFormValue(form, "description", game.description);
+      setFormValue(form, "coverImageUrl", game.coverImage);
+      setFormValue(form, "backgroundImageUrl", game.bannerImage);
+      setFormValue(form, "galleryImageUrls", game.gallery.join("\n"));
+      setFormValue(form, "downloadUrl", game.downloadUrl ?? "");
+      setFormValue(form, "seoTitle", game.title);
+      setFormValue(form, "seoDescription", game.shortDescription);
+      form.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
 
   async function submitSettings(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -293,16 +394,25 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
       return;
     }
 
+    if (!selectedGenres.length) {
+      setMessage("Chọn ít nhất một thể loại game. Bạn có thể tìm hoặc tự thêm thể loại mới.");
+      return;
+    }
+
     const form = event.currentTarget;
     const controller = new AbortController();
     const timeout = window.setTimeout(() => controller.abort(), 30_000);
 
     setIsSubmittingGame(true);
-    setMessage("Đang lưu game... Ảnh sẽ được lưu bằng link nên không upload file nặng.");
+    setMessage(
+      editingGame
+        ? `Đang cập nhật "${editingGame.title}"...`
+        : "Đang lưu game... Ảnh sẽ được lưu bằng link nên không upload file nặng."
+    );
 
     try {
       const response = await fetch("/api/admin/games", {
-        method: "POST",
+        method: editingGame ? "PATCH" : "POST",
         body: new FormData(form),
         signal: controller.signal
       });
@@ -315,7 +425,7 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
       setMessage(data.message ?? fallbackMessage);
 
       if (response.ok) {
-        form.reset();
+        resetGameForm(form);
         await loadGames();
       }
     } catch (error) {
@@ -481,6 +591,10 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
                       >
                         Xem game
                       </Link>
+                      <Button type="button" variant="ghost" size="sm" onClick={() => startEditingGame(game)}>
+                        <Pencil className="h-4 w-4" />
+                        Sửa
+                      </Button>
                       <Button type="button" variant="secondary" size="sm" onClick={() => deleteGame(game.slug, game.title)}>
                         <Trash2 className="h-4 w-4" />
                         Xóa
@@ -569,21 +683,34 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
           <CardContent className="space-y-6 p-6">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div>
-                <p className="text-xs uppercase text-primary">Đăng game mới</p>
-                <h2 className="mt-2 font-display text-4xl text-foreground">Nhập thông tin game để xuất bản</h2>
+                <p className="text-xs uppercase text-primary">{editingGame ? "Chỉnh sửa game" : "Đăng game mới"}</p>
+                <h2 className="mt-2 font-display text-4xl text-foreground">
+                  {editingGame ? `Cập nhật ${editingGame.title}` : "Nhập thông tin game để xuất bản"}
+                </h2>
               </div>
               <div className="flex gap-2">
-                <Button type="reset" form="admin-game-form" variant="secondary">
-                  Xóa form
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => resetGameForm(document.getElementById("admin-game-form") as HTMLFormElement | null)}
+                >
+                  {editingGame ? "Hủy sửa" : "Xóa form"}
                 </Button>
                 <Button type="submit" form="admin-game-form" disabled={isSubmittingGame}>
                   {isSubmittingGame ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileCheck2 className="h-4 w-4" />}
-                  {isSubmittingGame ? "Đang đăng..." : "Đăng game"}
+                  {isSubmittingGame ? "Đang lưu..." : editingGame ? "Lưu chỉnh sửa" : "Đăng game"}
                 </Button>
               </div>
             </div>
 
             <form id="admin-game-form" onSubmit={submitGame} className="space-y-5">
+              {editingGame ? <input type="hidden" name="slug" value={editingGame.slug} /> : null}
+              {selectedGenres.map((genre) => (
+                <input key={genre} type="hidden" name="genres" value={genre} />
+              ))}
+              {selectedTags.map((tag) => (
+                <input key={tag} type="hidden" name="tags" value={tag} />
+              ))}
               <div className="grid gap-4 md:grid-cols-2">
                 <Input name="title" placeholder="Tên game" required />
                 <Input name="version" placeholder="Phiên bản, ví dụ v1.2.0" required />
@@ -634,14 +761,76 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
               </div>
 
               <div className="space-y-3">
-                <p className="text-sm font-semibold text-foreground">Thể loại game</p>
-                <div className="flex flex-wrap gap-2">
-                  {GENRES.map((genre) => (
-                    <label key={genre} className="cursor-pointer rounded-full border border-white/10 bg-white/6 px-3 py-2 text-xs uppercase tracking-[0.14em] text-muted-foreground transition hover:border-primary/35 hover:text-foreground">
-                      <input name="genres" value={genre} type="checkbox" className="sr-only peer" />
-                      <span className="peer-checked:text-primary">{genre}</span>
-                    </label>
-                  ))}
+                <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">Thể loại game</p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      Tìm nhanh hoặc tự thêm thể loại mới nếu danh sách chưa có.
+                    </p>
+                  </div>
+                  <div className="grid gap-2 sm:grid-cols-[1fr_auto] lg:min-w-[420px]">
+                    <Input
+                      value={genreSearch}
+                      onChange={(event) => setGenreSearch(event.target.value)}
+                      placeholder="Tìm thể loại: RPG, Gothic, Adult VN..."
+                    />
+                    <div className="grid grid-cols-[1fr_auto] gap-2">
+                      <Input
+                        value={customGenre}
+                        onChange={(event) => setCustomGenre(event.target.value)}
+                        onKeyDown={(event) => {
+                          if (event.key === "Enter") {
+                            event.preventDefault();
+                            addCustomGenre();
+                          }
+                        }}
+                        placeholder="Thêm thể loại"
+                      />
+                      <Button type="button" variant="secondary" onClick={addCustomGenre}>
+                        Thêm
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                {selectedGenres.length ? (
+                  <div className="flex flex-wrap gap-2 rounded-lg border border-primary/15 bg-primary/5 p-3">
+                    {selectedGenres.map((genre) => (
+                      <button
+                        key={genre}
+                        type="button"
+                        onClick={() => toggleGenre(genre)}
+                        className="rounded-full border border-primary/25 bg-primary/12 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-primary transition hover:bg-primary/18"
+                      >
+                        {genre} ×
+                      </button>
+                    ))}
+                  </div>
+                ) : null}
+
+                <div className="flex max-h-64 flex-wrap gap-2 overflow-y-auto rounded-lg border border-white/8 bg-black/16 p-3">
+                  {filteredGenres.length ? (
+                    filteredGenres.map((genre) => {
+                      const selected = selectedGenres.includes(genre);
+
+                      return (
+                        <button
+                          key={genre}
+                          type="button"
+                          onClick={() => toggleGenre(genre)}
+                          className={`rounded-full border px-3 py-2 text-xs uppercase tracking-[0.14em] transition ${
+                            selected
+                              ? "border-primary/40 bg-primary/15 text-primary"
+                              : "border-white/10 bg-white/6 text-muted-foreground hover:border-primary/35 hover:text-foreground"
+                          }`}
+                        >
+                          {genre}
+                        </button>
+                      );
+                    })
+                  ) : (
+                    <p className="text-sm text-muted-foreground">Không thấy thể loại phù hợp. Gõ tên ở ô “Thêm thể loại” rồi bấm Thêm.</p>
+                  )}
                 </div>
               </div>
 
@@ -649,10 +838,18 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
                 <p className="text-sm font-semibold text-foreground">Tag gợi ý</p>
                 <div className="flex flex-wrap gap-2">
                   {TAGS.slice(0, 12).map((tag) => (
-                    <label key={tag} className="cursor-pointer rounded-full border border-white/10 bg-black/22 px-3 py-2 text-xs uppercase tracking-[0.14em] text-muted-foreground transition hover:border-accent/35 hover:text-foreground">
-                      <input name="tags" value={tag} type="checkbox" className="sr-only peer" />
-                      <span className="peer-checked:text-accent">{tag}</span>
-                    </label>
+                    <button
+                      key={tag}
+                      type="button"
+                      onClick={() => toggleTag(tag)}
+                      className={`rounded-full border px-3 py-2 text-xs uppercase tracking-[0.14em] transition ${
+                        selectedTags.includes(tag)
+                          ? "border-accent/40 bg-accent/12 text-accent"
+                          : "border-white/10 bg-black/22 text-muted-foreground hover:border-accent/35 hover:text-foreground"
+                      }`}
+                    >
+                      {tag}
+                    </button>
                   ))}
                 </div>
               </div>
