@@ -5,6 +5,10 @@ declare global {
 }
 
 function shouldUsePrisma() {
+  if (process.env.CI === "true" && process.env.ENABLE_PRISMA_DEMO_FALLBACK === "true") {
+    return false;
+  }
+
   return Boolean(process.env.DATABASE_URL);
 }
 
