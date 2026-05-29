@@ -189,7 +189,12 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
     setGamesLoading(true);
 
     try {
-      const response = await fetch("/api/admin/games", { cache: "no-store" });
+      const response = await fetch(`/api/admin/games?ts=${Date.now()}`, {
+        cache: "no-store",
+        headers: {
+          "Cache-Control": "no-store"
+        }
+      });
       const data = await response.json();
 
       if (Array.isArray(data.games)) {
@@ -508,7 +513,14 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
 
       if (response.ok) {
         if (editingGame) {
-          setEditingGame(getEditedGameSnapshot(editingGame));
+          const savedGame = (data.game ?? getEditedGameSnapshot(editingGame)) as AdminGameSummary;
+          setEditingGame(savedGame);
+          setGameForm(gameToFormState(savedGame));
+          setSelectedGenres(savedGame.genres);
+          setSelectedTags(savedGame.tags);
+          setGames((currentGames) =>
+            currentGames.map((game) => (game.slug === savedGame.slug ? savedGame : game))
+          );
         } else {
           resetGameForm();
         }

@@ -1,5 +1,6 @@
 import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
+import type { Prisma } from "@prisma/client";
 import { z } from "zod";
 import { auth } from "@/auth";
 import { prisma } from "@/database/prisma";
@@ -11,6 +12,49 @@ export const runtime = "nodejs";
 const MAX_GALLERY_IMAGES = 6;
 const DEFAULT_COVER_IMAGE = "/games/cathedral-01.svg";
 const DEFAULT_BANNER_IMAGE = "/backgrounds/eden-cathedral.png";
+
+const adminGameSelect = {
+  id: true,
+  slug: true,
+  title: true,
+  tagline: true,
+  shortDescription: true,
+  description: true,
+  version: true,
+  developer: true,
+  engine: true,
+  downloadUrl: true,
+  downloadsCount: true,
+  coverImage: true,
+  bannerImage: true,
+  gallery: true,
+  platforms: true,
+  languages: true,
+  updatedAt: true,
+  createdAt: true,
+  genres: {
+    select: {
+      genre: true
+    }
+  },
+  tags: {
+    select: {
+      tag: {
+        select: {
+          name: true
+        }
+      }
+    }
+  },
+  _count: {
+    select: {
+      comments: true,
+      reviews: true
+    }
+  }
+} satisfies Prisma.GameSelect;
+
+type AdminGameRecord = Prisma.GameGetPayload<{ select: typeof adminGameSelect }>;
 
 const gameDraftSchema = z.object({
   title: z.string().trim().min(2).max(120),
@@ -116,6 +160,17 @@ function normalizeStringArray(value: unknown) {
   return Array.isArray(value) ? value.filter((entry): entry is string => typeof entry === "string") : [];
 }
 
+function serializeAdminGame(game: AdminGameRecord) {
+  return {
+    ...game,
+    gallery: normalizeStringArray(game.gallery),
+    platforms: normalizeStringArray(game.platforms),
+    languages: normalizeStringArray(game.languages),
+    genres: game.genres.map((genre) => genre.genre),
+    tags: game.tags.map((gameTag) => gameTag.tag.name)
+  };
+}
+
 function getGameFormPayload(formData: FormData) {
   return {
     slug: getText(formData, "slug"),
@@ -182,59 +237,15 @@ export async function GET() {
 
   const games = await prisma.game.findMany({
     orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
-    select: {
-      id: true,
-      slug: true,
-      title: true,
-      tagline: true,
-      shortDescription: true,
-      description: true,
-      version: true,
-      developer: true,
-      engine: true,
-      downloadUrl: true,
-      downloadsCount: true,
-      coverImage: true,
-      bannerImage: true,
-      gallery: true,
-      platforms: true,
-      languages: true,
-      updatedAt: true,
-      createdAt: true,
-      genres: {
-        select: {
-          genre: true
-        }
-      },
-      tags: {
-        select: {
-          tag: {
-            select: {
-              name: true
-            }
-          }
-        }
-      },
-      _count: {
-        select: {
-          comments: true,
-          reviews: true
-        }
-      }
-    },
+    select: adminGameSelect,
     take: 50
   });
 
-  return NextResponse.json({
-    games: games.map((game) => ({
-      ...game,
-      gallery: normalizeStringArray(game.gallery),
-      platforms: normalizeStringArray(game.platforms),
-      languages: normalizeStringArray(game.languages),
-      genres: game.genres.map((genre) => genre.genre),
-      tags: game.tags.map((gameTag) => gameTag.tag.name)
-    }))
+  const response = NextResponse.json({
+    games: games.map(serializeAdminGame)
   });
+  response.headers.set("Cache-Control", "no-store, max-age=0");
+  return response;
 }
 
 export async function DELETE(request: Request) {
@@ -318,18 +329,30 @@ export async function PATCH(request: Request) {
   try {
     const existingGame = await client.game.findUnique({
       where: { slug: parsed.data.slug },
-      select: { id: true }
+      select: {
+        id: true,
+        coverImage: true,
+        bannerImage: true,
+        gallery: true,
+        platforms: true,
+        languages: true,
+        downloadUrl: true
+      }
     });
 
     if (!existingGame) {
       return NextResponse.json({ message: `Không tìm thấy game "${parsed.data.slug}" để chỉnh sửa.` }, { status: 404 });
     }
 
-    const coverImage = normalizeExternalImageUrl(parsed.data.coverImageUrl, "Ảnh cover");
+    const coverImage = parsed.data.coverImageUrl
+      ? normalizeExternalImageUrl(parsed.data.coverImageUrl, "Ảnh cover")
+      : existingGame.coverImage;
     const bannerImage = parsed.data.backgroundImageUrl
       ? normalizeExternalImageUrl(parsed.data.backgroundImageUrl, "Background")
-      : coverImage || DEFAULT_BANNER_IMAGE;
-    const gallery = parseGalleryImageUrls(parsed.data.galleryImageUrls, bannerImage || DEFAULT_COVER_IMAGE);
+      : existingGame.bannerImage || coverImage || DEFAULT_BANNER_IMAGE;
+    const gallery = parsed.data.galleryImageUrls?.trim()
+      ? parseGalleryImageUrls(parsed.data.galleryImageUrls, bannerImage || DEFAULT_COVER_IMAGE)
+      : normalizeStringArray(existingGame.gallery);
     const tags = parsed.data.tags ?? [];
     const tagRecords = await Promise.all(
       tags.map((tag) =>
@@ -361,13 +384,13 @@ export async function PATCH(request: Request) {
         version: parsed.data.version,
         developer: parsed.data.developer,
         engine: parsed.data.engine,
-        downloadUrl: parsed.data.downloadUrl || null,
+        downloadUrl: parsed.data.downloadUrl || existingGame.downloadUrl,
         mature: tags.includes("18+") || parsed.data.genres.includes("Adult") || parsed.data.genres.includes("Adult VN"),
         coverImage,
         bannerImage,
         gallery,
-        platforms: toList(parsed.data.platforms, ["Windows"]),
-        languages: toList(parsed.data.languages, ["Tiếng Việt"]),
+        platforms: toList(parsed.data.platforms, normalizeStringArray(existingGame.platforms).length ? normalizeStringArray(existingGame.platforms) : ["Windows"]),
+        languages: toList(parsed.data.languages, normalizeStringArray(existingGame.languages).length ? normalizeStringArray(existingGame.languages) : ["Tiếng Việt"]),
         genres: {
           deleteMany: {},
           create: parsed.data.genres.map((genre) => ({ genre }))
@@ -389,11 +412,7 @@ export async function PATCH(request: Request) {
           }))
         }
       },
-      select: {
-        slug: true,
-        title: true,
-        version: true
-      }
+      select: adminGameSelect
     });
 
     revalidateGameShelves(game.slug);
@@ -401,7 +420,7 @@ export async function PATCH(request: Request) {
     return NextResponse.json({
       message: `Đã cập nhật game "${game.title}" ${game.version}.`,
       game: {
-        ...game,
+        ...serializeAdminGame(game),
         url: `/games/${game.slug}`
       }
     });
@@ -513,11 +532,7 @@ export async function POST(request: Request) {
           }))
         }
       },
-      select: {
-        slug: true,
-        title: true,
-        version: true
-      }
+      select: adminGameSelect
     });
 
     revalidateGameShelves(game.slug);
@@ -525,7 +540,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       message: `Đã đăng game "${game.title}" ${game.version} thành công.`,
       game: {
-        ...game,
+        ...serializeAdminGame(game),
         url: `/games/${game.slug}`
       }
     });
