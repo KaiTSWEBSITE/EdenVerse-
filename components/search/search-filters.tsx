@@ -4,11 +4,17 @@ import { Card, CardContent } from "@/components/ui/card";
 export function SearchFilters({
   activeGenre,
   activeEngine,
-  activeTag
+  activeTag,
+  genreOptions = GENRES,
+  engineOptions = ENGINES,
+  tagOptions = TAGS
 }: {
   activeGenre?: string;
   activeEngine?: string;
   activeTag?: string;
+  genreOptions?: readonly string[];
+  engineOptions?: readonly string[];
+  tagOptions?: readonly string[];
 }) {
   return (
     <Card className="h-fit">
@@ -18,9 +24,9 @@ export function SearchFilters({
           <h2 className="mt-2 font-display text-3xl text-foreground">Lọc game nhanh</h2>
         </div>
         <div className="space-y-5">
-          <FilterGroup title="Thể loại" options={GENRES} active={activeGenre} queryKey="genre" />
-          <FilterGroup title="Engine" options={ENGINES} active={activeEngine} queryKey="engine" />
-          <FilterGroup title="Tags" options={TAGS.slice(0, 8)} active={activeTag} queryKey="tag" />
+          <FilterGroup title="Thể loại" options={genreOptions} active={activeGenre} queryKey="genre" />
+          <FilterGroup title="Engine" options={engineOptions} active={activeEngine} queryKey="engine" />
+          <FilterGroup title="Tags" options={tagOptions.slice(0, 18)} active={activeTag} queryKey="tag" />
         </div>
       </CardContent>
     </Card>

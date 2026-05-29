@@ -1,6 +1,7 @@
 import { GameCard } from "@/components/game/game-card";
 import { SearchFilters } from "@/components/search/search-filters";
 import { SectionHeading } from "@/components/ui/section-heading";
+import { ENGINES, GENRES, TAGS } from "@/constants/filters";
 import { searchSchema } from "@/lib/validators";
 import { getAllGames } from "@/services/game-service";
 
@@ -19,7 +20,16 @@ export default async function SearchPage({
     sort: typeof resolvedSearchParams.sort === "string" ? resolvedSearchParams.sort : "trending"
   });
 
-  const games = await getAllGames(parsed);
+  const [games, allGames] = await Promise.all([getAllGames(parsed), getAllGames()]);
+  const genreOptions = Array.from(new Set([...GENRES, ...allGames.flatMap((game) => game.genres)])).sort((a, b) =>
+    a.localeCompare(b)
+  );
+  const engineOptions = Array.from(new Set([...ENGINES, ...allGames.map((game) => game.engine)])).sort((a, b) =>
+    a.localeCompare(b)
+  );
+  const tagOptions = Array.from(new Set([...TAGS, ...allGames.flatMap((game) => game.tags)])).sort((a, b) =>
+    a.localeCompare(b)
+  );
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
@@ -29,7 +39,14 @@ export default async function SearchPage({
         description="Hệ thống tìm kiếm ưu tiên tên game, thể loại, tag và developer để bạn lọc game nhanh hơn."
       />
       <div className="grid gap-6 xl:grid-cols-[320px_1fr]">
-        <SearchFilters activeGenre={parsed.genre} activeEngine={parsed.engine} activeTag={parsed.tag} />
+        <SearchFilters
+          activeGenre={parsed.genre}
+          activeEngine={parsed.engine}
+          activeTag={parsed.tag}
+          genreOptions={genreOptions}
+          engineOptions={engineOptions}
+          tagOptions={tagOptions}
+        />
         <div className="space-y-5">
           <div className="glass-panel rounded-[28px] p-6">
             <p className="text-sm text-muted-foreground">

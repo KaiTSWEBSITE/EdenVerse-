@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { searchSchema } from "@/lib/validators";
 import { getAllGames } from "@/services/game-service";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const parsed = searchSchema.parse({
@@ -14,5 +16,7 @@ export async function GET(request: Request) {
   });
 
   const games = await getAllGames(parsed);
-  return NextResponse.json({ games });
+  const response = NextResponse.json({ games });
+  response.headers.set("Cache-Control", "no-store, max-age=0");
+  return response;
 }

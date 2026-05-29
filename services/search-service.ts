@@ -1,4 +1,3 @@
-import { demoGames } from "@/database/demo-data";
 import type { SearchFilters } from "@/types";
 import { getAllGames } from "@/services/game-service";
 
@@ -8,15 +7,40 @@ export async function getSearchSuggestions(query: string) {
     return [];
   }
 
-  return demoGames
+  const games = await getAllGames();
+
+  return games
     .map((game) => {
-      const titleHit = game.title.toLowerCase().includes(q) ? 5 : 0;
-      const tagHit = game.tags.some((tag) => tag.toLowerCase().includes(q)) ? 3 : 0;
-      const developerHit = game.developer.toLowerCase().includes(q) ? 2 : 0;
-      return { game, score: titleHit + tagHit + developerHit };
+      const title = game.title.toLowerCase();
+      const searchableText = [
+        game.title,
+        game.slug,
+        game.developer,
+        game.engine,
+        game.version,
+        game.shortDescription,
+        game.tags.join(" "),
+        game.genres.join(" ")
+      ]
+        .join(" ")
+        .toLowerCase();
+
+      const exactTitleHit = title === q ? 24 : 0;
+      const titleStartHit = title.startsWith(q) ? 14 : 0;
+      const titleHit = title.includes(q) ? 10 : 0;
+      const tagHit = game.tags.some((tag) => tag.toLowerCase().includes(q)) ? 5 : 0;
+      const genreHit = game.genres.some((genre) => genre.toLowerCase().includes(q)) ? 4 : 0;
+      const developerHit = game.developer.toLowerCase().includes(q) ? 3 : 0;
+      const engineHit = game.engine.toLowerCase().includes(q) ? 2 : 0;
+      const fallbackHit = searchableText.includes(q) ? 1 : 0;
+
+      return {
+        game,
+        score: exactTitleHit + titleStartHit + titleHit + tagHit + genreHit + developerHit + engineHit + fallbackHit
+      };
     })
     .filter((entry) => entry.score > 0)
-    .sort((a, b) => b.score - a.score)
+    .sort((a, b) => b.score - a.score || b.game.downloads - a.game.downloads)
     .slice(0, 6)
     .map(({ game }) => ({
       slug: game.slug,
