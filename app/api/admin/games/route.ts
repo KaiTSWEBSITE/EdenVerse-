@@ -8,9 +8,7 @@ import { slugify } from "@/lib/utils";
 
 export const runtime = "nodejs";
 
-const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 const MAX_GALLERY_IMAGES = 6;
-const ALLOWED_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
 const DEFAULT_COVER_IMAGE = "/games/cathedral-01.svg";
 const DEFAULT_BANNER_IMAGE = "/backgrounds/eden-cathedral.png";
 
@@ -24,6 +22,9 @@ const gameDraftSchema = z.object({
   shortDescription: z.string().trim().min(10).max(420),
   description: z.string().trim().min(20).max(4000),
   downloadUrl: z.string().trim().url().optional().or(z.literal("")),
+  coverImageUrl: z.string().trim().url("Link ảnh cover chưa hợp lệ.").max(2048),
+  backgroundImageUrl: z.string().trim().url("Link background chưa hợp lệ.").max(2048).optional().or(z.literal("")),
+  galleryImageUrls: z.string().trim().max(6000).optional(),
   seoTitle: z.string().trim().max(120).optional(),
   seoDescription: z.string().trim().max(220).optional(),
   genres: z.array(z.string()).min(1, "Chọn ít nhất một thể loại."),
@@ -60,10 +61,6 @@ function getText(formData: FormData, key: string) {
   return typeof value === "string" ? value : "";
 }
 
-function getFiles(formData: FormData, key: string) {
-  return formData.getAll(key).filter((value): value is File => value instanceof File && value.size > 0);
-}
-
 function toList(value: string | undefined, fallback: string[]) {
   const entries = (value ?? "")
     .split(",")
@@ -73,42 +70,29 @@ function toList(value: string | undefined, fallback: string[]) {
   return entries.length ? entries : fallback;
 }
 
-function hasTrustedImageSignature(buffer: Buffer, mimeType: string) {
-  if (mimeType === "image/jpeg") {
-    return buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff;
-  }
+function normalizeExternalImageUrl(value: string, label: string) {
+  try {
+    const url = new URL(value.trim());
 
-  if (mimeType === "image/png") {
-    return buffer.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]));
-  }
+    if (url.protocol !== "https:") {
+      throw new Error();
+    }
 
-  if (mimeType === "image/webp") {
-    return buffer.subarray(0, 4).toString("ascii") === "RIFF" && buffer.subarray(8, 12).toString("ascii") === "WEBP";
+    return url.toString();
+  } catch {
+    throw new Error(`${label} cần là link ảnh HTTPS hợp lệ.`);
   }
-
-  if (mimeType === "image/gif") {
-    const header = buffer.subarray(0, 6).toString("ascii");
-    return header === "GIF87a" || header === "GIF89a";
-  }
-
-  return false;
 }
 
-async function imageFileToDataUrl(file: File) {
-  if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
-    throw new Error("Chỉ nhận ảnh JPG, PNG, WEBP hoặc GIF.");
-  }
+function parseGalleryImageUrls(value: string | undefined, fallbackImage: string) {
+  const urls = (value ?? "")
+    .split(/\r?\n|,/)
+    .map((entry) => entry.trim())
+    .filter(Boolean)
+    .slice(0, MAX_GALLERY_IMAGES)
+    .map((entry, index) => normalizeExternalImageUrl(entry, `Ảnh giới thiệu ${index + 1}`));
 
-  if (file.size > MAX_IMAGE_SIZE) {
-    throw new Error("Ảnh upload phải nhỏ hơn 5MB.");
-  }
-
-  const buffer = Buffer.from(await file.arrayBuffer());
-  if (!hasTrustedImageSignature(buffer, file.type)) {
-    throw new Error("Ảnh upload không vượt qua kiểm tra chữ ký file.");
-  }
-
-  return `data:${file.type};base64,${buffer.toString("base64")}`;
+  return urls.length ? urls : [fallbackImage];
 }
 
 async function createUniqueGameSlug(title: string) {
@@ -238,6 +222,9 @@ export async function POST(request: Request) {
     shortDescription: getText(formData, "shortDescription"),
     description: getText(formData, "description"),
     downloadUrl: getText(formData, "downloadUrl"),
+    coverImageUrl: getText(formData, "coverImageUrl"),
+    backgroundImageUrl: getText(formData, "backgroundImageUrl"),
+    galleryImageUrls: getText(formData, "galleryImageUrls"),
     seoTitle: getText(formData, "seoTitle"),
     seoDescription: getText(formData, "seoDescription"),
     genres: formData.getAll("genres").filter((value): value is string => typeof value === "string"),
@@ -261,13 +248,11 @@ export async function POST(request: Request) {
   }
 
   try {
-    const [coverFile] = getFiles(formData, "cover");
-    const [backgroundFile] = getFiles(formData, "background");
-    const galleryFiles = getFiles(formData, "gallery").slice(0, MAX_GALLERY_IMAGES);
-    const coverImage = coverFile ? await imageFileToDataUrl(coverFile) : DEFAULT_COVER_IMAGE;
-    const bannerImage = backgroundFile ? await imageFileToDataUrl(backgroundFile) : DEFAULT_BANNER_IMAGE;
-    const uploadedGallery = (await Promise.all(galleryFiles.map((file) => imageFileToDataUrl(file)))).filter(Boolean);
-    const gallery = uploadedGallery.length ? uploadedGallery : [bannerImage];
+    const coverImage = normalizeExternalImageUrl(parsed.data.coverImageUrl, "Ảnh cover");
+    const bannerImage = parsed.data.backgroundImageUrl
+      ? normalizeExternalImageUrl(parsed.data.backgroundImageUrl, "Background")
+      : coverImage || DEFAULT_BANNER_IMAGE;
+    const gallery = parseGalleryImageUrls(parsed.data.galleryImageUrls, bannerImage || DEFAULT_COVER_IMAGE);
     const tags = parsed.data.tags ?? [];
     const slug = await createUniqueGameSlug(parsed.data.title);
     const hasExistingGames = (await client.game.count()) > 0;

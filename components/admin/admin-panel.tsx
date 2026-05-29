@@ -8,6 +8,8 @@ import {
   Gamepad2,
   Gauge,
   ImageUp,
+  Link2,
+  Loader2,
   LockKeyhole,
   MessageSquareWarning,
   SearchCheck,
@@ -15,7 +17,6 @@ import {
   ShieldCheck,
   Tag,
   Trash2,
-  UploadCloud,
   UsersRound
 } from "lucide-react";
 import type { ComponentType, FormEvent } from "react";
@@ -29,7 +30,7 @@ import { Input } from "@/components/ui/input";
 
 const controlItems = [
   { label: "Quản lý game", icon: Gamepad2, status: "Tạo, sửa, ẩn" },
-  { label: "Upload ảnh", icon: ImageUp, status: "Cover + gallery" },
+  { label: "Link ảnh", icon: ImageUp, status: "URL ngoài" },
   { label: "Duyệt bình luận", icon: MessageSquareWarning, status: "3 đang chờ" },
   { label: "Khóa người dùng", icon: ShieldBan, status: "Theo role" },
   { label: "Quản lý tag", icon: Tag, status: "Tự gợi ý" },
@@ -111,6 +112,7 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordMessage, setPasswordMessage] = useState("");
+  const [isSubmittingGame, setIsSubmittingGame] = useState(false);
 
   async function loadPosts() {
     setPostsLoading(true);
@@ -287,24 +289,44 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
 
   async function submitGame(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (isSubmittingGame) {
+      return;
+    }
+
     const form = event.currentTarget;
-    setMessage("Đang lưu game vào database...");
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 30_000);
 
-    const response = await fetch("/api/admin/games", {
-      method: "POST",
-      body: new FormData(form)
-    });
-    const data = await response.json();
-    const fallbackMessage =
-      response.status === 401 || response.status === 403
-        ? "Phiên đăng nhập admin đã hết hạn hoặc chưa đủ quyền. Vui lòng đăng nhập lại."
-        : "Đã nhận dữ liệu game.";
+    setIsSubmittingGame(true);
+    setMessage("Đang lưu game... Ảnh sẽ được lưu bằng link nên không upload file nặng.");
 
-    setMessage(data.message ?? fallbackMessage);
+    try {
+      const response = await fetch("/api/admin/games", {
+        method: "POST",
+        body: new FormData(form),
+        signal: controller.signal
+      });
+      const data = await response.json();
+      const fallbackMessage =
+        response.status === 401 || response.status === 403
+          ? "Phiên đăng nhập admin đã hết hạn hoặc chưa đủ quyền. Vui lòng đăng nhập lại."
+          : "Đã nhận dữ liệu game.";
 
-    if (response.ok) {
-      form.reset();
-      await loadGames();
+      setMessage(data.message ?? fallbackMessage);
+
+      if (response.ok) {
+        form.reset();
+        await loadGames();
+      }
+    } catch (error) {
+      const timeoutMessage =
+        error instanceof DOMException && error.name === "AbortError"
+          ? "Kết nối quá lâu nên đã dừng. Hãy kiểm tra mạng, link ảnh và thử lại."
+          : "Không gửi được form lúc này. Hãy thử lại hoặc đăng nhập lại admin.";
+      setMessage(timeoutMessage);
+    } finally {
+      window.clearTimeout(timeout);
+      setIsSubmittingGame(false);
     }
   }
 
@@ -554,9 +576,9 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
                 <Button type="reset" form="admin-game-form" variant="secondary">
                   Xóa form
                 </Button>
-                <Button type="submit" form="admin-game-form">
-                  <FileCheck2 className="h-4 w-4" />
-                  Đăng game
+                <Button type="submit" form="admin-game-form" disabled={isSubmittingGame}>
+                  {isSubmittingGame ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileCheck2 className="h-4 w-4" />}
+                  {isSubmittingGame ? "Đang đăng..." : "Đăng game"}
                 </Button>
               </div>
             </div>
@@ -590,10 +612,25 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
                 <Textarea name="description" placeholder="Mô tả chi tiết, story, gameplay, điểm nổi bật..." className="min-h-[150px]" required />
               </div>
 
-              <div className="grid gap-4 md:grid-cols-3">
-                <UploadBox label="Ảnh cover" name="cover" />
-                <UploadBox label="Background / banner" name="background" />
-                <UploadBox label="Ảnh giới thiệu" name="gallery" multiple />
+              <div className="space-y-4 rounded-xl border border-primary/15 bg-primary/5 p-4">
+                <div className="flex items-start gap-3">
+                  <Link2 className="mt-1 h-5 w-5 shrink-0 text-primary" />
+                  <div>
+                    <p className="font-semibold text-foreground">Ảnh dùng bằng link ngoài, không upload lên máy chủ</p>
+                    <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                      Dán link ảnh HTTPS từ Imgur, Catbox, Discord CDN, Google Drive direct image hoặc host ảnh khác. EdenVerse chỉ lưu đường dẫn, không lưu file ảnh vào database.
+                    </p>
+                  </div>
+                </div>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <Input name="coverImageUrl" type="url" placeholder="Link ảnh cover, ví dụ: https://i.imgur.com/cover.jpg" required />
+                  <Input name="backgroundImageUrl" type="url" placeholder="Link background/banner, có thể để trống" />
+                </div>
+                <Textarea
+                  name="galleryImageUrls"
+                  placeholder={"Link ảnh giới thiệu, mỗi dòng một ảnh:\nhttps://i.imgur.com/screen-1.jpg\nhttps://i.imgur.com/screen-2.jpg"}
+                  className="min-h-[120px]"
+                />
               </div>
 
               <div className="space-y-3">
@@ -730,11 +767,11 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
         <Card>
           <CardContent className="space-y-5 p-6">
             <div className="flex items-center gap-3">
-              <UploadCloud className="h-5 w-5 text-primary" />
-              <h3 className="font-display text-3xl text-foreground">Upload nhanh</h3>
+              <Link2 className="h-5 w-5 text-primary" />
+              <h3 className="font-display text-3xl text-foreground">Link ảnh nhanh</h3>
             </div>
             <div className="rounded-lg border border-dashed border-primary/30 bg-primary/5 p-6 text-sm leading-7 text-muted-foreground">
-              Kéo thả cover, background hoặc ảnh giới thiệu vào form đăng game. API upload kiểm tra loại file, kích thước và tên file trước khi lưu.
+              Dùng link ảnh trực tiếp để đăng game nhanh hơn. Website chỉ lưu URL ảnh, không upload file lên server và không nhét ảnh nặng vào database.
             </div>
           </CardContent>
         </Card>
@@ -789,14 +826,4 @@ function formatAdminDate(value: string) {
 
 function PostListNotice({ text }: { text: string }) {
   return <p className="p-4 text-sm text-muted-foreground">{text}</p>;
-}
-
-function UploadBox({ label, name, multiple = false }: { label: string; name: string; multiple?: boolean }) {
-  return (
-    <label className="block rounded-lg border border-dashed border-white/14 bg-black/22 p-4 transition hover:border-primary/35">
-      <span className="mb-3 block text-sm font-semibold text-foreground">{label}</span>
-      <Input name={name} type="file" accept="image/png,image/jpeg,image/webp,image/gif" multiple={multiple} className="h-auto cursor-pointer py-3" />
-      <span className="mt-3 block text-xs text-muted-foreground">JPG, PNG, WEBP hoặc GIF, tối đa 5MB.</span>
-    </label>
-  );
 }
