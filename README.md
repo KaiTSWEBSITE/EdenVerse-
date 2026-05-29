@@ -14,7 +14,7 @@ EdenVerse là website giới thiệu và quản lý game theo phong cách dark f
 - Admin có form đăng game thật vào PostgreSQL, chỉnh giới thiệu trang chủ, xóa bài, xóa game demo và đổi mật khẩu.
 - Mỗi game hỗ trợ link tải chính và link tải phụ/mirror dự phòng.
 - Header và footer có nút Discord server, cấu hình bằng `NEXT_PUBLIC_DISCORD_URL`.
-- Logo SVG mới và GIF logo riêng tại `public/logos/edenverse-logo-lightning.gif`.
+- Logo SVG tĩnh tại `public/logos/edenverse-mark.svg`, gọn nhẹ và dễ thay đổi.
 - Có rate limit, role check, origin check, bcrypt hash, Zod validation, upload filter và security headers.
 
 ## Chạy Local
