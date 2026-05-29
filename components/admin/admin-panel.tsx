@@ -106,6 +106,40 @@ type AdminGameSummary = {
   };
 };
 
+type GameFormState = {
+  title: string;
+  version: string;
+  developer: string;
+  engine: string;
+  platforms: string;
+  languages: string;
+  shortDescription: string;
+  description: string;
+  coverImageUrl: string;
+  backgroundImageUrl: string;
+  galleryImageUrls: string;
+  downloadUrl: string;
+  seoTitle: string;
+  seoDescription: string;
+};
+
+const emptyGameFormState: GameFormState = {
+  title: "",
+  version: "",
+  developer: "",
+  engine: "",
+  platforms: "",
+  languages: "",
+  shortDescription: "",
+  description: "",
+  coverImageUrl: "",
+  backgroundImageUrl: "",
+  galleryImageUrls: "",
+  downloadUrl: "",
+  seoTitle: "",
+  seoDescription: ""
+};
+
 export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics: DashboardMetric[] }) {
   const [intro, setIntro] = useState(heroIntro);
   const [message, setMessage] = useState("");
@@ -130,6 +164,7 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [genreSearch, setGenreSearch] = useState("");
   const [customGenre, setCustomGenre] = useState("");
+  const [gameForm, setGameForm] = useState<GameFormState>(emptyGameFormState);
 
   async function loadPosts() {
     setPostsLoading(true);
@@ -177,6 +212,7 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
   const genreOptions = Array.from(new Set([...GENRES, ...selectedGenres])).sort((first, second) =>
     first.localeCompare(second)
   );
+  const engineOptions = Array.from(new Set([...ENGINES, gameForm.engine].filter(Boolean)));
   const filteredGenres = genreOptions
     .filter((genre) => genre.toLowerCase().includes(genreSearch.trim().toLowerCase()))
     .slice(0, 36);
@@ -207,16 +243,81 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
     setGenreSearch("");
   }
 
-  function setFormValue(form: HTMLFormElement, name: string, value: string) {
-    const field = form.elements.namedItem(name);
-
-    if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement || field instanceof HTMLSelectElement) {
-      field.value = value;
-    }
+  function updateGameForm<K extends keyof GameFormState>(field: K, value: GameFormState[K]) {
+    setGameForm((currentForm) => ({
+      ...currentForm,
+      [field]: value
+    }));
   }
 
-  function resetGameForm(form?: HTMLFormElement | null) {
-    form?.reset();
+  function gameToFormState(game: AdminGameSummary): GameFormState {
+    return {
+      title: game.title,
+      version: game.version,
+      developer: game.developer,
+      engine: game.engine,
+      platforms: game.platforms.join(", "),
+      languages: game.languages.join(", "),
+      shortDescription: game.shortDescription,
+      description: game.description,
+      coverImageUrl: game.coverImage,
+      backgroundImageUrl: game.bannerImage,
+      galleryImageUrls: game.gallery.join("\n"),
+      downloadUrl: game.downloadUrl ?? "",
+      seoTitle: game.title,
+      seoDescription: game.shortDescription
+    };
+  }
+
+  function buildGameFormData() {
+    const formData = new FormData();
+
+    if (editingGame) {
+      formData.set("slug", editingGame.slug);
+    }
+
+    Object.entries(gameForm).forEach(([key, value]) => {
+      formData.set(key, value);
+    });
+    selectedGenres.forEach((genre) => formData.append("genres", genre));
+    selectedTags.forEach((tag) => formData.append("tags", tag));
+
+    return formData;
+  }
+
+  function splitAdminList(value: string) {
+    return value
+      .split(/\r?\n|,/)
+      .map((entry) => entry.trim())
+      .filter(Boolean);
+  }
+
+  function getEditedGameSnapshot(game: AdminGameSummary): AdminGameSummary {
+    return {
+      ...game,
+      title: gameForm.title,
+      version: gameForm.version,
+      developer: gameForm.developer,
+      engine: gameForm.engine,
+      downloadUrl: gameForm.downloadUrl || null,
+      shortDescription: gameForm.shortDescription,
+      description: gameForm.description,
+      tagline: gameForm.shortDescription.slice(0, 140),
+      coverImage: gameForm.coverImageUrl,
+      bannerImage: gameForm.backgroundImageUrl || gameForm.coverImageUrl,
+      gallery: splitAdminList(gameForm.galleryImageUrls).length
+        ? splitAdminList(gameForm.galleryImageUrls)
+        : [gameForm.backgroundImageUrl || gameForm.coverImageUrl],
+      platforms: splitAdminList(gameForm.platforms),
+      languages: splitAdminList(gameForm.languages),
+      genres: selectedGenres,
+      tags: selectedTags,
+      updatedAt: new Date().toISOString()
+    };
+  }
+
+  function resetGameForm() {
+    setGameForm(emptyGameFormState);
     setEditingGame(null);
     setSelectedGenres([]);
     setSelectedTags([]);
@@ -227,6 +328,7 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
 
   function startEditingGame(game: AdminGameSummary) {
     setEditingGame(game);
+    setGameForm(gameToFormState(game));
     setSelectedGenres(game.genres);
     setSelectedTags(game.tags);
     setGenreSearch("");
@@ -235,26 +337,7 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
 
     window.requestAnimationFrame(() => {
       const form = document.getElementById("admin-game-form") as HTMLFormElement | null;
-
-      if (!form) {
-        return;
-      }
-
-      setFormValue(form, "title", game.title);
-      setFormValue(form, "version", game.version);
-      setFormValue(form, "developer", game.developer);
-      setFormValue(form, "engine", game.engine);
-      setFormValue(form, "platforms", game.platforms.join(", "));
-      setFormValue(form, "languages", game.languages.join(", "));
-      setFormValue(form, "shortDescription", game.shortDescription);
-      setFormValue(form, "description", game.description);
-      setFormValue(form, "coverImageUrl", game.coverImage);
-      setFormValue(form, "backgroundImageUrl", game.bannerImage);
-      setFormValue(form, "galleryImageUrls", game.gallery.join("\n"));
-      setFormValue(form, "downloadUrl", game.downloadUrl ?? "");
-      setFormValue(form, "seoTitle", game.title);
-      setFormValue(form, "seoDescription", game.shortDescription);
-      form.scrollIntoView({ behavior: "smooth", block: "start" });
+      form?.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   }
 
@@ -399,7 +482,6 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
       return;
     }
 
-    const form = event.currentTarget;
     const controller = new AbortController();
     const timeout = window.setTimeout(() => controller.abort(), 30_000);
 
@@ -413,7 +495,7 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
     try {
       const response = await fetch("/api/admin/games", {
         method: editingGame ? "PATCH" : "POST",
-        body: new FormData(form),
+        body: buildGameFormData(),
         signal: controller.signal
       });
       const data = await response.json();
@@ -425,7 +507,11 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
       setMessage(data.message ?? fallbackMessage);
 
       if (response.ok) {
-        resetGameForm(form);
+        if (editingGame) {
+          setEditingGame(getEditedGameSnapshot(editingGame));
+        } else {
+          resetGameForm();
+        }
         await loadGames();
       }
     } catch (error) {
@@ -692,7 +778,7 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
                 <Button
                   type="button"
                   variant="secondary"
-                  onClick={() => resetGameForm(document.getElementById("admin-game-form") as HTMLFormElement | null)}
+                  onClick={resetGameForm}
                 >
                   {editingGame ? "Hủy sửa" : "Xóa form"}
                 </Button>
@@ -712,31 +798,75 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
                 <input key={tag} type="hidden" name="tags" value={tag} />
               ))}
               <div className="grid gap-4 md:grid-cols-2">
-                <Input name="title" placeholder="Tên game" required />
-                <Input name="version" placeholder="Phiên bản, ví dụ v1.2.0" required />
-                <Input name="developer" placeholder="Nhà phát triển / studio" required />
+                <Input
+                  name="title"
+                  value={gameForm.title}
+                  onChange={(event) => updateGameForm("title", event.target.value)}
+                  placeholder="Tên game"
+                  required
+                />
+                <Input
+                  name="version"
+                  value={gameForm.version}
+                  onChange={(event) => updateGameForm("version", event.target.value)}
+                  placeholder="Phiên bản, ví dụ v1.2.0"
+                  required
+                />
+                <Input
+                  name="developer"
+                  value={gameForm.developer}
+                  onChange={(event) => updateGameForm("developer", event.target.value)}
+                  placeholder="Nhà phát triển / studio"
+                  required
+                />
                 <select
                   name="engine"
-                  defaultValue=""
+                  value={gameForm.engine}
+                  onChange={(event) => updateGameForm("engine", event.target.value)}
                   required
                   className="h-12 w-full rounded-lg border border-white/10 bg-black/30 px-4 text-sm text-foreground focus:border-primary/50"
                 >
                   <option value="" disabled>
                     Chọn engine
                   </option>
-                  {ENGINES.map((engine) => (
+                  {engineOptions.map((engine) => (
                     <option key={engine} value={engine}>
                       {engine}
                     </option>
                   ))}
                 </select>
-                <Input name="platforms" placeholder="Thiết bị: Windows, Android, macOS..." required />
-                <Input name="languages" placeholder="Ngôn ngữ: English, Vietnamese..." />
+                <Input
+                  name="platforms"
+                  value={gameForm.platforms}
+                  onChange={(event) => updateGameForm("platforms", event.target.value)}
+                  placeholder="Thiết bị: Windows, Android, macOS..."
+                  required
+                />
+                <Input
+                  name="languages"
+                  value={gameForm.languages}
+                  onChange={(event) => updateGameForm("languages", event.target.value)}
+                  placeholder="Ngôn ngữ: English, Vietnamese..."
+                />
               </div>
 
               <div className="grid gap-4 md:grid-cols-2">
-                <Textarea name="shortDescription" placeholder="Giới thiệu ngắn hiển thị trên card game..." className="min-h-[150px]" required />
-                <Textarea name="description" placeholder="Mô tả chi tiết, story, gameplay, điểm nổi bật..." className="min-h-[150px]" required />
+                <Textarea
+                  name="shortDescription"
+                  value={gameForm.shortDescription}
+                  onChange={(event) => updateGameForm("shortDescription", event.target.value)}
+                  placeholder="Giới thiệu ngắn hiển thị trên card game..."
+                  className="min-h-[150px]"
+                  required
+                />
+                <Textarea
+                  name="description"
+                  value={gameForm.description}
+                  onChange={(event) => updateGameForm("description", event.target.value)}
+                  placeholder="Mô tả chi tiết, story, gameplay, điểm nổi bật..."
+                  className="min-h-[150px]"
+                  required
+                />
               </div>
 
               <div className="space-y-4 rounded-xl border border-primary/15 bg-primary/5 p-4">
@@ -750,11 +880,26 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
                   </div>
                 </div>
                 <div className="grid gap-4 md:grid-cols-2">
-                  <Input name="coverImageUrl" type="url" placeholder="Link ảnh cover, ví dụ: https://i.imgur.com/cover.jpg" required />
-                  <Input name="backgroundImageUrl" type="url" placeholder="Link background/banner, có thể để trống" />
+                  <Input
+                    name="coverImageUrl"
+                    type="url"
+                    value={gameForm.coverImageUrl}
+                    onChange={(event) => updateGameForm("coverImageUrl", event.target.value)}
+                    placeholder="Link ảnh cover, ví dụ: https://i.imgur.com/cover.jpg"
+                    required
+                  />
+                  <Input
+                    name="backgroundImageUrl"
+                    type="url"
+                    value={gameForm.backgroundImageUrl}
+                    onChange={(event) => updateGameForm("backgroundImageUrl", event.target.value)}
+                    placeholder="Link background/banner, có thể để trống"
+                  />
                 </div>
                 <Textarea
                   name="galleryImageUrls"
+                  value={gameForm.galleryImageUrls}
+                  onChange={(event) => updateGameForm("galleryImageUrls", event.target.value)}
                   placeholder={"Link ảnh giới thiệu, mỗi dòng một ảnh:\nhttps://i.imgur.com/screen-1.jpg\nhttps://i.imgur.com/screen-2.jpg"}
                   className="min-h-[120px]"
                 />
@@ -855,10 +1000,25 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
               </div>
 
               <div className="grid gap-4 md:grid-cols-2">
-                <Input name="downloadUrl" placeholder="Link tải / download hub" />
-                <Input name="seoTitle" placeholder="SEO title" />
+                <Input
+                  name="downloadUrl"
+                  value={gameForm.downloadUrl}
+                  onChange={(event) => updateGameForm("downloadUrl", event.target.value)}
+                  placeholder="Link tải / download hub"
+                />
+                <Input
+                  name="seoTitle"
+                  value={gameForm.seoTitle}
+                  onChange={(event) => updateGameForm("seoTitle", event.target.value)}
+                  placeholder="SEO title"
+                />
               </div>
-              <Textarea name="seoDescription" placeholder="SEO description..." />
+              <Textarea
+                name="seoDescription"
+                value={gameForm.seoDescription}
+                onChange={(event) => updateGameForm("seoDescription", event.target.value)}
+                placeholder="SEO description..."
+              />
 
               {message ? (
                 <div className="rounded-lg border border-primary/25 bg-primary/8 px-4 py-3 text-sm text-primary">
