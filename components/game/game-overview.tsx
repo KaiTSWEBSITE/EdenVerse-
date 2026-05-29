@@ -10,12 +10,12 @@ export function GameOverview({ game }: { game: Game }) {
         <CardContent className="space-y-8 p-8">
           <div>
             <p className="text-xs uppercase tracking-[0.22em] text-primary">Cốt truyện</p>
-            <p className="mt-3 text-base leading-8 text-muted-foreground">{game.story}</p>
+            <p className="mt-3 whitespace-pre-line text-base leading-8 text-muted-foreground">{game.story}</p>
           </div>
           <Separator />
           <div>
             <p className="text-xs uppercase tracking-[0.22em] text-primary">Giới thiệu</p>
-            <p className="mt-3 text-base leading-8 text-muted-foreground">{game.description}</p>
+            <p className="mt-3 whitespace-pre-line text-base leading-8 text-muted-foreground">{game.description}</p>
           </div>
           <Separator />
           <div id="download">

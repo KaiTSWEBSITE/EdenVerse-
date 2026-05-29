@@ -45,7 +45,7 @@ export function GameCard({ game }: { game: Game }) {
               ))}
               {game.mature ? <Badge className="border-accent/30 bg-accent/10 px-2 py-1 text-[9px] leading-none text-accent">18+</Badge> : null}
             </div>
-            <h3 className="font-display text-2xl leading-tight text-white">{game.title}</h3>
+            <h3 className="break-words py-0.5 font-display text-2xl leading-[1.16] text-white">{game.title}</h3>
             <p className="mt-2 line-clamp-2 text-sm leading-6 text-white/72">{game.shortDescription}</p>
           </div>
         </div>

@@ -28,9 +28,13 @@ export function GameHero({ game }: { game: Game }) {
               {game.mature ? <Badge className="border-accent/30 bg-accent/10 text-accent">18+ Mature</Badge> : null}
             </div>
             <div className="space-y-3">
-              <h1 className="font-display text-5xl text-foreground sm:text-6xl">{game.title}</h1>
-              <p className="text-sm uppercase tracking-[0.22em] text-primary">{game.tagline}</p>
-              <p className="max-w-4xl text-base leading-8 text-muted-foreground">{game.description}</p>
+              <h1 className="break-words py-1 font-display text-5xl leading-[1.16] text-foreground sm:text-6xl sm:leading-[1.14]">
+                {game.title}
+              </h1>
+              <p className="whitespace-pre-line break-words text-sm uppercase leading-7 tracking-[0.22em] text-primary">
+                {game.tagline}
+              </p>
+              <p className="max-w-4xl whitespace-pre-line text-base leading-8 text-muted-foreground">{game.description}</p>
             </div>
             <div className="grid gap-4 md:grid-cols-4">
               <Card className="bg-black/18">

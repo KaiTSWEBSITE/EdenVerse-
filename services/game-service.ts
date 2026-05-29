@@ -4,6 +4,7 @@ import { prisma } from "@/database/prisma";
 import { isDemoCatalogHidden } from "@/services/demo-catalog-service";
 import { getTrackedDownloadCount } from "@/services/download-service";
 import type { Game, SearchFilters } from "@/types";
+import { getGameDisplayTitle } from "@/lib/game-title";
 
 const gameInclude = {
   genres: true,
@@ -66,7 +67,7 @@ function mapGameRecord(game: GameRecord): Game {
   return {
     id: game.id,
     slug: game.slug,
-    title: game.title,
+    title: getGameDisplayTitle(game),
     tagline: game.tagline,
     shortDescription: game.shortDescription,
     description: game.description,
