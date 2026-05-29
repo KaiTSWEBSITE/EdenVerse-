@@ -21,7 +21,8 @@ export function GameOverview({ game }: { game: Game }) {
           <div id="download">
             <p className="text-xs uppercase tracking-[0.22em] text-primary">Khu tải game</p>
             <p className="mt-3 text-base leading-8 text-muted-foreground">
-              Mỗi lần người dùng bấm nút tải, EdenVerse sẽ ghi nhận một lượt click. Bảng Game Hot sẽ dùng số liệu này để tự sắp xếp game nổi bật hơn.
+              Mỗi lần người dùng bấm nút tải, EdenVerse sẽ ghi nhận một lượt click. Bảng Game Hot dùng số liệu này để tự sắp xếp game nổi bật hơn.
+              {game.downloadUrlAlt ? " Game này có thêm link dự phòng để đổi mirror khi link chính quá tải hoặc lỗi." : ""}
             </p>
           </div>
         </CardContent>

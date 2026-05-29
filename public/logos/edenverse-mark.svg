@@ -1,37 +1,52 @@
 <svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <radialGradient id="aura" cx="50%" cy="36%" r="70%">
-      <stop offset="0%" stop-color="#B9F6FF" stop-opacity="0.82"/>
-      <stop offset="38%" stop-color="#175A73" stop-opacity="0.58"/>
-      <stop offset="100%" stop-color="#04060B"/>
+    <radialGradient id="aura" cx="50%" cy="38%" r="72%">
+      <stop offset="0%" stop-color="#DFFBFF" stop-opacity="0.9"/>
+      <stop offset="36%" stop-color="#1CA6D2" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#03050A"/>
     </radialGradient>
-    <linearGradient id="glass" x1="128" y1="38" x2="128" y2="220">
-      <stop stop-color="#D8FBFF"/>
-      <stop offset="0.42" stop-color="#67D7FF"/>
-      <stop offset="1" stop-color="#0D6E8E"/>
+    <linearGradient id="gold" x1="44" y1="30" x2="211" y2="229">
+      <stop stop-color="#FFF0BA"/>
+      <stop offset="0.52" stop-color="#C79B4B"/>
+      <stop offset="1" stop-color="#5D3518"/>
     </linearGradient>
-    <linearGradient id="gold" x1="58" y1="38" x2="198" y2="222">
-      <stop stop-color="#FFE3A0"/>
-      <stop offset="0.56" stop-color="#C49A4E"/>
-      <stop offset="1" stop-color="#68451D"/>
+    <linearGradient id="glass" x1="128" y1="55" x2="128" y2="217">
+      <stop stop-color="#F6FEFF"/>
+      <stop offset="0.42" stop-color="#70DCFF"/>
+      <stop offset="1" stop-color="#063D59"/>
     </linearGradient>
-    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
-      <feGaussianBlur stdDeviation="5" result="blur"/>
-      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.28 0 0 0 0 0.84 0 0 0 0 1 0 0 0 0.55 0"/>
+    <filter id="blueGlow" x="-40%" y="-40%" width="180%" height="180%" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="7" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.19 0 0 0 0 0.78 0 0 0 0 1 0 0 0 0.75 0"/>
+      <feBlend in="SourceGraphic"/>
+    </filter>
+    <filter id="goldGlow" x="-35%" y="-35%" width="170%" height="170%" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 1 0 0 0 0 0.75 0 0 0 0 0.28 0 0 0 0.42 0"/>
       <feBlend in="SourceGraphic"/>
     </filter>
   </defs>
-  <rect width="256" height="256" rx="58" fill="#03050A"/>
-  <rect x="16" y="16" width="224" height="224" rx="50" fill="url(#aura)" stroke="#86E8FF" stroke-opacity="0.32" stroke-width="2"/>
-  <path d="M128 31L196 75V218H60V75L128 31Z" fill="#07101A" stroke="url(#gold)" stroke-width="6" stroke-linejoin="round"/>
-  <path d="M88 212V91C88 70.01 104.96 53 126 53H130C151.04 53 168 70.01 168 91V212H88Z" fill="url(#glass)" fill-opacity="0.88" filter="url(#softGlow)"/>
-  <path d="M128 54V214" stroke="#042331" stroke-width="5" stroke-linecap="round" opacity="0.66"/>
-  <path d="M91 117H165" stroke="#D7FAFF" stroke-opacity="0.52" stroke-width="4" stroke-linecap="round"/>
-  <path d="M102 80L128 54L154 80" stroke="#D7FAFF" stroke-opacity="0.58" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M53 218H203" stroke="url(#gold)" stroke-width="8" stroke-linecap="round"/>
-  <path d="M71 73L128 38L185 73" stroke="#FFE1A0" stroke-opacity="0.72" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M78 178H111V192H94V202H113V216H78V178Z" fill="#FFE6A6"/>
-  <path d="M145 178H161L170 200L179 178H195L177 216H163L145 178Z" fill="#FFE6A6"/>
-  <circle cx="128" cy="131" r="15" fill="#08121B" stroke="#F5D68B" stroke-width="5"/>
-  <path d="M128 120V142M117 131H139" stroke="#8DEAFF" stroke-width="4" stroke-linecap="round"/>
+
+  <rect width="256" height="256" rx="56" fill="#02040A"/>
+  <rect x="14" y="14" width="228" height="228" rx="50" fill="url(#aura)" stroke="#8BEAFF" stroke-opacity="0.38" stroke-width="2"/>
+  <path d="M128 28L203 77V222H53V77L128 28Z" fill="#07101A" stroke="url(#gold)" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M128 39L187 78" stroke="#FFE9A8" stroke-opacity="0.55" stroke-width="3" stroke-linecap="round"/>
+  <path d="M128 39L69 78" stroke="#FFE9A8" stroke-opacity="0.55" stroke-width="3" stroke-linecap="round"/>
+
+  <g filter="url(#blueGlow)">
+    <path d="M86 214V95C86 71.8 104.8 53 128 53C151.2 53 170 71.8 170 95V214H86Z" fill="url(#glass)" fill-opacity="0.88"/>
+    <path d="M128 55V214" stroke="#04212F" stroke-opacity="0.76" stroke-width="5" stroke-linecap="round"/>
+    <path d="M92 119H164" stroke="#DDFBFF" stroke-opacity="0.58" stroke-width="4" stroke-linecap="round"/>
+    <path d="M104 81L128 57L152 81" stroke="#F0FDFF" stroke-opacity="0.62" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <path d="M55 220H201" stroke="url(#gold)" stroke-width="9" stroke-linecap="round" filter="url(#goldGlow)"/>
+  <circle cx="128" cy="133" r="15" fill="#07101A" stroke="#F4D487" stroke-width="5"/>
+  <path d="M128 121V145M116 133H140" stroke="#8EEDFF" stroke-width="4" stroke-linecap="round"/>
+
+  <path d="M78 177H111V191H94V200H114V215H78V177Z" fill="#FFE7A6"/>
+  <path d="M142 177H158L169 199L180 177H197L178 215H162L142 177Z" fill="#FFE7A6"/>
+
+  <path d="M176 43L151 92H174L139 151L149 106H127L154 43H176Z" fill="#EAFBFF" filter="url(#blueGlow)"/>
+  <path d="M177 43L151 92H174L139 151" stroke="#FFD873" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

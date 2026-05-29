@@ -12,6 +12,9 @@ EdenVerse là website giới thiệu và quản lý game theo phong cách dark f
 - Không hard-code tài khoản admin production trong source hoặc README.
 - Super Admin được tạo bằng `ADMIN_SETUP_TOKEN` bí mật một lần.
 - Admin có form đăng game thật vào PostgreSQL, chỉnh giới thiệu trang chủ, xóa bài, xóa game demo và đổi mật khẩu.
+- Mỗi game hỗ trợ link tải chính và link tải phụ/mirror dự phòng.
+- Header và footer có nút Discord server, cấu hình bằng `NEXT_PUBLIC_DISCORD_URL`.
+- Logo SVG mới và GIF logo riêng tại `public/logos/edenverse-logo-lightning.gif`.
 - Có rate limit, role check, origin check, bcrypt hash, Zod validation, upload filter và security headers.
 
 ## Chạy Local
@@ -40,6 +43,7 @@ Biến quan trọng:
 - `ENABLE_DEMO_AUTH`: chỉ bật `true` cho local demo, không bật production.
 - `ENABLE_PRISMA_DEMO_FALLBACK`: bật/tắt game fallback demo.
 - `NEXT_PUBLIC_SITE_INTRO`: câu giới thiệu mặc định trước khi admin lưu setting.
+- `NEXT_PUBLIC_DISCORD_URL`: link invite Discord server hiển thị ở menu và footer.
 
 ## PostgreSQL / Prisma
 
@@ -76,7 +80,7 @@ Không có mật khẩu admin mặc định. Quy trình đúng là:
 ## API Chính
 
 - `GET /api/games`
-- `POST /api/games/[slug]/download`
+- `POST /api/games/[slug]/download`: body có thể gửi `{ "mirror": "primary" }` hoặc `{ "mirror": "backup" }`.
 - `POST /api/admin/bootstrap`
 - `POST /api/admin/games`
 - `POST /api/admin/password`

@@ -95,6 +95,7 @@ type AdminGameSummary = {
   developer: string;
   engine: string;
   downloadUrl: string | null;
+  downloadUrlAlt: string | null;
   downloadsCount: number;
   coverImage: string;
   bannerImage: string;
@@ -124,6 +125,7 @@ type GameFormState = {
   backgroundImageUrl: string;
   galleryImageUrls: string;
   downloadUrl: string;
+  downloadUrlAlt: string;
   seoTitle: string;
   seoDescription: string;
 };
@@ -141,6 +143,7 @@ const emptyGameFormState: GameFormState = {
   backgroundImageUrl: "",
   galleryImageUrls: "",
   downloadUrl: "",
+  downloadUrlAlt: "",
   seoTitle: "",
   seoDescription: ""
 };
@@ -274,6 +277,7 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
       backgroundImageUrl: game.bannerImage,
       galleryImageUrls: game.gallery.join("\n"),
       downloadUrl: game.downloadUrl ?? "",
+      downloadUrlAlt: game.downloadUrlAlt ?? "",
       seoTitle: game.title,
       seoDescription: game.shortDescription
     };
@@ -310,6 +314,7 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
       developer: gameForm.developer,
       engine: gameForm.engine,
       downloadUrl: gameForm.downloadUrl || null,
+      downloadUrlAlt: gameForm.downloadUrlAlt || null,
       shortDescription: gameForm.shortDescription,
       description: gameForm.description,
       tagline: gameForm.shortDescription.slice(0, 140),
@@ -682,6 +687,7 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
                         <span>Slug: {game.slug}</span>
                         <span>Studio: {game.developer}</span>
                         <span>Lượt tải: {game.downloadsCount}</span>
+                        <span>{game.downloadUrlAlt ? "Có link tải phụ" : "1 link tải"}</span>
                         <span>Bình luận: {game._count?.comments ?? 0}</span>
                         <span>Đánh giá: {game._count?.reviews ?? 0}</span>
                         <span>Cập nhật: {formatAdminDate(game.updatedAt)}</span>
@@ -899,7 +905,6 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
                 <div className="grid gap-4 md:grid-cols-2">
                   <Input
                     name="coverImageUrl"
-                    type="url"
                     value={gameForm.coverImageUrl}
                     onChange={(event) => updateGameForm("coverImageUrl", event.target.value)}
                     placeholder="Link ảnh cover, ví dụ: https://i.imgur.com/cover.jpg"
@@ -907,7 +912,6 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
                   />
                   <Input
                     name="backgroundImageUrl"
-                    type="url"
                     value={gameForm.backgroundImageUrl}
                     onChange={(event) => updateGameForm("backgroundImageUrl", event.target.value)}
                     placeholder="Link background/banner, có thể để trống"
@@ -1021,7 +1025,13 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
                   name="downloadUrl"
                   value={gameForm.downloadUrl}
                   onChange={(event) => updateGameForm("downloadUrl", event.target.value)}
-                  placeholder="Link tải / download hub"
+                  placeholder="Link tải chính / download hub"
+                />
+                <Input
+                  name="downloadUrlAlt"
+                  value={gameForm.downloadUrlAlt}
+                  onChange={(event) => updateGameForm("downloadUrlAlt", event.target.value)}
+                  placeholder="Link tải phụ / mirror dự phòng"
                 />
                 <Input
                   name="seoTitle"

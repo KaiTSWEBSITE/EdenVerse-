@@ -20,7 +20,7 @@ export function getTrackedDownloadCount(game: Game) {
   return game.downloads + getDownloadClickCount(game.slug);
 }
 
-export async function recordDownloadClick(slug: string) {
+export async function recordDownloadClick(slug: string, mirror: "primary" | "backup" = "primary") {
   const nextClicks = getDownloadClickCount(slug) + 1;
   downloadClicks.set(slug, nextClicks);
 
@@ -34,14 +34,18 @@ export async function recordDownloadClick(slug: string) {
         },
         select: {
           downloadsCount: true,
-          downloadUrl: true
+          downloadUrl: true,
+          downloadUrlAlt: true
         }
       });
+
+      const selectedUrl = mirror === "backup" ? game.downloadUrlAlt || game.downloadUrl : game.downloadUrl;
 
       return {
         clicks: nextClicks,
         downloads: game.downloadsCount,
-        downloadUrl: game.downloadUrl || `/games/${slug}#download`
+        downloadUrl: selectedUrl || `/games/${slug}#download`,
+        mirror
       };
     } catch {
       // Fall back to in-memory tracking when the clicked game is not in Prisma yet.
@@ -52,6 +56,7 @@ export async function recordDownloadClick(slug: string) {
   return {
     clicks: nextClicks,
     downloads: game ? game.downloads + nextClicks : nextClicks,
-    downloadUrl: `/games/${slug}#download`
+    downloadUrl: `/games/${slug}#download`,
+    mirror
   };
 }

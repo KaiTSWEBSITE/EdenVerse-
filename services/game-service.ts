@@ -90,6 +90,7 @@ function mapGameRecord(game: GameRecord): Game {
     gallery: toStringArray(game.gallery),
     trailerUrl: game.trailerUrl ?? "",
     downloadUrl: game.downloadUrl ?? undefined,
+    downloadUrlAlt: game.downloadUrlAlt ?? undefined,
     genres: game.genres.map((entry) => entry.genre),
     tags: game.tags.map((entry) => entry.tag.name),
     platforms: toStringArray(game.platforms).length ? toStringArray(game.platforms) : fallback?.platforms ?? ["Windows"],

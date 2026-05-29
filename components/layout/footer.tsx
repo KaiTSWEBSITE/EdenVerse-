@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Route } from "next";
+import { ExternalLink, MessageCircle } from "lucide-react";
 import { footerNavigation } from "@/config/navigation";
 import { siteConfig } from "@/config/site";
 import { Logo } from "@/components/layout/logo";
@@ -11,6 +12,16 @@ export function Footer() {
         <div className="space-y-5">
           <Logo />
           <p className="max-w-md text-sm leading-7 text-muted-foreground">{siteConfig.description}</p>
+          <a
+            href={siteConfig.discordUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-lg border border-[#5865F2]/30 bg-[#5865F2]/12 px-4 py-2 text-sm font-semibold text-foreground transition hover:bg-[#5865F2]/18"
+          >
+            <MessageCircle className="h-4 w-4 text-primary" />
+            Vào Discord server
+            <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
+          </a>
           <div className="space-y-2 text-xs text-muted-foreground">
             <p className="uppercase tracking-[0.18em]">Thuộc sở hữu và vận hành bởi {siteConfig.owner}</p>
             <p>{siteConfig.copyright}</p>

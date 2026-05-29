@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import type { Route } from "next";
-import { Menu, ShieldCheck, UserRound } from "lucide-react";
+import { ExternalLink, Menu, MessageCircle, ShieldCheck, UserRound } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { useState } from "react";
 import { primaryNavigation } from "@/config/navigation";
+import { siteConfig } from "@/config/site";
 import { Logo } from "@/components/layout/logo";
 import { SearchCommand } from "@/components/search/search-command";
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,7 @@ export function Header() {
   const { data: session, status } = useSession();
   const username = session?.user?.username;
   const isAdmin = ["ADMIN", "SUPER_ADMIN"].includes(session?.user?.role ?? "");
+  const visibleNavigation = primaryNavigation.filter((item) => item.href !== "/admin" || isAdmin);
 
   return (
     <header className="sticky top-0 z-40 border-b border-white/8 bg-[rgba(5,7,12,0.72)] backdrop-blur-xl">
@@ -23,7 +25,7 @@ export function Header() {
         <Logo className="shrink-0" />
 
         <nav className="hidden items-center gap-1 xl:flex">
-          {primaryNavigation.map((item) => (
+          {visibleNavigation.map((item) => (
             <Link
               key={item.href}
               href={item.href as Route}
@@ -39,6 +41,13 @@ export function Header() {
         </div>
 
         <div className="hidden items-center gap-3 md:flex">
+          <a href={siteConfig.discordUrl} target="_blank" rel="noopener noreferrer">
+            <Button variant="ghost" className="hidden xl:inline-flex">
+              <MessageCircle className="h-4 w-4" />
+              Discord
+              <ExternalLink className="h-3.5 w-3.5" />
+            </Button>
+          </a>
           {status === "authenticated" ? (
             <>
               {isAdmin ? (
@@ -70,8 +79,12 @@ export function Header() {
         </div>
 
         <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild className="lg:hidden">
-            <button className="ml-auto rounded-lg border border-white/10 bg-white/6 p-3 text-foreground">
+          <DialogTrigger asChild>
+            <button
+              type="button"
+              aria-label="Mở menu EdenVerse"
+              className="ml-auto rounded-lg border border-white/10 bg-white/6 p-3 text-foreground xl:hidden"
+            >
               <Menu className="h-5 w-5" />
             </button>
           </DialogTrigger>
@@ -82,7 +95,7 @@ export function Header() {
                 <SearchCommand />
               </div>
               <div className="space-y-2">
-                {primaryNavigation.map((item) => (
+                {visibleNavigation.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href as Route}
@@ -92,6 +105,19 @@ export function Header() {
                     {item.label}
                   </Link>
                 ))}
+                <a
+                  href={siteConfig.discordUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center justify-between rounded-lg border border-[#5865F2]/30 bg-[#5865F2]/12 px-4 py-3 text-sm text-foreground transition hover:bg-[#5865F2]/18"
+                >
+                  <span className="inline-flex items-center gap-2">
+                    <MessageCircle className="h-4 w-4 text-primary" />
+                    Discord server
+                  </span>
+                  <ExternalLink className="h-4 w-4 text-muted-foreground" />
+                </a>
                 {status === "authenticated" && username ? (
                   <Link
                     href={`/profile/${username}` as Route}

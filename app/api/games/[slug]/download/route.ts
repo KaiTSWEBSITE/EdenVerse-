@@ -5,6 +5,8 @@ import { applyRateLimit } from "@/middleware/rate-limit";
 
 export async function POST(request: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
+  const body = await request.json().catch(() => ({}));
+  const mirror = body?.mirror === "backup" ? "backup" : "primary";
   const game = await getGameBySlug(slug);
 
   if (!game) {
@@ -20,7 +22,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ slu
     return NextResponse.json({ message: "Bạn bấm tải quá nhanh, thử lại sau một chút." }, { status: 429 });
   }
 
-  const stats = await recordDownloadClick(slug);
+  const stats = await recordDownloadClick(slug, mirror);
 
   return NextResponse.json({
     message: "Đã ghi nhận lượt click tải.",

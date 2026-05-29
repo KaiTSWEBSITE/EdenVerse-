@@ -4,9 +4,9 @@ import type { Game } from "@/types";
 import { formatCompactNumber, formatDate, formatRating } from "@/lib/utils";
 import { getTrackedDownloadCount } from "@/services/download-service";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { DownloadButton } from "@/components/game/download-button";
+import { SaveGameButton } from "@/components/game/save-game-button";
 
 export function GameHero({ game }: { game: Game }) {
   const trackedDownloads = getTrackedDownloadCount(game);
@@ -79,8 +79,8 @@ export function GameHero({ game }: { game: Game }) {
               </Card>
             </div>
             <div className="flex flex-wrap gap-3">
-              <DownloadButton slug={game.slug} initialDownloads={trackedDownloads} />
-              <Button variant="secondary">Lưu vào danh sách</Button>
+              <DownloadButton slug={game.slug} initialDownloads={trackedDownloads} hasBackup={Boolean(game.downloadUrlAlt)} />
+              <SaveGameButton slug={game.slug} />
             </div>
           </CardContent>
         </Card>

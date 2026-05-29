@@ -92,6 +92,7 @@ model Game {
   updatedAt       DateTime       @updatedAt
   trailerUrl      String?
   downloadUrl     String?
+  downloadUrlAlt  String?
   mature          Boolean        @default(false)
   featured        Boolean        @default(false)
   hero            Boolean        @default(false)

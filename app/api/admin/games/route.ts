@@ -25,6 +25,7 @@ const adminGameSelect = {
   developer: true,
   engine: true,
   downloadUrl: true,
+  downloadUrlAlt: true,
   downloadsCount: true,
   coverImage: true,
   bannerImage: true,
@@ -57,6 +58,29 @@ const adminGameSelect = {
 
 type AdminGameRecord = Prisma.GameGetPayload<{ select: typeof adminGameSelect }>;
 
+function isHttpsUrl(value: string) {
+  try {
+    const url = new URL(value.trim());
+    return url.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+function isInternalAssetPath(value: string) {
+  const trimmed = value.trim();
+  return trimmed.startsWith("/") && !trimmed.startsWith("//");
+}
+
+const externalImageUrlSchema = z.string().trim().url("Link ảnh cover chưa hợp lệ.").max(2048);
+const optionalExternalImageUrlSchema = z.string().trim().url("Link background chưa hợp lệ.").max(2048).optional().or(z.literal(""));
+const editableImageUrlSchema = z
+  .string()
+  .trim()
+  .max(2048)
+  .refine((value) => isHttpsUrl(value) || isInternalAssetPath(value), "Link ảnh cần là HTTPS hoặc đường dẫn ảnh nội bộ hiện có.");
+const optionalEditableImageUrlSchema = editableImageUrlSchema.optional().or(z.literal(""));
+
 const gameDraftSchema = z.object({
   title: z.string().trim().min(2).max(120),
   version: z.string().trim().min(1).max(40),
@@ -67,8 +91,9 @@ const gameDraftSchema = z.object({
   shortDescription: z.string().trim().min(10).max(420),
   description: z.string().trim().min(20).max(4000),
   downloadUrl: z.string().trim().url().optional().or(z.literal("")),
-  coverImageUrl: z.string().trim().url("Link ảnh cover chưa hợp lệ.").max(2048),
-  backgroundImageUrl: z.string().trim().url("Link background chưa hợp lệ.").max(2048).optional().or(z.literal("")),
+  downloadUrlAlt: z.string().trim().url().optional().or(z.literal("")),
+  coverImageUrl: externalImageUrlSchema,
+  backgroundImageUrl: optionalExternalImageUrlSchema,
   galleryImageUrls: z.string().trim().max(6000).optional(),
   seoTitle: z.string().trim().max(120).optional(),
   seoDescription: z.string().trim().max(220).optional(),
@@ -81,7 +106,9 @@ const deleteGameSchema = z.object({
 });
 
 const updateGameSchema = gameDraftSchema.extend({
-  slug: z.string().trim().min(2).max(140)
+  slug: z.string().trim().min(2).max(140),
+  coverImageUrl: editableImageUrlSchema,
+  backgroundImageUrl: optionalEditableImageUrlSchema
 });
 
 function getClientKey(request: Request) {
@@ -146,6 +173,16 @@ function normalizeExternalImageUrl(value: string, label: string) {
   }
 }
 
+function normalizeEditableImageUrl(value: string, label: string) {
+  const trimmed = value.trim();
+
+  if (trimmed.startsWith("/") && !trimmed.startsWith("//")) {
+    return trimmed;
+  }
+
+  return normalizeExternalImageUrl(trimmed, label);
+}
+
 function parseGalleryImageUrls(value: string | undefined, fallbackImage: string) {
   const urls = (value ?? "")
     .split(/\r?\n|,/)
@@ -153,6 +190,19 @@ function parseGalleryImageUrls(value: string | undefined, fallbackImage: string)
     .filter(Boolean)
     .slice(0, MAX_GALLERY_IMAGES)
     .map((entry, index) => normalizeExternalImageUrl(entry, `Ảnh giới thiệu ${index + 1}`));
+
+  return urls.length ? urls : [fallbackImage];
+}
+
+function parseEditableGalleryImageUrls(value: string | undefined, fallbackImage: string) {
+  const urls = (value ?? "")
+    .split(/\r?\n|,/)
+    .map((entry) => entry.trim())
+    .filter(Boolean)
+    .slice(0, MAX_GALLERY_IMAGES)
+    .map((entry, index) =>
+      isInternalAssetPath(entry) ? entry : normalizeExternalImageUrl(entry, `Ảnh giới thiệu ${index + 1}`)
+    );
 
   return urls.length ? urls : [fallbackImage];
 }
@@ -185,6 +235,7 @@ function getGameFormPayload(formData: FormData) {
     shortDescription: getText(formData, "shortDescription"),
     description: getText(formData, "description"),
     downloadUrl: getText(formData, "downloadUrl"),
+    downloadUrlAlt: getText(formData, "downloadUrlAlt"),
     coverImageUrl: getText(formData, "coverImageUrl"),
     backgroundImageUrl: getText(formData, "backgroundImageUrl"),
     galleryImageUrls: getText(formData, "galleryImageUrls"),
@@ -338,7 +389,8 @@ export async function PATCH(request: Request) {
         gallery: true,
         platforms: true,
         languages: true,
-        downloadUrl: true
+        downloadUrl: true,
+        downloadUrlAlt: true
       }
     });
 
@@ -347,13 +399,13 @@ export async function PATCH(request: Request) {
     }
 
     const coverImage = parsed.data.coverImageUrl
-      ? normalizeExternalImageUrl(parsed.data.coverImageUrl, "Ảnh cover")
+      ? normalizeEditableImageUrl(parsed.data.coverImageUrl, "Ảnh cover")
       : existingGame.coverImage;
     const bannerImage = parsed.data.backgroundImageUrl
-      ? normalizeExternalImageUrl(parsed.data.backgroundImageUrl, "Background")
+      ? normalizeEditableImageUrl(parsed.data.backgroundImageUrl, "Background")
       : existingGame.bannerImage || coverImage || DEFAULT_BANNER_IMAGE;
     const gallery = parsed.data.galleryImageUrls?.trim()
-      ? parseGalleryImageUrls(parsed.data.galleryImageUrls, bannerImage || DEFAULT_COVER_IMAGE)
+      ? parseEditableGalleryImageUrls(parsed.data.galleryImageUrls, bannerImage || DEFAULT_COVER_IMAGE)
       : normalizeStringArray(existingGame.gallery);
     const tags = parsed.data.tags ?? [];
     const tagRecords = await Promise.all(
@@ -387,6 +439,7 @@ export async function PATCH(request: Request) {
         developer: parsed.data.developer,
         engine: parsed.data.engine,
         downloadUrl: parsed.data.downloadUrl || existingGame.downloadUrl,
+        downloadUrlAlt: parsed.data.downloadUrlAlt || existingGame.downloadUrlAlt,
         mature: tags.includes("18+") || parsed.data.genres.includes("Adult") || parsed.data.genres.includes("Adult VN"),
         coverImage,
         bannerImage,
@@ -508,6 +561,7 @@ export async function POST(request: Request) {
         engine: parsed.data.engine,
         releaseDate: new Date(),
         downloadUrl: parsed.data.downloadUrl || null,
+        downloadUrlAlt: parsed.data.downloadUrlAlt || null,
         mature: tags.includes("18+") || parsed.data.genres.includes("Adult") || parsed.data.genres.includes("Adult VN"),
         featured: true,
         hero: !hasExistingGames,

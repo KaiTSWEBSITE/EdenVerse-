@@ -3,6 +3,7 @@ export const siteConfig = {
   copyright: "© 2026 EdenVerse. All rights reserved.",
   description:
     "Thư viện game Visual Novel, Sandbox, RPG và Anime Games với giao diện gothic cao cấp, dễ tìm và dễ chọn.",
+  discordUrl: process.env.NEXT_PUBLIC_DISCORD_URL ?? "https://discord.gg/edenverse",
   keywords: [
     "visual novel",
     "adult vn",
