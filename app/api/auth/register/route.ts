@@ -26,15 +26,21 @@ export async function POST(request: Request) {
     });
   }
 
-  const passwordHash = await bcrypt.hash(parsed.data.password, 10);
-
-  const user = await prisma.user.upsert({
-    where: { email: parsed.data.email },
-    update: {
-      username: parsed.data.username,
-      passwordHash
+  const existingUser = await prisma.user.findFirst({
+    where: {
+      OR: [{ email: parsed.data.email }, { username: parsed.data.username }]
     },
-    create: {
+    select: { id: true }
+  });
+
+  if (existingUser) {
+    return NextResponse.json({ message: "Email hoặc username đã tồn tại." }, { status: 409 });
+  }
+
+  const passwordHash = await bcrypt.hash(parsed.data.password, 12);
+
+  const user = await prisma.user.create({
+    data: {
       email: parsed.data.email,
       username: parsed.data.username,
       name: parsed.data.username,

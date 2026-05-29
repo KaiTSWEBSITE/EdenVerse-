@@ -25,5 +25,5 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: "Invalid email or password" }, { status: 401 });
   }
 
-  return NextResponse.json({ message: "Credentials validated. Use NextAuth session flow on the client.", user });
+  return NextResponse.json({ message: "Credentials validated. Use NextAuth session flow on the client." });
 }

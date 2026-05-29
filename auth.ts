@@ -3,6 +3,13 @@ import Credentials from "next-auth/providers/credentials";
 import { loginSchema } from "@/lib/validators";
 import { verifyCredentials } from "@/services/auth-service";
 
+const authSecret =
+  process.env.AUTH_SECRET ?? (process.env.VERCEL_ENV === "production" ? undefined : "edenverse-development-secret");
+
+if (!authSecret) {
+  throw new Error("AUTH_SECRET is required for production authentication.");
+}
+
 const providers = [
   Credentials({
     name: "Email",
@@ -41,12 +48,16 @@ const providers = [
 ];
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  secret: process.env.AUTH_SECRET ?? "edenverse-development-secret",
+  secret: authSecret,
   trustHost: true,
+  useSecureCookies: process.env.NODE_ENV === "production",
   session: {
     strategy: "jwt",
-    maxAge: 60 * 60 * 24 * 60,
-    updateAge: 60 * 60 * 24
+    maxAge: 60 * 60 * 12,
+    updateAge: 60 * 30
+  },
+  jwt: {
+    maxAge: 60 * 60 * 12
   },
   pages: {
     signIn: "/auth/login"

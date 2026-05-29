@@ -10,24 +10,32 @@ export const searchSchema = z.object({
 });
 
 export const registerSchema = z.object({
-  email: z.string().email(),
-  username: z.string().min(3).max(24),
+  email: z.string().trim().toLowerCase().email(),
+  username: z
+    .string()
+    .trim()
+    .min(3)
+    .max(24)
+    .regex(/^[a-zA-Z0-9_-]+$/, "Username chỉ được dùng chữ, số, gạch dưới hoặc gạch ngang"),
   password: z
     .string()
-    .min(8)
-    .regex(/[A-Z]/, "Password must include at least one uppercase letter")
-    .regex(/[0-9]/, "Password must include at least one number"),
+    .min(12, "Mật khẩu cần tối thiểu 12 ký tự")
+    .max(128)
+    .regex(/[a-z]/, "Mật khẩu cần có chữ thường")
+    .regex(/[A-Z]/, "Mật khẩu cần có chữ hoa")
+    .regex(/[0-9]/, "Mật khẩu cần có số")
+    .regex(/[^a-zA-Z0-9]/, "Mật khẩu cần có ký tự đặc biệt"),
   rememberMe: z.boolean().optional()
 });
 
 export const loginSchema = z.object({
-  email: z.string().email(),
+  email: z.string().trim().toLowerCase().email(),
   password: z.string().min(8),
   rememberMe: z.boolean().optional()
 });
 
 export const forgotPasswordSchema = z.object({
-  email: z.string().email()
+  email: z.string().trim().toLowerCase().email()
 });
 
 export const commentSchema = z.object({

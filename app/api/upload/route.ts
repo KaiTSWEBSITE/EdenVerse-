@@ -42,6 +42,13 @@ function hasTrustedImageSignature(buffer: Buffer, mimeType: string) {
 }
 
 export async function POST(request: Request) {
+  if (process.env.NODE_ENV === "production" && process.env.ENABLE_LOCAL_UPLOADS !== "true") {
+    return NextResponse.json(
+      { message: "Upload local đang tắt trên production. Hãy dùng link ảnh HTTPS ngoài để giảm rủi ro bảo mật." },
+      { status: 403 }
+    );
+  }
+
   const session = await auth();
   const role = session?.user?.role ?? "USER";
   if (!["ADMIN", "SUPER_ADMIN", "MODERATOR"].includes(role)) {

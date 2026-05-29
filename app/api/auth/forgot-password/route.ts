@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { forgotPasswordSchema } from "@/lib/validators";
 import { applyRateLimit } from "@/middleware/rate-limit";
-import { createCsrfToken } from "@/utils/security";
 
 export async function POST(request: Request) {
   const limited = applyRateLimit(request.headers.get("x-forwarded-for") ?? "local:forgot-password", {
@@ -21,7 +20,6 @@ export async function POST(request: Request) {
   }
 
   return NextResponse.json({
-    message: `Password reset flow initialized for ${parsed.data.email}. Connect your mailer to deliver this token.`,
-    token: createCsrfToken()
+    message: "Nếu email tồn tại, hệ thống sẽ gửi hướng dẫn đặt lại mật khẩu."
   });
 }

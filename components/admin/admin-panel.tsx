@@ -32,30 +32,35 @@ import { Input } from "@/components/ui/input";
 const controlItems = [
   { label: "Quản lý game", icon: Gamepad2, status: "Tạo, sửa, ẩn" },
   { label: "Link ảnh", icon: ImageUp, status: "URL ngoài" },
-  { label: "Duyệt bình luận", icon: MessageSquareWarning, status: "3 đang chờ" },
+  { label: "Duyệt bình luận", icon: MessageSquareWarning, status: "0 đang chờ" },
   { label: "Khóa người dùng", icon: ShieldBan, status: "Theo role" },
   { label: "Quản lý tag", icon: Tag, status: "Tự gợi ý" },
   { label: "Quản lý SEO", icon: BarChart3, status: "Có checklist" }
 ];
 
-const moderationQueue = [
-  { user: "aria", reason: "Báo cáo spoiler", risk: "Trung bình" },
-  { user: "guest-204", reason: "Spam link ngoài", risk: "Cao" },
-  { user: "riven", reason: "Review cần duyệt 18+", risk: "Thấp" }
-];
+type ModerationQueueItem = {
+  user: string;
+  reason: string;
+  risk: string;
+};
+
+type AuditEvent = {
+  time: string;
+  actor: string;
+  action: string;
+};
+
+const pendingGames: string[] = [];
+const moderationQueue: ModerationQueueItem[] = [];
 
 const securityChecks = [
-  { label: "CSP + frame guard", value: "Đang bật", icon: ShieldCheck },
-  { label: "Rate limit API", value: "Login, upload, comment", icon: Gauge },
-  { label: "Upload filter", value: "Chỉ nhận JPG, PNG, WEBP hoặc GIF", icon: LockKeyhole },
-  { label: "Audit log", value: "Ghi sự kiện quản trị", icon: FileCheck2 }
+  { label: "CSP + frame guard", value: "Frame bị chặn, CSP siết chặt", icon: ShieldCheck },
+  { label: "Rate limit API", value: "Login, register, upload, admin", icon: Gauge },
+  { label: "Upload filter", value: "Production ưu tiên link HTTPS ngoài", icon: LockKeyhole },
+  { label: "Audit log", value: "Đã reset log hiển thị demo", icon: FileCheck2 }
 ];
 
-const auditEvents = [
-  { time: "09:45", actor: "admin", action: "Tạo bản nháp game Seraph Code" },
-  { time: "10:20", actor: "sol", action: "Ẩn bình luận chứa link spam" },
-  { time: "11:05", actor: "riven", action: "Cập nhật meta SEO cho Glass Eclipse" }
-];
+const auditEvents: AuditEvent[] = [];
 
 type AdminPostSummary = {
   id: string;
@@ -1063,12 +1068,19 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
           <Card>
             <CardContent className="space-y-4 p-6">
               <h3 className="font-display text-3xl text-foreground">Game chờ duyệt</h3>
-              {["Moonlit Oblivion v1.4", "Velvet Hollow v0.9", "Noctis Archive v2.0"].map((item) => (
-                <div key={item} className="rounded-lg border border-white/8 bg-black/18 p-4">
-                  <p className="font-semibold text-foreground">{item}</p>
-                  <p className="mt-1 text-sm text-muted-foreground">Đang chờ kiểm tra ảnh, tag và mô tả.</p>
+              {pendingGames.length ? (
+                pendingGames.map((item) => (
+                  <div key={item} className="rounded-lg border border-white/8 bg-black/18 p-4">
+                    <p className="font-semibold text-foreground">{item}</p>
+                    <p className="mt-1 text-sm text-muted-foreground">Đang chờ kiểm tra ảnh, tag và mô tả.</p>
+                  </div>
+                ))
+              ) : (
+                <div className="rounded-lg border border-primary/15 bg-primary/5 p-4">
+                  <p className="font-semibold text-foreground">Không có game chờ duyệt</p>
+                  <p className="mt-1 text-sm text-muted-foreground">Danh sách demo đã được reset, bài viết và game thật không bị xóa.</p>
                 </div>
-              ))}
+              )}
             </CardContent>
           </Card>
         </div>
@@ -1081,17 +1093,24 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
               <h3 className="font-display text-3xl text-foreground">Duyệt cộng đồng</h3>
               <MessageSquareWarning className="h-5 w-5 text-accent" />
             </div>
-            {moderationQueue.map((item) => (
-              <div key={`${item.user}-${item.reason}`} className="rounded-lg border border-white/8 bg-black/18 p-4">
-                <div className="flex items-center justify-between gap-3">
-                  <p className="font-semibold text-foreground">@{item.user}</p>
-                  <span className="rounded-md border border-accent/20 bg-accent/10 px-2 py-1 text-xs text-accent">
-                    {item.risk}
-                  </span>
+            {moderationQueue.length ? (
+              moderationQueue.map((item) => (
+                <div key={`${item.user}-${item.reason}`} className="rounded-lg border border-white/8 bg-black/18 p-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="font-semibold text-foreground">@{item.user}</p>
+                    <span className="rounded-md border border-accent/20 bg-accent/10 px-2 py-1 text-xs text-accent">
+                      {item.risk}
+                    </span>
+                  </div>
+                  <p className="mt-2 text-sm text-muted-foreground">{item.reason}</p>
                 </div>
-                <p className="mt-2 text-sm text-muted-foreground">{item.reason}</p>
+              ))
+            ) : (
+              <div className="rounded-lg border border-primary/15 bg-primary/5 p-4">
+                <p className="font-semibold text-foreground">Không có báo cáo cộng đồng đang chờ</p>
+                <p className="mt-1 text-sm text-muted-foreground">Các mục chờ duyệt demo đã được dọn sạch khỏi bảng quản trị.</p>
               </div>
-            ))}
+            )}
           </CardContent>
         </Card>
 
@@ -1169,15 +1188,22 @@ export function AdminPanel({ heroIntro, metrics }: { heroIntro: string; metrics:
               <h3 className="font-display text-3xl text-foreground">Nhật ký quản trị</h3>
             </div>
             <div className="space-y-3">
-              {auditEvents.map((event) => (
-                <div key={`${event.time}-${event.action}`} className="rounded-lg border border-white/8 bg-black/18 p-4">
-                  <div className="flex items-center justify-between gap-3 text-xs uppercase text-muted-foreground">
-                    <span>{event.time}</span>
-                    <span>@{event.actor}</span>
+              {auditEvents.length ? (
+                auditEvents.map((event) => (
+                  <div key={`${event.time}-${event.action}`} className="rounded-lg border border-white/8 bg-black/18 p-4">
+                    <div className="flex items-center justify-between gap-3 text-xs uppercase text-muted-foreground">
+                      <span>{event.time}</span>
+                      <span>@{event.actor}</span>
+                    </div>
+                    <p className="mt-2 text-sm leading-6 text-foreground">{event.action}</p>
                   </div>
-                  <p className="mt-2 text-sm leading-6 text-foreground">{event.action}</p>
+                ))
+              ) : (
+                <div className="rounded-lg border border-primary/15 bg-primary/5 p-4">
+                  <p className="font-semibold text-foreground">Nhật ký demo đã reset</p>
+                  <p className="mt-1 text-sm text-muted-foreground">Chưa có sự kiện quản trị mới trong phiên hiển thị này.</p>
                 </div>
-              ))}
+              )}
             </div>
           </CardContent>
         </Card>
