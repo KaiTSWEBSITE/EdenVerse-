@@ -5,6 +5,7 @@ import { z } from "zod";
 import { auth } from "@/auth";
 import { prisma } from "@/database/prisma";
 import { applyRateLimit } from "@/middleware/rate-limit";
+import { getGameDisplayTitle } from "@/lib/game-title";
 import { slugify } from "@/lib/utils";
 
 export const runtime = "nodejs";
@@ -163,6 +164,7 @@ function normalizeStringArray(value: unknown) {
 function serializeAdminGame(game: AdminGameRecord) {
   return {
     ...game,
+    title: getGameDisplayTitle(game),
     gallery: normalizeStringArray(game.gallery),
     platforms: normalizeStringArray(game.platforms),
     languages: normalizeStringArray(game.languages),
