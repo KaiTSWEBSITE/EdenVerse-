@@ -1,14 +1,27 @@
 "use client";
 
 import Link from "next/link";
-import { signIn } from "next-auth/react";
-import { useState, type FormEvent } from "react";
+import type { Route } from "next";
+import { getSession, signIn, signOut, useSession } from "next-auth/react";
+import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
+function getSafeCallbackUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const callbackUrl = params.get("callbackUrl") ?? "/admin";
+
+  if (!callbackUrl.startsWith("/") || callbackUrl.startsWith("//")) {
+    return "/admin";
+  }
+
+  return callbackUrl;
+}
+
 export default function LoginPage() {
+  const { data: session, status } = useSession();
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [password, setPassword] = useState("");
@@ -16,6 +29,14 @@ export default function LoginPage() {
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState("");
   const router = useRouter();
+  const role = session?.user?.role ?? "USER";
+  const isAdmin = role === "ADMIN" || role === "SUPER_ADMIN";
+
+  useEffect(() => {
+    if (status === "authenticated" && isAdmin) {
+      router.replace(getSafeCallbackUrl() as Route);
+    }
+  }, [isAdmin, router, status]);
 
   async function submitLogin(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -43,8 +64,17 @@ export default function LoginPage() {
         return;
       }
 
-      setSuccess("Đăng nhập thành công, đang chuyển vào admin...");
-      router.push("/admin");
+      const latestSession = await getSession();
+      const latestRole = latestSession?.user?.role ?? "USER";
+      const username = latestSession?.user?.username;
+
+      if (latestRole === "ADMIN" || latestRole === "SUPER_ADMIN") {
+        setSuccess("Đăng nhập admin thành công, đang chuyển vào khu quản trị...");
+        router.push(getSafeCallbackUrl() as Route);
+      } else {
+        setSuccess("Đăng nhập thành công. Tài khoản này chưa có quyền quản trị nên mình đưa bạn về hồ sơ.");
+        router.push((username ? `/profile/${username}` : "/profile") as Route);
+      }
       router.refresh();
     } catch {
       setSuccess("");
@@ -52,6 +82,54 @@ export default function LoginPage() {
     } finally {
       setSubmitting(false);
     }
+  }
+
+  if (status === "loading" || (status === "authenticated" && isAdmin)) {
+    return (
+      <section className="mx-auto max-w-xl px-4 py-20 sm:px-6 lg:px-8">
+        <Card>
+          <CardContent className="space-y-4 p-8">
+            <p className="text-xs uppercase tracking-[0.22em] text-primary">Đăng nhập</p>
+            <h1 className="font-display text-4xl text-foreground">Đang kiểm tra phiên đăng nhập...</h1>
+            <p className="text-sm leading-7 text-muted-foreground">Nếu tài khoản có quyền admin, hệ thống sẽ tự chuyển vào khu quản trị.</p>
+          </CardContent>
+        </Card>
+      </section>
+    );
+  }
+
+  if (status === "authenticated") {
+    return (
+      <section className="mx-auto max-w-xl px-4 py-20 sm:px-6 lg:px-8">
+        <Card>
+          <CardContent className="space-y-6 p-8">
+            <div>
+              <p className="text-xs uppercase tracking-[0.22em] text-primary">Đã đăng nhập</p>
+              <h1 className="mt-2 font-display text-5xl text-foreground">Bạn đang dùng tài khoản thường</h1>
+              <p className="mt-3 text-sm leading-7 text-muted-foreground">
+                Tài khoản <span className="font-semibold text-foreground">{session.user?.email}</span> đang có role{" "}
+                <span className="font-semibold text-primary">{role}</span>, nên chưa thể vào khu đăng game/admin.
+              </p>
+              <p className="mt-2 text-sm leading-7 text-muted-foreground">
+                Muốn đăng game thì cần đăng nhập bằng tài khoản có role <span className="text-foreground">ADMIN</span> hoặc{" "}
+                <span className="text-foreground">SUPER_ADMIN</span>.
+              </p>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Link href={(session.user?.username ? `/profile/${session.user.username}` : "/profile") as Route}>
+                <Button type="button" variant="secondary" className="w-full">
+                  Về hồ sơ
+                </Button>
+              </Link>
+              <Button type="button" className="w-full" onClick={() => signOut({ callbackUrl: "/auth/login" })}>
+                Đăng xuất để đổi tài khoản
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </section>
+    );
   }
 
   return (

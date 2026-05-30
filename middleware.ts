@@ -100,8 +100,22 @@ export default auth((request) => {
     }
   }
 
-  if (isProtected && request.auth?.user?.role !== "ADMIN" && request.auth?.user?.role !== "SUPER_ADMIN") {
-    const redirect = NextResponse.redirect(new URL("/auth/login", request.url));
+  if (isProtected) {
+    const role = request.auth?.user?.role ?? "";
+    const canEnterAdmin = role === "ADMIN" || role === "SUPER_ADMIN";
+
+    if (canEnterAdmin) {
+      return response;
+    }
+
+    const loginUrl = new URL("/auth/login", request.url);
+    loginUrl.searchParams.set("callbackUrl", `${request.nextUrl.pathname}${request.nextUrl.search}`);
+
+    if (request.auth?.user) {
+      loginUrl.searchParams.set("reason", "not-admin");
+    }
+
+    const redirect = NextResponse.redirect(loginUrl);
     applySecurityHeaders(redirect);
     return redirect;
   }
