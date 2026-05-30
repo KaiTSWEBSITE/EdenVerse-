@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import type { Route } from "next";
-import { getSession, signIn, signOut, useSession } from "next-auth/react";
+import { getSession, signIn, useSession } from "next-auth/react";
 import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -11,13 +11,21 @@ import { Input } from "@/components/ui/input";
 
 function getSafeCallbackUrl() {
   const params = new URLSearchParams(window.location.search);
-  const callbackUrl = params.get("callbackUrl") ?? "/admin";
+  const callbackUrl = params.get("callbackUrl") ?? "/profile";
 
   if (!callbackUrl.startsWith("/") || callbackUrl.startsWith("//")) {
-    return "/admin";
+    return "/profile";
+  }
+
+  if (callbackUrl.startsWith("/admin") || callbackUrl.startsWith("/eden-vault")) {
+    return "/profile";
   }
 
   return callbackUrl;
+}
+
+function getProfileUrl(username?: string | null) {
+  return (username ? `/profile/${username}` : "/profile") as Route;
 }
 
 export default function LoginPage() {
@@ -29,26 +37,24 @@ export default function LoginPage() {
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState("");
   const router = useRouter();
-  const role = session?.user?.role ?? "USER";
-  const isAdmin = role === "ADMIN" || role === "SUPER_ADMIN";
 
   useEffect(() => {
-    if (status === "authenticated" && isAdmin) {
-      router.replace(getSafeCallbackUrl() as Route);
+    if (status === "authenticated") {
+      router.replace(getProfileUrl(session?.user?.username));
     }
-  }, [isAdmin, router, status]);
+  }, [router, session?.user?.username, status]);
 
   async function submitLogin(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     if (!email.trim() || !password) {
-      setError("Nhập email và mật khẩu trước đã nhé.");
+      setError("Nh?p email v? m?t kh?u tr??c ?? nh?.");
       return;
     }
 
     setSubmitting(true);
     setError("");
-    setSuccess("Đang kiểm tra tài khoản...");
+    setSuccess("?ang ki?m tra t?i kho?n...");
 
     try {
       const result = await signIn("credentials", {
@@ -60,72 +66,32 @@ export default function LoginPage() {
 
       if (result?.error) {
         setSuccess("");
-        setError("Email hoặc mật khẩu chưa đúng.");
+        setError("Email ho?c m?t kh?u ch?a ??ng.");
         return;
       }
 
       const latestSession = await getSession();
-      const latestRole = latestSession?.user?.role ?? "USER";
       const username = latestSession?.user?.username;
 
-      if (latestRole === "ADMIN" || latestRole === "SUPER_ADMIN") {
-        setSuccess("Đăng nhập admin thành công, đang chuyển vào khu quản trị...");
-        router.push(getSafeCallbackUrl() as Route);
-      } else {
-        setSuccess("Đăng nhập thành công. Tài khoản này chưa có quyền quản trị nên mình đưa bạn về hồ sơ.");
-        router.push((username ? `/profile/${username}` : "/profile") as Route);
-      }
+      setSuccess("??ng nh?p th?nh c?ng, ?ang m? h? s? c?a b?n...");
+      router.push((getSafeCallbackUrl() === "/profile" ? getProfileUrl(username) : getSafeCallbackUrl()) as Route);
       router.refresh();
     } catch {
       setSuccess("");
-      setError("Không thể đăng nhập lúc này, thử tải lại trang rồi đăng nhập lại.");
+      setError("Kh?ng th? ??ng nh?p l?c n?y, th? t?i l?i trang r?i ??ng nh?p l?i.");
     } finally {
       setSubmitting(false);
     }
   }
 
-  if (status === "loading" || (status === "authenticated" && isAdmin)) {
+  if (status === "loading" || status === "authenticated") {
     return (
       <section className="mx-auto max-w-xl px-4 py-20 sm:px-6 lg:px-8">
         <Card>
           <CardContent className="space-y-4 p-8">
-            <p className="text-xs uppercase tracking-[0.22em] text-primary">Đăng nhập</p>
-            <h1 className="font-display text-4xl text-foreground">Đang kiểm tra phiên đăng nhập...</h1>
-            <p className="text-sm leading-7 text-muted-foreground">Nếu tài khoản có quyền admin, hệ thống sẽ tự chuyển vào khu quản trị.</p>
-          </CardContent>
-        </Card>
-      </section>
-    );
-  }
-
-  if (status === "authenticated") {
-    return (
-      <section className="mx-auto max-w-xl px-4 py-20 sm:px-6 lg:px-8">
-        <Card>
-          <CardContent className="space-y-6 p-8">
-            <div>
-              <p className="text-xs uppercase tracking-[0.22em] text-primary">Đã đăng nhập</p>
-              <h1 className="mt-2 font-display text-5xl text-foreground">Bạn đang dùng tài khoản thường</h1>
-              <p className="mt-3 text-sm leading-7 text-muted-foreground">
-                Tài khoản <span className="font-semibold text-foreground">{session.user?.email}</span> đang có role{" "}
-                <span className="font-semibold text-primary">{role}</span>, nên chưa thể vào khu đăng game/admin.
-              </p>
-              <p className="mt-2 text-sm leading-7 text-muted-foreground">
-                Muốn đăng game thì cần đăng nhập bằng tài khoản có role <span className="text-foreground">ADMIN</span> hoặc{" "}
-                <span className="text-foreground">SUPER_ADMIN</span>.
-              </p>
-            </div>
-
-            <div className="grid gap-3 sm:grid-cols-2">
-              <Link href={(session.user?.username ? `/profile/${session.user.username}` : "/profile") as Route}>
-                <Button type="button" variant="secondary" className="w-full">
-                  Về hồ sơ
-                </Button>
-              </Link>
-              <Button type="button" className="w-full" onClick={() => signOut({ callbackUrl: "/auth/login" })}>
-                Đăng xuất để đổi tài khoản
-              </Button>
-            </div>
+            <p className="text-xs uppercase tracking-[0.22em] text-primary">??ng nh?p</p>
+            <h1 className="font-display text-4xl text-foreground">?ang ki?m tra phi?n ??ng nh?p...</h1>
+            <p className="text-sm leading-7 text-muted-foreground">N?u b?n ?? ??ng nh?p, h? th?ng s? ??a b?n v? h? s? c? nh?n.</p>
           </CardContent>
         </Card>
       </section>
@@ -137,16 +103,16 @@ export default function LoginPage() {
       <Card>
         <CardContent className="space-y-6 p-8">
           <div>
-            <p className="text-xs uppercase tracking-[0.22em] text-primary">Đăng nhập</p>
-            <h1 className="mt-2 font-display text-5xl text-foreground">Chào mừng trở lại</h1>
+            <p className="text-xs uppercase tracking-[0.22em] text-primary">T?i kho?n</p>
+            <h1 className="mt-2 font-display text-5xl text-foreground">Ch?o m?ng tr? l?i</h1>
             <p className="mt-3 text-sm leading-7 text-muted-foreground">
-              Đăng nhập một lần để vào khu quản trị. Phiên đăng nhập được giữ lâu hơn để bạn không phải nhập lại liên tục.
+              ??ng nh?p ?? l?u game y?u th?ch, ch?nh h? s? v? theo d?i c?c b?n c?p nh?t m?i nh?t tr?n EdenVerse.
             </p>
           </div>
 
           <form onSubmit={submitLogin} className="space-y-4">
-            <Input value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Email quản trị" />
-            <Input value={password} onChange={(event) => setPassword(event.target.value)} type="password" placeholder="Mật khẩu" />
+            <Input value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Email" />
+            <Input value={password} onChange={(event) => setPassword(event.target.value)} type="password" placeholder="M?t kh?u" />
             <label className="flex items-center gap-3 text-sm text-muted-foreground">
               <input
                 checked={rememberMe}
@@ -154,23 +120,27 @@ export default function LoginPage() {
                 type="checkbox"
                 className="h-4 w-4 rounded border-white/20 bg-black/40"
               />
-              Giữ đăng nhập trên thiết bị này
+              Gi? ??ng nh?p tr?n thi?t b? n?y
             </label>
             {success ? <p className="rounded-lg border border-primary/20 bg-primary/8 px-4 py-3 text-sm text-primary">{success}</p> : null}
             {error ? <p className="rounded-lg border border-red-400/20 bg-red-500/8 px-4 py-3 text-sm text-red-300">{error}</p> : null}
             <Button className="w-full" disabled={submitting} type="submit">
-              {submitting ? "Đang kiểm tra..." : "Đăng nhập"}
+              {submitting ? "?ang ki?m tra..." : "??ng nh?p"}
             </Button>
           </form>
 
           <div className="flex items-center justify-between text-sm text-muted-foreground">
             <Link href="/auth/register" className="hover:text-foreground">
-              Tạo tài khoản
+              T?o t?i kho?n
             </Link>
             <Link href="/auth/forgot-password" className="hover:text-foreground">
-              Quên mật khẩu
+              Qu?n m?t kh?u
             </Link>
           </div>
+
+          <p className="rounded-xl border border-white/8 bg-white/5 px-4 py-3 text-xs leading-6 text-muted-foreground">
+            Khu qu?n tr? kh?ng ??ng nh?p t?i trang n?y. N?u b?n l? ch? s? h?u, h?y d?ng c?ng qu?n tr? ri?ng.
+          </p>
         </CardContent>
       </Card>
     </section>

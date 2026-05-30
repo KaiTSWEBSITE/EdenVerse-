@@ -17,7 +17,8 @@ export function Header() {
   const { data: session, status } = useSession();
   const username = session?.user?.username;
   const isAdmin = ["ADMIN", "SUPER_ADMIN"].includes(session?.user?.role ?? "");
-  const visibleNavigation = primaryNavigation.filter((item) => item.href !== "/admin" || isAdmin);
+  const canOpenAdmin = isAdmin && session?.user?.adminVaultPassed === true;
+  const visibleNavigation = primaryNavigation.filter((item) => item.href !== "/admin" || canOpenAdmin);
 
   return (
     <header className="sticky top-0 z-40 border-b border-white/8 bg-[rgba(5,7,12,0.72)] backdrop-blur-xl">
@@ -50,29 +51,29 @@ export function Header() {
           </a>
           {status === "authenticated" ? (
             <>
-              {isAdmin ? (
+              {canOpenAdmin ? (
                 <Link href="/admin">
                   <Button variant="accent">
                     <ShieldCheck className="h-4 w-4" />
-                    Vào admin
+                    V?o admin
                   </Button>
                 </Link>
               ) : null}
               <Link href={(username ? `/profile/${username}` : "/profile") as Route}>
                 <Button variant="secondary">
                   <UserRound className="h-4 w-4" />
-                  Hồ sơ
+                  H? s?
                 </Button>
               </Link>
               <Button variant="ghost" onClick={() => signOut({ callbackUrl: "/" })}>
-                Thoát
+                Tho?t
               </Button>
             </>
           ) : (
             <Link href="/auth/login">
               <Button variant="default">
                 <UserRound className="h-4 w-4" />
-                Đăng nhập
+                ??ng nh?p
               </Button>
             </Link>
           )}
@@ -82,7 +83,7 @@ export function Header() {
           <DialogTrigger asChild>
             <button
               type="button"
-              aria-label="Mở menu EdenVerse"
+              aria-label="M? menu EdenVerse"
               className="ml-auto rounded-lg border border-white/10 bg-white/6 p-3 text-foreground xl:hidden"
             >
               <Menu className="h-5 w-5" />
@@ -124,7 +125,7 @@ export function Header() {
                     onClick={() => setOpen(false)}
                     className="block rounded-lg border border-primary/20 bg-primary/8 px-4 py-3 text-sm text-primary"
                   >
-                    Hồ sơ của tôi
+                    H? s? c?a t?i
                   </Link>
                 ) : (
                   <Link
@@ -132,7 +133,7 @@ export function Header() {
                     onClick={() => setOpen(false)}
                     className="block rounded-lg border border-primary/20 bg-primary/8 px-4 py-3 text-sm text-primary"
                   >
-                    Đăng nhập
+                    ??ng nh?p
                   </Link>
                 )}
               </div>

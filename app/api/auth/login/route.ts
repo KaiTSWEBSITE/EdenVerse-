@@ -1,10 +1,8 @@
 import { NextResponse } from "next/server";
-import { loginSchema } from "@/lib/validators";
-import { verifyCredentials } from "@/services/auth-service";
 import { applyRateLimit } from "@/middleware/rate-limit";
 
 export async function POST(request: Request) {
-  const limited = applyRateLimit(request.headers.get("x-forwarded-for") ?? "local:login", {
+  const limited = applyRateLimit(request.headers.get("x-forwarded-for") ?? "local:login-probe", {
     max: 8,
     windowMs: 60_000
   });
@@ -13,17 +11,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: "Too many login attempts" }, { status: 429 });
   }
 
-  const json = await request.json();
-  const parsed = loginSchema.safeParse(json);
-
-  if (!parsed.success) {
-    return NextResponse.json({ message: "Invalid credentials payload" }, { status: 400 });
-  }
-
-  const user = await verifyCredentials(parsed.data.email, parsed.data.password);
-  if (!user) {
-    return NextResponse.json({ message: "Invalid email or password" }, { status: 401 });
-  }
-
-  return NextResponse.json({ message: "Credentials validated. Use NextAuth session flow on the client." });
+  return NextResponse.json(
+    { message: "Credential probing endpoint is disabled. Use the protected NextAuth session flow." },
+    { status: 404 }
+  );
 }

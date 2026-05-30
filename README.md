@@ -1,32 +1,33 @@
 # EdenVerse
 
-EdenVerse là website giới thiệu và quản lý game theo phong cách dark fantasy, gothic và visual novel premium. Trang chủ tập trung vào 3 kệ chính: Game Hot theo lượt click tải, game mới ra mắt và game chất lượng tốt.
+EdenVerse l? website gi?i thi?u v? qu?n l? game theo phong c?ch dark fantasy, gothic v? visual novel premium. Trang ch? t?p trung v?o 3 k? ch?nh: Game Hot theo l??t click t?i, game m?i ra m?t v? game ch?t l??ng t?t.
 
 ![EdenVerse Preview](./public/backgrounds/eden-cathedral.png)
 
-## Điểm Chính
+## ?i?m Ch?nh
 
-- Next.js 15 App Router, React 19, TypeScript, TailwindCSS và Framer Motion.
-- Prisma + PostgreSQL với migration production tự chạy trên Vercel.
-- NextAuth credentials login bằng email/password, không dùng Google/Discord.
-- Không hard-code tài khoản admin production trong source hoặc README.
-- Super Admin được tạo bằng `ADMIN_SETUP_TOKEN` bí mật một lần.
-- Admin có form đăng game thật vào PostgreSQL, chỉnh giới thiệu trang chủ, xóa bài, xóa game demo và đổi mật khẩu.
-- Mỗi game hỗ trợ link tải chính và link tải phụ/mirror dự phòng.
-- Header và footer có nút Discord server, cấu hình bằng `NEXT_PUBLIC_DISCORD_URL`.
-- Logo SVG tĩnh tại `public/logos/edenverse-mark.svg`, gọn nhẹ và dễ thay đổi.
-- Có rate limit, role check, origin check, bcrypt hash, Zod validation, upload filter và security headers.
+- Next.js 15 App Router, React 19, TypeScript, TailwindCSS v? Framer Motion.
+- Prisma + PostgreSQL v?i migration production t? ch?y tr?n Vercel.
+- NextAuth credentials login b?ng email/password, kh?ng d?ng Google/Discord.
+- Kh?ng hard-code t?i kho?n admin production trong source ho?c README.
+- Super Admin ???c t?o b?ng `ADMIN_SETUP_TOKEN` b? m?t m?t l?n.
+- T?i kho?n admin b? ch?n kh?i form login c?ng khai; ph?i ?i qua c?ng ri?ng `/eden-vault` v?i `ADMIN_ACCESS_KEY`.
+- Admin c? form ??ng game th?t v?o PostgreSQL, ch?nh gi?i thi?u trang ch?, x?a b?i, x?a game demo v? ??i m?t kh?u.
+- M?i game h? tr? link t?i ch?nh v? link t?i ph?/mirror d? ph?ng.
+- Header v? footer c? n?t Discord server, c?u h?nh b?ng `NEXT_PUBLIC_DISCORD_URL`.
+- Logo SVG t?nh t?i `public/logos/edenverse-mark.svg`, g?n nh? v? d? thay ??i.
+- C? rate limit, role check, origin check, bcrypt hash, Zod validation, upload filter v? security headers.
 
-## Chạy Local
+## Ch?y Local
 
 ```bash
 npm install
 npm run dev
 ```
 
-Mở [http://localhost:3000](http://localhost:3000).
+M? [http://localhost:3000](http://localhost:3000).
 
-## Biến Môi Trường
+## Bi?n M?i Tr??ng
 
 Copy file env:
 
@@ -34,16 +35,17 @@ Copy file env:
 copy .env.example .env
 ```
 
-Biến quan trọng:
+Bi?n quan tr?ng:
 
-- `DATABASE_URL`: PostgreSQL production hoặc local.
-- `DATABASE_URL_UNPOOLED`: URL direct/unpooled cho migration trên Vercel nếu có.
-- `AUTH_SECRET`: chuỗi bí mật mạnh cho NextAuth.
-- `ADMIN_SETUP_TOKEN`: token bí mật chỉ dùng để bootstrap Super Admin lần đầu.
-- `ENABLE_DEMO_AUTH`: chỉ bật `true` cho local demo, không bật production.
-- `ENABLE_PRISMA_DEMO_FALLBACK`: bật/tắt game fallback demo.
-- `NEXT_PUBLIC_SITE_INTRO`: câu giới thiệu mặc định trước khi admin lưu setting.
-- `NEXT_PUBLIC_DISCORD_URL`: link invite Discord server hiển thị ở menu và footer.
+- `DATABASE_URL`: PostgreSQL production ho?c local.
+- `DATABASE_URL_UNPOOLED`: URL direct/unpooled cho migration tr?n Vercel n?u c?.
+- `AUTH_SECRET`: chu?i b? m?t m?nh cho NextAuth.
+- `ADMIN_SETUP_TOKEN`: token b? m?t ch? d?ng ?? bootstrap Super Admin l?n ??u.
+- `ADMIN_ACCESS_KEY`: m? c?ng ri?ng ?? cho ph?p t?i kho?n admin ??ng nh?p qua `/eden-vault`.
+- `ENABLE_DEMO_AUTH`: ch? b?t `true` cho local demo, kh?ng b?t production.
+- `ENABLE_PRISMA_DEMO_FALLBACK`: b?t/t?t game fallback demo.
+- `NEXT_PUBLIC_SITE_INTRO`: c?u gi?i thi?u m?c ??nh tr??c khi admin l?u setting.
+- `NEXT_PUBLIC_DISCORD_URL`: link invite Discord server hi?n th? ? menu v? footer.
 
 ## PostgreSQL / Prisma
 
@@ -54,33 +56,35 @@ npm run db:migrate
 npm run db:seed
 ```
 
-Trên Vercel, `npm run build` sẽ tự chạy `prisma generate` và `prisma migrate deploy` khi có `VERCEL=1` và `DATABASE_URL`.
+Tr?n Vercel, `npm run build` s? t? ch?y `prisma generate` v? `prisma migrate deploy` khi c? `VERCEL=1` v? `DATABASE_URL`.
 
 ## Admin Production
 
-Không có mật khẩu admin mặc định. Quy trình đúng là:
+Kh?ng c? m?t kh?u admin m?c ??nh. Quy tr?nh ??ng l?:
 
-1. Tạo `ADMIN_SETUP_TOKEN` mạnh trong Vercel.
+1. T?o `ADMIN_SETUP_TOKEN` m?nh trong Vercel.
 2. Deploy.
-3. Gọi `POST /api/admin/bootstrap` với token bí mật để tạo Super Admin.
-4. Gỡ `ADMIN_SETUP_TOKEN` và redeploy để khóa bootstrap.
-5. Đăng nhập bằng tài khoản Super Admin thật và đổi mật khẩu trong `/admin`.
+3. G?i `POST /api/admin/bootstrap` v?i token b? m?t ?? t?o Super Admin.
+4. G? `ADMIN_SETUP_TOKEN` v? redeploy ?? kh?a bootstrap.
+5. T?o `ADMIN_ACCESS_KEY` m?nh trong Vercel v? ch? ch? s? h?u bi?t m? n?y.
+6. ??ng nh?p b?ng t?i kho?n Super Admin th?t t?i `/eden-vault`, sau ?? ??i m?t kh?u trong `/admin`.
 
-## Routes Chính
+## Routes Ch?nh
 
-- `/`: trang chủ với 3 kệ game chính.
-- `/games/hot`: Game Hot theo lượt click tải.
-- `/games/new`: game mới ra mắt.
-- `/games/quality`: game chất lượng tốt.
-- `/games/[slug]`: chi tiết game.
-- `/search`: tìm kiếm và lọc game.
-- `/admin`: quản trị game, nội dung, bảo mật và SEO.
-- `/auth/login`: đăng nhập email/password.
+- `/`: trang ch? v?i 3 k? game ch?nh.
+- `/games/hot`: Game Hot theo l??t click t?i.
+- `/games/new`: game m?i ra m?t.
+- `/games/quality`: game ch?t l??ng t?t.
+- `/games/[slug]`: chi ti?t game.
+- `/search`: t?m ki?m v? l?c game.
+- `/admin`: qu?n tr? game, n?i dung, b?o m?t v? SEO.
+- `/auth/login`: ??ng nh?p ng??i d?ng th??ng b?ng email/password.
+- `/eden-vault`: c?ng ri?ng cho ch? s? h?u/admin, y?u c?u th?m `ADMIN_ACCESS_KEY`.
 
-## API Chính
+## API Ch?nh
 
 - `GET /api/games`
-- `POST /api/games/[slug]/download`: body có thể gửi `{ "mirror": "primary" }` hoặc `{ "mirror": "backup" }`.
+- `POST /api/games/[slug]/download`: body c? th? g?i `{ "mirror": "primary" }` ho?c `{ "mirror": "backup" }`.
 - `POST /api/admin/bootstrap`
 - `POST /api/admin/games`
 - `POST /api/admin/password`
@@ -90,4 +94,4 @@ Không có mật khẩu admin mặc định. Quy trình đúng là:
 
 ## Background
 
-Ảnh nền chính nằm tại `public/backgrounds/eden-cathedral.png` và được dùng xuyên suốt website với blur nhẹ, overlay tối, vignette, ánh xanh kính cathedral, fog và particles nhẹ.
+?nh n?n ch?nh n?m t?i `public/backgrounds/eden-cathedral.png` v? ???c d?ng xuy?n su?t website v?i blur nh?, overlay t?i, vignette, ?nh xanh k?nh cathedral, fog v? particles nh?.

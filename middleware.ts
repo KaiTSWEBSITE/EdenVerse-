@@ -77,8 +77,9 @@ export default auth((request) => {
   const pathname = request.nextUrl.pathname;
   const isApiRoute = pathname.startsWith("/api/");
   const isProtected = pathname.startsWith("/admin");
+  const isAdminVault = pathname === "/eden-vault";
 
-  if (isApiRoute || isProtected) {
+  if (isApiRoute || isProtected || isAdminVault) {
     response.headers.set("Cache-Control", "no-store, max-age=0");
     response.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
   }
@@ -102,20 +103,14 @@ export default auth((request) => {
 
   if (isProtected) {
     const role = request.auth?.user?.role ?? "";
-    const canEnterAdmin = role === "ADMIN" || role === "SUPER_ADMIN";
+    const adminVaultPassed = request.auth?.user?.adminVaultPassed === true;
+    const canEnterAdmin = (role === "ADMIN" || role === "SUPER_ADMIN") && adminVaultPassed;
 
     if (canEnterAdmin) {
       return response;
     }
 
-    const loginUrl = new URL("/auth/login", request.url);
-    loginUrl.searchParams.set("callbackUrl", `${request.nextUrl.pathname}${request.nextUrl.search}`);
-
-    if (request.auth?.user) {
-      loginUrl.searchParams.set("reason", "not-admin");
-    }
-
-    const redirect = NextResponse.redirect(loginUrl);
+    const redirect = NextResponse.redirect(new URL("/", request.url));
     applySecurityHeaders(redirect);
     return redirect;
   }

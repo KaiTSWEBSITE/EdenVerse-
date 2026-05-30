@@ -12,7 +12,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/games/new",
     "/games/quality",
     "/dashboard",
-    "/admin",
     ...games.map((game) => `/games/${game.slug}`)
   ].map((path) => ({
     url: `${siteConfig.url}${path}`,

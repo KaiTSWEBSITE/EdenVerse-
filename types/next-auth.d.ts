@@ -9,6 +9,7 @@ declare module "next-auth" {
       reputation: number;
       level: number;
       allowMatureContent: boolean;
+      adminVaultPassed: boolean;
     };
   }
 
@@ -18,6 +19,7 @@ declare module "next-auth" {
     reputation: number;
     level: number;
     allowMatureContent: boolean;
+    adminVaultPassed?: boolean;
   }
 }
 
@@ -28,5 +30,6 @@ declare module "next-auth/jwt" {
     reputation?: number;
     level?: number;
     allowMatureContent?: boolean;
+    adminVaultPassed?: boolean;
   }
 }
