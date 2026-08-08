@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { applySecurityHeaders } from "@/middleware/headers";
-import { createRequestId } from "@/utils/security";
+
 
 const blockedPathPatterns = [
   /^\/\.env/i,
@@ -90,8 +90,8 @@ export default async function middleware(request: NextRequest) {
   const response = NextResponse.next();
   applySecurityHeaders(response);
 
-  // Attach a unique request ID for traceability
-  const requestId = createRequestId();
+  // Attach a unique request ID for traceability (Edge compatible)
+  const requestId = crypto.randomUUID();
   response.headers.set("X-Request-Id", requestId);
 
   const pathname = request.nextUrl.pathname;
