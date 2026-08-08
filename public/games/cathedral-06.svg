@@ -1,0 +1,18 @@
+<svg width="900" height="1200" viewBox="0 0 900 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="1200" fill="#04070B"/>
+  <rect width="900" height="1200" fill="url(#bg)"/>
+  <path d="M452 140L620 320L544 1080H360L284 320L452 140Z" fill="#111B28" stroke="#8EE6FF" stroke-opacity="0.26" stroke-width="2"/>
+  <path d="M420 1034L450 362L480 1034H420Z" fill="#0F2A36"/>
+  <path d="M402 338L450 190L498 338H402Z" fill="#A8EEFF" fill-opacity="0.9"/>
+  <path d="M318 470L370 370L422 470H318Z" fill="#76D5FF" fill-opacity="0.4"/>
+  <path d="M478 470L530 370L582 470H478Z" fill="#76D5FF" fill-opacity="0.4"/>
+  <text x="84" y="104" fill="#8EE6FF" font-family="Georgia, serif" font-size="38" letter-spacing="8">AURELIAN GRID</text>
+  <text x="82" y="1032" fill="#F4EFE1" font-family="Georgia, serif" font-size="84">Seraph</text>
+  <text x="82" y="1110" fill="#D0AE68" font-family="Arial, sans-serif" font-size="42" letter-spacing="6">CODE</text>
+  <defs>
+    <linearGradient id="bg" x1="450" y1="0" x2="450" y2="1200" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#07111B"/>
+      <stop offset="1" stop-color="#020305"/>
+    </linearGradient>
+  </defs>
+</svg>

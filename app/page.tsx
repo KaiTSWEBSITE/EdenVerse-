@@ -1,0 +1,61 @@
+import { GameSection } from "@/components/home/game-section";
+import { HeroSection } from "@/components/home/hero-section";
+import { cookies } from "next/headers";
+import {
+  getHeroGame,
+  getHotGames,
+  getNewlyReleasedGames,
+  getQualityGames
+} from "@/services/game-service";
+import { getHeroIntro } from "@/services/site-settings-service";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+function decodeHeroIntroCookie(value?: string) {
+  if (!value) {
+    return "";
+  }
+
+  try {
+    return decodeURIComponent(value).trim();
+  } catch {
+    return "";
+  }
+}
+
+export default async function HomePage() {
+  const cookieStore = await cookies();
+  const cookieHeroIntro = decodeHeroIntroCookie(cookieStore.get("edenverse_hero_intro")?.value);
+  const [heroGame, savedHeroIntro, hotGames, newGames, qualityGames] = await Promise.all([
+    getHeroGame(),
+    getHeroIntro(),
+    getHotGames(8),
+    getNewlyReleasedGames(8),
+    getQualityGames(8)
+  ]);
+
+  return (
+    <>
+      <HeroSection heroGame={heroGame} intro={cookieHeroIntro || savedHeroIntro} trending={hotGames.slice(0, 4)} />
+      <GameSection
+        eyebrow="Game Hot"
+        title="Game được tải nhiều nhất"
+        description="Bảng này tự tăng hạng theo số lần người dùng bấm vào link tải game."
+        games={hotGames}
+      />
+      <GameSection
+        eyebrow="Mới ra mắt"
+        title="Các trò chơi mới ra mắt"
+        description="Ưu tiên theo ngày phát hành mới nhất để người chơi thấy game mới trước."
+        games={newGames}
+      />
+      <GameSection
+        eyebrow="Chất lượng tốt"
+        title="Game có đánh giá và phản hồi ổn định"
+        description="Lọc theo rating cao, số lượt đánh giá ổn định và độ hoàn thiện tổng thể của game."
+        games={qualityGames}
+      />
+    </>
+  );
+}

@@ -1,0 +1,18 @@
+<svg width="900" height="1200" viewBox="0 0 900 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="1200" fill="#04070B"/>
+  <rect width="900" height="1200" fill="url(#bg)"/>
+  <ellipse cx="450" cy="220" rx="180" ry="200" fill="#89D8FF" fill-opacity="0.2"/>
+  <path d="M300 1130V320C300 218 383 136 485 136C587 136 670 218 670 320V1130H300Z" fill="#101A26" stroke="#8EDFFF" stroke-opacity="0.25" stroke-width="2"/>
+  <path d="M394 1030V366H576V1030H394Z" fill="#152635"/>
+  <path d="M432 328V184H538V328H432Z" fill="#BAEDFF" fill-opacity="0.9"/>
+  <path d="M332 420V236H376V420H332Z" fill="#6DCCFF" fill-opacity="0.4"/>
+  <text x="84" y="104" fill="#8EDFFF" font-family="Georgia, serif" font-size="38" letter-spacing="8">NOCTURNE VALE</text>
+  <text x="82" y="1032" fill="#F3EFE2" font-family="Georgia, serif" font-size="74">Moonfall</text>
+  <text x="82" y="1110" fill="#D3B06A" font-family="Arial, sans-serif" font-size="42" letter-spacing="6">SANCTUM</text>
+  <defs>
+    <linearGradient id="bg" x1="450" y1="0" x2="450" y2="1200" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#07101A"/>
+      <stop offset="1" stop-color="#030406"/>
+    </linearGradient>
+  </defs>
+</svg>

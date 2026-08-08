@@ -1,0 +1,66 @@
+import { GameCard } from "@/components/game/game-card";
+import { SearchFilters } from "@/components/search/search-filters";
+import { SectionHeading } from "@/components/ui/section-heading";
+import { ENGINES, GENRES, TAGS } from "@/constants/filters";
+import { searchSchema } from "@/lib/validators";
+import { getAllGames } from "@/services/game-service";
+
+export default async function SearchPage({
+  searchParams
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const resolvedSearchParams = await searchParams;
+  const parsed = searchSchema.parse({
+    q: typeof resolvedSearchParams.q === "string" ? resolvedSearchParams.q : undefined,
+    genre: typeof resolvedSearchParams.genre === "string" ? resolvedSearchParams.genre : undefined,
+    engine: typeof resolvedSearchParams.engine === "string" ? resolvedSearchParams.engine : undefined,
+    tag: typeof resolvedSearchParams.tag === "string" ? resolvedSearchParams.tag : undefined,
+    mature: typeof resolvedSearchParams.mature === "string" ? resolvedSearchParams.mature : "all",
+    sort: typeof resolvedSearchParams.sort === "string" ? resolvedSearchParams.sort : "trending"
+  });
+
+  const [games, allGames] = await Promise.all([getAllGames(parsed), getAllGames()]);
+  const genreOptions = Array.from(new Set([...GENRES, ...allGames.flatMap((game) => game.genres)])).sort((a, b) =>
+    a.localeCompare(b)
+  );
+  const engineOptions = Array.from(new Set([...ENGINES, ...allGames.map((game) => game.engine)])).sort((a, b) =>
+    a.localeCompare(b)
+  );
+  const tagOptions = Array.from(new Set([...TAGS, ...allGames.flatMap((game) => game.tags)])).sort((a, b) =>
+    a.localeCompare(b)
+  );
+
+  return (
+    <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+      <SectionHeading
+        eyebrow="Tìm kiếm"
+        title="Tìm theo tên, developer, engine, tag hoặc mood"
+        description="Hệ thống tìm kiếm ưu tiên tên game, thể loại, tag và developer để bạn lọc game nhanh hơn."
+      />
+      <div className="grid gap-6 xl:grid-cols-[320px_1fr]">
+        <SearchFilters
+          activeGenre={parsed.genre}
+          activeEngine={parsed.engine}
+          activeTag={parsed.tag}
+          genreOptions={genreOptions}
+          engineOptions={engineOptions}
+          tagOptions={tagOptions}
+        />
+        <div className="space-y-5">
+          <div className="glass-panel rounded-[28px] p-6">
+            <p className="text-sm text-muted-foreground">
+              <span className="font-semibold text-foreground">{games.length}</span> kết quả
+              {parsed.q ? ` cho "${parsed.q}"` : ""}.
+            </p>
+          </div>
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+            {games.map((game) => (
+              <GameCard key={game.slug} game={game} />
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

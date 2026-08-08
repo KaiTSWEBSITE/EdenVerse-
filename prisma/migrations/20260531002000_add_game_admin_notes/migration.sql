@@ -1,0 +1,2 @@
+ALTER TABLE "Game" ADD COLUMN "adminNote" TEXT;
+ALTER TABLE "Game" ADD COLUMN "adminNoteColor" TEXT;

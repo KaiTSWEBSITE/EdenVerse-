@@ -1,0 +1,18 @@
+<svg width="900" height="1200" viewBox="0 0 900 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="1200" fill="#05070C"/>
+  <rect width="900" height="1200" fill="url(#bg)"/>
+  <path d="M258 1180L450 220L642 1180H258Z" fill="#131D2B" stroke="#A9E7FF" stroke-opacity="0.28" stroke-width="2"/>
+  <path d="M450 196L506 350H394L450 196Z" fill="#7EDBFF" fill-opacity="0.92"/>
+  <path d="M360 460H540V1040H360V460Z" fill="#0B1420"/>
+  <path d="M394 500H506V1040H394V500Z" fill="#152A3A"/>
+  <circle cx="450" cy="412" r="32" fill="#F0C56E"/>
+  <text x="84" y="104" fill="#F0C56E" font-family="Georgia, serif" font-size="38" letter-spacing="8">VELVET FORGE</text>
+  <text x="82" y="1032" fill="#F5F0E2" font-family="Georgia, serif" font-size="80">Crown</text>
+  <text x="82" y="1110" fill="#90DEFF" font-family="Arial, sans-serif" font-size="42" letter-spacing="6">OF ASHES</text>
+  <defs>
+    <linearGradient id="bg" x1="450" y1="0" x2="450" y2="1200" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#09121D"/>
+      <stop offset="1" stop-color="#030406"/>
+    </linearGradient>
+  </defs>
+</svg>
