@@ -98,6 +98,7 @@ function mapGameRecord(game: GameRecord): Game {
     downloadUrlSeason2: game.downloadUrlSeason2 ?? undefined,
     adminNote: game.adminNote ?? undefined,
     adminNoteColor: game.adminNoteColor ?? undefined,
+    fileSize: game.fileSize ?? undefined,
     genres: game.genres.map((entry) => entry.genre),
     tags: game.tags.map((entry) => entry.tag.name),
     platforms: toStringArray(game.platforms).length ? toStringArray(game.platforms) : fallback?.platforms ?? ["Windows"],

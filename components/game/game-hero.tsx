@@ -61,7 +61,7 @@ export async function GameHero({ game }: { game: Game }) {
               alt={game.title}
               fill
               style={coverCropStyle}
-              className="object-contain transition duration-500 group-hover:scale-[1.02]"
+              className="object-cover transition duration-500 group-hover:scale-[1.02]"
               sizes="(max-width: 1280px) 100vw, 30vw"
               priority
             />
