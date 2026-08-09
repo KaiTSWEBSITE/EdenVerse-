@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cinzel, Inter } from "next/font/google";
+import { Inter, Playfair_Display } from "next/font/google";
 import { AtmosphericBackdrop } from "@/components/layout/atmospheric-backdrop";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
@@ -7,10 +7,10 @@ import { AppProviders } from "@/context/providers";
 import { siteConfig } from "@/config/site";
 import "@/app/globals.css";
 
-const display = Cinzel({
-  subsets: ["latin", "latin-ext"],
+const display = Playfair_Display({
+  subsets: ["latin", "vietnamese"],
   variable: "--font-display",
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700", "900"],
   display: "swap"
 });
 

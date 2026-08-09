@@ -152,8 +152,8 @@ export function HeroSection({
                       <Flame className="h-3.5 w-3.5 text-accent" />
                       #{index + 1}
                     </div>
-                    <p className="break-words font-display text-xl leading-tight text-foreground">{game.title}</p>
-                    <p className="mt-1 shrink text-xs text-muted-foreground">{game.developer}</p>
+                    <p className="font-display text-xl leading-tight text-foreground line-clamp-2">{game.title}</p>
+                    <p className="mt-1 line-clamp-1 text-xs text-muted-foreground">{game.developer}</p>
                   </div>
                 </Link>
               ))

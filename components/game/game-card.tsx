@@ -101,10 +101,10 @@ export function GameCard({ game }: { game: Game }) {
                 </Badge>
               ) : null}
             </div>
-            <h3 className="break-words py-1 font-display text-2xl leading-[1.24] text-white">
+            <h3 className="line-clamp-2 break-words py-1 font-display text-2xl leading-[1.24] text-white">
               {game.title}
             </h3>
-            <p className="mt-2 pb-0.5 text-sm leading-7 text-white/74">
+            <p className="mt-2 line-clamp-3 pb-0.5 text-sm leading-6 text-white/80">
               {game.shortDescription}
             </p>
           </div>
@@ -117,7 +117,7 @@ export function GameCard({ game }: { game: Game }) {
               <Star className="h-4 w-4 fill-accent text-accent" />
               {formatRating(game.rating)}
             </span>
-            <span className="shrink">{game.developer}</span>
+            <span className="truncate max-w-[120px]">{game.developer}</span>
             <span className="hidden items-center gap-1.5 sm:inline-flex">
               <Download className="h-3.5 w-3.5 text-primary/80" />
               {formatCompactNumber(game.downloads)} tải
