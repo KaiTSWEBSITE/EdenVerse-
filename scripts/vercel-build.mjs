@@ -28,7 +28,7 @@ if (shouldRunMigrations) {
     process.env.DATABASE_URL = process.env.DATABASE_URL_UNPOOLED;
   }
 
-  run("npx", ["prisma", "migrate", "deploy"]);
+  run("npx", ["prisma", "db", "push", "--accept-data-loss"]);
   process.env.DATABASE_URL = runtimeDatabaseUrl;
 }
 

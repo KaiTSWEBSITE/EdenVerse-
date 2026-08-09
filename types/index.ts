@@ -31,6 +31,7 @@ export interface Game {
   shortDescription: string;
   description: string;
   story: string;
+  fileSize?: string;
   version: string;
   developer: string;
   engine: string;

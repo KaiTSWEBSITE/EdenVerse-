@@ -88,6 +88,7 @@ model Game {
   shortDescription String
   description     String
   story           String
+  fileSize        String?
   version         String
   developer       String
   engine          String

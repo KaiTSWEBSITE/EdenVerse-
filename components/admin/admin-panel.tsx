@@ -92,6 +92,7 @@ type AdminGameSummary = {
   title: string;
   tagline: string;
   shortDescription: string;
+  fileSize: string;
   description: string;
   version: string;
   developer: string;
@@ -154,6 +155,7 @@ type GameFormState = {
   platforms: string;
   languages: string;
   shortDescription: string;
+  fileSize: string;
   description: string;
   coverImageUrl: string;
   coverZoom: string;
@@ -179,6 +181,7 @@ const emptyGameFormState: GameFormState = {
   platforms: "",
   languages: "",
   shortDescription: "",
+  fileSize: "",
   description: "",
   coverImageUrl: "",
   coverZoom: "1",
@@ -415,6 +418,7 @@ export function AdminPanel({
       platforms: game.platforms.join(", "),
       languages: game.languages.join(", "),
       shortDescription: game.shortDescription,
+      fileSize: game.fileSize || "",
       description: game.description,
       coverImageUrl: game.coverImage,
       coverZoom: String(game.coverZoom ?? 1),
@@ -470,7 +474,7 @@ export function AdminPanel({
       adminNote: gameForm.adminNote || null,
       adminNoteColor: getSafeAdminNoteColor(gameForm.adminNoteColor),
       shortDescription: gameForm.shortDescription,
-      description: gameForm.description,
+      fileSize: gameForm.fileSize,
       tagline: gameForm.shortDescription.slice(0, 140),
       coverImage: gameForm.coverImageUrl,
       coverZoom: Number(gameForm.coverZoom) || 1,
