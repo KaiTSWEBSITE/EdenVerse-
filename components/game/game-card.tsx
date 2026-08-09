@@ -63,7 +63,7 @@ export function GameCard({ game }: { game: Game }) {
         </div>
 
         {/* Cover image area */}
-        <div className="relative aspect-video overflow-hidden bg-[#050912]">
+        <div className="relative aspect-[4/5] overflow-hidden bg-[#050912]">
           {/* Blurred bg */}
           <Image
             src={game.coverImage}
@@ -80,7 +80,7 @@ export function GameCard({ game }: { game: Game }) {
             fill
             sizes="(max-width: 768px) 100vw, 33vw"
             style={coverCropStyle}
-            className="object-cover transition duration-500 ease-out group-hover:scale-[1.04] group-hover:saturate-110"
+            className="object-contain transition duration-500 ease-out group-hover:scale-[1.04] group-hover:saturate-110"
           />
           {/* Bottom gradient */}
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/28 to-transparent" />
