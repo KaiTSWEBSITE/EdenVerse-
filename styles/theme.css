@@ -3,17 +3,17 @@
   --foreground: 42 31% 90%;
   --card: 224 30% 11%;
   --card-foreground: 42 31% 92%;
-  --primary: 196 86% 67%;
-  --primary-foreground: 228 34% 8%;
-  --secondary: 218 24% 16%;
-  --secondary-foreground: 42 31% 90%;
-  --muted: 220 24% 14%;
-  --muted-foreground: 215 16% 72%;
-  --accent: 44 58% 64%;
+  --primary: 353 89% 56%; /* Gothic Crimson */
+  --primary-foreground: 0 0% 100%;
+  --secondary: 220 24% 12%;
+  --secondary-foreground: 0 0% 80%;
+  --muted: 220 24% 10%;
+  --muted-foreground: 220 10% 60%;
+  --accent: 0 0% 74%; /* Silver */
   --accent-foreground: 228 36% 8%;
-  --border: 211 39% 22%;
-  --input: 216 36% 17%;
-  --ring: 195 90% 73%;
+  --border: 353 40% 22%;
+  --input: 220 24% 12%;
+  --ring: 353 89% 56%;
 }
 
 body {
@@ -87,39 +87,7 @@ body {
   background-clip: text;
 }
 
-/* ─── Section heading accent border ─────────────────────────── */
-.heading-accent {
-  position: relative;
-  padding-left: 1rem;
-}
-
-.heading-accent::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 8%;
-  bottom: 8%;
-  width: 3px;
-  border-radius: 9999px;
-  background: linear-gradient(
-    180deg,
-    hsl(var(--primary)) 0%,
-    hsl(var(--accent) / 0.65) 65%,
-    transparent 100%
-  );
-}
-
-/* ─── Section divider ────────────────────────────────────────── */
-.section-divider {
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    hsl(var(--primary) / 0.35) 0%,
-    hsl(var(--accent) / 0.18) 42%,
-    transparent 100%
-  );
-  margin-top: 0.5rem;
-}
+/* ─── Section dividers removed per request ───────────────────── */
 
 /* ─── Glow badge ─────────────────────────────────────────────── */
 .glow-badge {

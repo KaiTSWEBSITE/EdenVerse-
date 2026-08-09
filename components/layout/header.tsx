@@ -34,10 +34,7 @@ export function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/6 bg-[rgba(4,6,11,0.76)] backdrop-blur-2xl">
-      {/* Subtle bottom glow */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
-
+    <header className="sticky top-0 z-40 bg-[rgba(4,6,11,0.76)] backdrop-blur-2xl">
       <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 sm:px-6 lg:px-8">
         <Logo className="shrink-0" />
 

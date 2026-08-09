@@ -7,7 +7,7 @@ import { Logo } from "@/components/layout/logo";
 
 export function Footer() {
   return (
-    <footer className="relative mt-8 border-t border-white/6">
+    <footer className="relative mt-8">
       {/* Ambient glow blobs */}
       <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
         <div
@@ -17,7 +17,7 @@ export function Footer() {
             height: 220,
             left: "70%",
             top: "10%",
-            background: "rgba(79,184,255,0.055)",
+            background: "rgba(229,57,53,0.06)",
             filter: "blur(80px)"
           }}
         />
@@ -28,7 +28,7 @@ export function Footer() {
             height: 180,
             left: "4%",
             top: "50%",
-            background: "rgba(209,160,88,0.04)",
+            background: "rgba(189,189,189,0.04)",
             filter: "blur(70px)",
             animationDelay: "2s"
           }}
@@ -76,8 +76,7 @@ export function Footer() {
         {footerNavigation.map((group) => (
           <div key={group.title}>
             <p className="mb-4 font-display text-xl text-foreground">{group.title}</p>
-            {/* Gradient divider under group title */}
-            <div className="section-divider mb-4 ml-0" />
+            <div className="mb-4" />
             <div className="space-y-3">
               {group.links.map((link) => (
                 <Link

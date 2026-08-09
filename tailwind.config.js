@@ -40,14 +40,14 @@ module.exports = {
         }
       },
       boxShadow: {
-        glow: "0 0 0 1px rgba(114, 214, 255, 0.12), 0 12px 40px rgba(7, 29, 48, 0.45)",
-        "glow-strong": "0 0 24px rgba(70, 180, 255, 0.22), 0 18px 60px rgba(5, 11, 23, 0.72)",
-        "glow-sm": "0 0 0 1px rgba(114, 214, 255, 0.08), 0 4px 20px rgba(7, 29, 48, 0.35)",
-        "card-hover": "0 28px 64px rgba(0, 0, 0, 0.52), 0 0 0 1px rgba(87, 188, 255, 0.12)"
+        glow: "0 0 0 1px rgba(229, 57, 53, 0.12), 0 12px 40px rgba(26, 7, 7, 0.45)",
+        "glow-strong": "0 0 24px rgba(229, 57, 53, 0.22), 0 18px 60px rgba(26, 7, 7, 0.72)",
+        "glow-sm": "0 0 0 1px rgba(229, 57, 53, 0.08), 0 4px 20px rgba(26, 7, 7, 0.35)",
+        "card-hover": "0 28px 64px rgba(0, 0, 0, 0.52), 0 0 0 1px rgba(229, 57, 53, 0.18)"
       },
       backgroundImage: {
         aurora:
-          "radial-gradient(circle at top, rgba(67, 162, 255, 0.20), transparent 40%), radial-gradient(circle at bottom left, rgba(255, 185, 94, 0.10), transparent 35%)",
+          "radial-gradient(circle at top, rgba(229, 57, 53, 0.18), transparent 45%), radial-gradient(circle at bottom left, rgba(189, 189, 189, 0.08), transparent 40%)",
         "panel-gradient":
           "linear-gradient(135deg, rgba(11, 16, 27, 0.88), rgba(14, 22, 34, 0.72))"
       },
@@ -56,12 +56,12 @@ module.exports = {
         body: ["var(--font-body)"]
       },
       animation: {
-        float: "float 8s ease-in-out infinite",
-        pulseglow: "pulseglow 5s ease-in-out infinite",
-        drift: "drift 20s linear infinite",
-        aurora: "aurora 7s ease-in-out infinite",
-        "bounce-gentle": "bounce-gentle 2.2s ease-in-out infinite",
-        "glow-breathe": "glow-breathe 4s ease-in-out infinite",
+        float: "float 12s ease-in-out infinite",
+        pulseglow: "pulseglow 8s ease-in-out infinite",
+        drift: "drift 25s linear infinite",
+        aurora: "aurora 15s ease-in-out infinite",
+        "bounce-gentle": "bounce-gentle 4s ease-in-out infinite",
+        "glow-breathe": "glow-breathe 8s ease-in-out infinite",
         "fade-in-up": "fade-in-up 0.55s ease forwards"
       },
       keyframes: {

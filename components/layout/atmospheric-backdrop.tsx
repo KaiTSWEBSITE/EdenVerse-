@@ -6,19 +6,19 @@ const AURORA_LINES = [
   {
     top: "22%",
     background:
-      "linear-gradient(90deg, transparent 0%, rgba(87,188,255,0.22) 28%, rgba(87,188,255,0.36) 50%, rgba(87,188,255,0.22) 72%, transparent 100%)",
+      "linear-gradient(90deg, transparent 0%, rgba(229,57,53,0.22) 28%, rgba(229,57,53,0.36) 50%, rgba(229,57,53,0.22) 72%, transparent 100%)",
     delay: "0s"
   },
   {
     top: "50%",
     background:
-      "linear-gradient(90deg, transparent 5%, rgba(209,160,88,0.14) 35%, rgba(209,160,88,0.24) 55%, rgba(209,160,88,0.14) 78%, transparent 100%)",
+      "linear-gradient(90deg, transparent 5%, rgba(189,189,189,0.14) 35%, rgba(189,189,189,0.24) 55%, rgba(189,189,189,0.14) 78%, transparent 100%)",
     delay: "2.4s"
   },
   {
     top: "74%",
     background:
-      "linear-gradient(90deg, transparent 0%, rgba(87,188,255,0.12) 32%, rgba(142,216,255,0.2) 52%, rgba(87,188,255,0.12) 70%, transparent 100%)",
+      "linear-gradient(90deg, transparent 0%, rgba(229,57,53,0.12) 32%, rgba(239,83,80,0.2) 52%, rgba(229,57,53,0.12) 70%, transparent 100%)",
     delay: "4.8s"
   }
 ];
@@ -29,7 +29,7 @@ const NEBULA_BLOBS = [
     height: 340,
     left: "58%",
     top: "6%",
-    color: "rgba(79,184,255,0.09)",
+    color: "rgba(229,57,53,0.09)",
     blur: 80,
     delay: "0s",
     duration: "10s"
@@ -39,7 +39,7 @@ const NEBULA_BLOBS = [
     height: 300,
     left: "2%",
     top: "52%",
-    color: "rgba(209,160,88,0.07)",
+    color: "rgba(189,189,189,0.07)",
     blur: 100,
     delay: "3.5s",
     duration: "13s"
@@ -49,14 +49,14 @@ const NEBULA_BLOBS = [
     height: 220,
     left: "34%",
     top: "26%",
-    color: "rgba(87,188,255,0.06)",
+    color: "rgba(229,57,53,0.06)",
     blur: 70,
     delay: "7s",
     duration: "9s"
   }
 ];
 
-const PARTICLES = Array.from({ length: 28 }, (_, i) => ({
+const PARTICLES = Array.from({ length: 12 }, (_, i) => ({
   width: 1.2 + (i % 4) * 0.55,
   height: 1.2 + (i % 4) * 0.55,
   left: `${5 + ((i * 11 + 7) % 90)}%`,
@@ -85,11 +85,10 @@ export function AtmosphericBackdrop() {
       <div className="absolute inset-0 vignette-overlay" />
 
       {/* Base overlay */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_14%,rgba(79,184,255,0.2),transparent_22%),linear-gradient(90deg,rgba(0,0,0,0.74),rgba(0,0,0,0.16)_48%,rgba(0,0,0,0.84))]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_14%,rgba(229,57,53,0.18),transparent_22%),linear-gradient(90deg,rgba(0,0,0,0.74),rgba(0,0,0,0.16)_48%,rgba(0,0,0,0.84))]" />
 
-      {/* Ray & fog layers */}
-      <div className="ray-layer absolute inset-0 opacity-38" />
-      <div className="fog-layer absolute inset-0 opacity-58" />
+      {/* Fog layer */}
+      <div className="fog-layer absolute inset-0 opacity-45" />
 
       {/* Nebula blobs */}
       <div className="absolute inset-0 hidden sm:block">

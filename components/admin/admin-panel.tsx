@@ -1021,7 +1021,7 @@ export function AdminPanel({
                   <div key={game.id} className="grid gap-4 p-4 lg:grid-cols-[1fr_auto] lg:items-center">
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
-                        <p className="truncate font-semibold text-foreground">{game.title}</p>
+                        <p className="break-words font-semibold text-foreground">{game.title}</p>
                         <span className="rounded-full border border-primary/20 bg-primary/10 px-2 py-1 text-[11px] uppercase tracking-[0.16em] text-primary">
                           {game.version}
                         </span>
@@ -1104,7 +1104,7 @@ export function AdminPanel({
                   <div key={post.id} className="grid gap-4 p-4 lg:grid-cols-[1fr_auto] lg:items-center">
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
-                        <p className="truncate font-semibold text-foreground">{post.title}</p>
+                        <p className="break-words font-semibold text-foreground">{post.title}</p>
                         <span className="rounded-full border border-primary/20 bg-primary/10 px-2 py-1 text-[11px] uppercase tracking-[0.16em] text-primary">
                           {post.status}
                         </span>

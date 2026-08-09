@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cormorant_SC, Spectral } from "next/font/google";
+import { Cinzel, Inter } from "next/font/google";
 import { AtmosphericBackdrop } from "@/components/layout/atmospheric-backdrop";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
@@ -7,17 +7,17 @@ import { AppProviders } from "@/context/providers";
 import { siteConfig } from "@/config/site";
 import "@/app/globals.css";
 
-const display = Cormorant_SC({
-  subsets: ["latin", "vietnamese"],
+const display = Cinzel({
+  subsets: ["latin", "latin-ext"],
   variable: "--font-display",
-  weight: ["500", "600", "700"],
+  weight: ["400", "500", "600", "700"],
   display: "swap"
 });
 
-const body = Spectral({
+const body = Inter({
   subsets: ["latin", "vietnamese"],
   variable: "--font-body",
-  weight: ["400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600"],
   display: "swap"
 });
 
@@ -45,9 +45,9 @@ export const metadata: Metadata = {
     images: ["/backgrounds/eden-cathedral.png"]
   },
   icons: {
-    icon: "/logos/edenverse-mark.svg",
-    shortcut: "/logos/edenverse-mark.svg",
-    apple: "/logos/edenverse-mark.svg"
+    icon: "/logos/edenverse-mark.png",
+    shortcut: "/logos/edenverse-mark.png",
+    apple: "/logos/edenverse-mark.png"
   }
 };
 
