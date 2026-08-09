@@ -23,7 +23,8 @@ export function getTrackedDownloadCount(game: Game) {
 
 export async function recordDownloadClick(
   slug: string,
-  mirror: "primary" | "backup" | "joyplay" | "season2" = "primary"
+  mirror: "primary" | "backup" | "joyplay" | "season2" = "primary",
+  isVip: boolean = false
 ) {
   const nextClicks = getDownloadClickCount(slug) + 1;
   downloadClicks.set(slug, nextClicks);
@@ -42,18 +43,22 @@ export async function recordDownloadClick(
           downloadUrl: true,
           downloadUrlAlt: true,
           downloadUrlJoyplay: true,
-          downloadUrlSeason2: true
+          downloadUrlSeason2: true,
+          downloadUrlVip: true,
+          downloadUrlAltVip: true,
+          downloadUrlJoyplayVip: true,
+          downloadUrlSeason2Vip: true
         }
       });
 
       const selectedUrl =
         mirror === "season2"
-          ? game.downloadUrlSeason2 || game.downloadUrl
+          ? (isVip && game.downloadUrlSeason2Vip) ? game.downloadUrlSeason2Vip : (game.downloadUrlSeason2 || game.downloadUrl)
           : mirror === "joyplay"
-            ? game.downloadUrlJoyplay || game.downloadUrl
+            ? (isVip && game.downloadUrlJoyplayVip) ? game.downloadUrlJoyplayVip : (game.downloadUrlJoyplay || game.downloadUrl)
             : mirror === "backup"
-              ? game.downloadUrlAlt || game.downloadUrl
-              : game.downloadUrl;
+              ? (isVip && game.downloadUrlAltVip) ? game.downloadUrlAltVip : (game.downloadUrlAlt || game.downloadUrl)
+              : (isVip && game.downloadUrlVip) ? game.downloadUrlVip : game.downloadUrl;
 
       return {
         clicks: nextClicks,

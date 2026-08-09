@@ -31,8 +31,9 @@ export async function POST(request: Request, { params }: { params: Promise<{ slu
     return NextResponse.json({ message: "Bạn bấm tải quá nhanh, thử lại sau một chút." }, { status: 429 });
   }
 
-  const stats = await recordDownloadClick(slug, mirror);
   const session = await auth();
+  const isVip = (session?.user?.vipTier ?? 0) > 0;
+  const stats = await recordDownloadClick(slug, mirror, isVip);
   const progression = session?.user?.id
     ? await awardReputationOnce({
         userId: session.user.id,
@@ -47,6 +48,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ slu
     message: progression
       ? `Đã ghi nhận lượt click tải. +${reputationRewards.download_game} danh tiếng.`
       : "Đã ghi nhận lượt click tải.",
+    downloadUrl: stats.downloadUrl,
     slug,
     title: game.title,
     progression,

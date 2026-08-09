@@ -10,6 +10,7 @@ export interface UserSummary {
   role: Role;
   level: number;
   reputation: number;
+  vipTier: number;
 }
 
 export interface UserProfile extends UserSummary {
@@ -56,6 +57,10 @@ export interface Game {
   downloadUrlAlt?: string;
   downloadUrlJoyplay?: string;
   downloadUrlSeason2?: string;
+  downloadUrlVip?: string;
+  downloadUrlAltVip?: string;
+  downloadUrlJoyplayVip?: string;
+  downloadUrlSeason2Vip?: string;
   adminNote?: string;
   adminNoteColor?: string;
   genres: string[];

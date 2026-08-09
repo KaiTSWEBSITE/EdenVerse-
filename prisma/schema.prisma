@@ -26,6 +26,7 @@ model User {
   role               Role        @default(USER)
   level              Int         @default(1)
   reputation         Int         @default(0)
+  vipTier            Int         @default(0)
   allowMatureContent Boolean     @default(false)
   emailVerified      DateTime?
   createdAt          DateTime    @default(now())
@@ -99,6 +100,10 @@ model Game {
   downloadUrlAlt  String?
   downloadUrlJoyplay String?
   downloadUrlSeason2 String?
+  downloadUrlVip     String?
+  downloadUrlAltVip  String?
+  downloadUrlJoyplayVip String?
+  downloadUrlSeason2Vip String?
   adminNote       String?
   adminNoteColor  String?
   mature          Boolean        @default(false)

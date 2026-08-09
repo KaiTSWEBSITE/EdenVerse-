@@ -101,6 +101,10 @@ type AdminGameSummary = {
   downloadUrlAlt: string | null;
   downloadUrlJoyplay: string | null;
   downloadUrlSeason2: string | null;
+  downloadUrlVip: string | null;
+  downloadUrlAltVip: string | null;
+  downloadUrlJoyplayVip: string | null;
+  downloadUrlSeason2Vip: string | null;
   adminNote: string | null;
   adminNoteColor: string | null;
   downloadsCount: number;
@@ -167,6 +171,10 @@ type GameFormState = {
   downloadUrlAlt: string;
   downloadUrlJoyplay: string;
   downloadUrlSeason2: string;
+  downloadUrlVip: string;
+  downloadUrlAltVip: string;
+  downloadUrlJoyplayVip: string;
+  downloadUrlSeason2Vip: string;
   adminNote: string;
   adminNoteColor: string;
   seoTitle: string;
@@ -193,6 +201,10 @@ const emptyGameFormState: GameFormState = {
   downloadUrlAlt: "",
   downloadUrlJoyplay: "",
   downloadUrlSeason2: "",
+  downloadUrlVip: "",
+  downloadUrlAltVip: "",
+  downloadUrlJoyplayVip: "",
+  downloadUrlSeason2Vip: "",
   adminNote: "",
   adminNoteColor: "#d1a058",
   seoTitle: "",
@@ -430,6 +442,10 @@ export function AdminPanel({
       downloadUrlAlt: game.downloadUrlAlt ?? "",
       downloadUrlJoyplay: game.downloadUrlJoyplay ?? "",
       downloadUrlSeason2: game.downloadUrlSeason2 ?? "",
+      downloadUrlVip: game.downloadUrlVip ?? "",
+      downloadUrlAltVip: game.downloadUrlAltVip ?? "",
+      downloadUrlJoyplayVip: game.downloadUrlJoyplayVip ?? "",
+      downloadUrlSeason2Vip: game.downloadUrlSeason2Vip ?? "",
       adminNote: game.adminNote ?? "",
       adminNoteColor: getSafeAdminNoteColor(game.adminNoteColor),
       seoTitle: game.title,
@@ -471,6 +487,10 @@ export function AdminPanel({
       downloadUrlAlt: gameForm.downloadUrlAlt || null,
       downloadUrlJoyplay: gameForm.downloadUrlJoyplay || null,
       downloadUrlSeason2: gameForm.downloadUrlSeason2 || null,
+      downloadUrlVip: gameForm.downloadUrlVip || null,
+      downloadUrlAltVip: gameForm.downloadUrlAltVip || null,
+      downloadUrlJoyplayVip: gameForm.downloadUrlJoyplayVip || null,
+      downloadUrlSeason2Vip: gameForm.downloadUrlSeason2Vip || null,
       adminNote: gameForm.adminNote || null,
       adminNoteColor: getSafeAdminNoteColor(gameForm.adminNoteColor),
       shortDescription: gameForm.shortDescription,
@@ -1500,6 +1520,37 @@ export function AdminPanel({
                   onChange={(event) => updateGameForm("downloadUrlSeason2", event.target.value)}
                   placeholder="Link tải Season 2 / season tiếp theo"
                 />
+              </div>
+              <div className="space-y-3">
+                <p className="text-sm font-semibold text-foreground">Link tải VIP (Tải trực tiếp, bỏ qua shortlink)</p>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <Input
+                    name="downloadUrlVip"
+                    value={gameForm.downloadUrlVip}
+                    onChange={(event) => updateGameForm("downloadUrlVip", event.target.value)}
+                    placeholder="Link VIP chính"
+                  />
+                  <Input
+                    name="downloadUrlAltVip"
+                    value={gameForm.downloadUrlAltVip}
+                    onChange={(event) => updateGameForm("downloadUrlAltVip", event.target.value)}
+                    placeholder="Link VIP phụ"
+                  />
+                  <Input
+                    name="downloadUrlJoyplayVip"
+                    value={gameForm.downloadUrlJoyplayVip}
+                    onChange={(event) => updateGameForm("downloadUrlJoyplayVip", event.target.value)}
+                    placeholder="Link VIP JoyPlay"
+                  />
+                  <Input
+                    name="downloadUrlSeason2Vip"
+                    value={gameForm.downloadUrlSeason2Vip}
+                    onChange={(event) => updateGameForm("downloadUrlSeason2Vip", event.target.value)}
+                    placeholder="Link VIP Season 2"
+                  />
+                </div>
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
                 <Input
                   name="seoTitle"
                   value={gameForm.seoTitle}

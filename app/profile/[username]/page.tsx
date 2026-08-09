@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ProfileOverview } from "@/components/profile/profile-overview";
 import { getGameBySlug } from "@/services/game-service";
 import { getUserByUsername } from "@/services/user-service";
+import { auth } from "@/auth";
 
 function isGame(value: Awaited<ReturnType<typeof getGameBySlug>>): value is NonNullable<Awaited<ReturnType<typeof getGameBySlug>>> {
   return Boolean(value);
@@ -23,6 +24,12 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
   const { username } = await params;
   const user = await getUserByUsername(username);
   if (!user) {
+    notFound();
+  }
+
+  const session = await auth();
+  const isAdmin = session?.user?.role === "ADMIN" || session?.user?.role === "SUPER_ADMIN";
+  if (session?.user?.username !== user.username && !isAdmin) {
     notFound();
   }
 

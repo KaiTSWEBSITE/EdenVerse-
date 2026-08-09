@@ -79,6 +79,7 @@ const providers = [
         username: user.username,
         role: user.role,
         reputation: user.reputation,
+        vipTier: user.vipTier,
         level: user.level,
         allowMatureContent: user.allowMatureContent,
         adminVaultPassed: isAdmin
@@ -109,6 +110,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.role = user.role;
         token.username = user.username;
         token.reputation = user.reputation;
+        token.vipTier = user.vipTier;
         token.level = user.level;
         token.allowMatureContent = user.allowMatureContent;
         token.adminVaultPassed = user.adminVaultPassed === true;
@@ -122,6 +124,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.role = (token.role as string | undefined) ?? "USER";
         session.user.username = (token.username as string | undefined) ?? "";
         session.user.reputation = (token.reputation as number | undefined) ?? 0;
+        session.user.vipTier = (token.vipTier as number | undefined) ?? 0;
         session.user.level = (token.level as number | undefined) ?? 1;
         session.user.allowMatureContent = (token.allowMatureContent as boolean | undefined) ?? false;
         session.user.adminVaultPassed = token.adminVaultPassed === true;
