@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 import type { ComponentType, FormEvent } from "react";
 import { useEffect, useState } from "react";
-import type { DashboardMetric } from "@/types";
+import type { DashboardMetric, UserProfile } from "@/types";
 import type { TranslatorSupportSettings } from "@/services/support-settings-service";
 import { ENGINES, GENRES, TAGS } from "@/constants/filters";
 import { Button } from "@/components/ui/button";
@@ -188,8 +188,8 @@ const emptyGameFormState: GameFormState = {
   engine: "",
   platforms: "",
   languages: "",
-  shortDescription: "",
   fileSize: "",
+  shortDescription: "",
   description: "",
   coverImageUrl: "",
   coverZoom: "1",
@@ -253,8 +253,12 @@ export function AdminPanel({
   const [gameListMessage, setGameListMessage] = useState("");
   const [gameDeleteMessage, setGameDeleteMessage] = useState("");
   const [reports, setReports] = useState<AdminGameReportSummary[]>([]);
-  const [reportsLoading, setReportsLoading] = useState(true);
+  const [reportsLoading, setReportsLoading] = useState(false);
   const [reportMessage, setReportMessage] = useState("");
+
+  const [users, setUsers] = useState<UserProfile[]>([]);
+  const [usersLoading, setUsersLoading] = useState(false);
+  const [userMessage, setUserMessage] = useState("");
   const [penaltyIdentifier, setPenaltyIdentifier] = useState("");
   const [penaltyPoints, setPenaltyPoints] = useState("10");
   const [penaltyReason, setPenaltyReason] = useState("");
@@ -352,19 +356,76 @@ export function AdminPanel({
       if (Array.isArray(data.reports)) {
         setReports(data.reports);
       }
-
-      setReportMessage(data.message ?? "");
+      if (data.message) {
+        setReportMessage(data.message);
+      }
     } catch {
-      setReportMessage("Không thể tải danh sách báo cáo lỗi lúc này.");
+      setReportMessage("Có lỗi xảy ra, không thể kết nối server.");
     } finally {
       setReportsLoading(false);
     }
   }
 
+  const deleteReport = async (reportId: string) => {
+    if (!confirm("Bạn có chắc chắn muốn xóa vĩnh viễn báo cáo này không?")) return;
+    try {
+      const res = await fetch(`/api/admin/reports?id=${reportId}`, {
+        method: "DELETE"
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setReports((prev) => prev.filter((r) => r.id !== reportId));
+      }
+      if (data.message) {
+        setReportMessage(data.message);
+      }
+    } catch {
+      setReportMessage("Có lỗi xảy ra khi xóa báo cáo.");
+    }
+  };
+
+  const loadUsers = async () => {
+    setUsersLoading(true);
+    setUserMessage("");
+    try {
+      const response = await fetch("/api/admin/users");
+      if (!response.ok) throw new Error("Fetch failed");
+      const data = await response.json();
+      if (Array.isArray(data.users)) {
+        setUsers(data.users);
+      }
+    } catch {
+      setUserMessage("Không thể tải danh sách thành viên.");
+    } finally {
+      setUsersLoading(false);
+    }
+  };
+
+  const updateUserRole = async (userId: string, newRole: string, newVipTier: number) => {
+    setUserMessage("Đang cập nhật...");
+    try {
+      const response = await fetch("/api/admin/users", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: userId, role: newRole, vipTier: newVipTier })
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setUsers((prev) =>
+          prev.map((u) => (u.id === userId ? { ...u, role: newRole as any, vipTier: newVipTier } : u))
+        );
+      }
+      setUserMessage(data.message || "Đã cập nhật.");
+    } catch {
+      setUserMessage("Lỗi khi cập nhật thành viên.");
+    }
+  };
+
   useEffect(() => {
     void loadPosts();
     void loadGames();
     void loadReports();
+    void loadUsers();
   }, []);
 
   const genreOptions = Array.from(new Set([...GENRES, ...selectedGenres])).sort((first, second) =>
@@ -429,8 +490,8 @@ export function AdminPanel({
       engine: game.engine,
       platforms: game.platforms.join(", "),
       languages: game.languages.join(", "),
-      shortDescription: game.shortDescription,
       fileSize: game.fileSize || "",
+      shortDescription: game.shortDescription,
       description: game.description,
       coverImageUrl: game.coverImage,
       coverZoom: String(game.coverZoom ?? 1),
@@ -493,8 +554,8 @@ export function AdminPanel({
       downloadUrlSeason2Vip: gameForm.downloadUrlSeason2Vip || null,
       adminNote: gameForm.adminNote || null,
       adminNoteColor: getSafeAdminNoteColor(gameForm.adminNoteColor),
+      fileSize: gameForm.fileSize || "",
       shortDescription: gameForm.shortDescription,
-      fileSize: gameForm.fileSize,
       tagline: gameForm.shortDescription.slice(0, 140),
       coverImage: gameForm.coverImageUrl,
       coverZoom: Number(gameForm.coverZoom) || 1,
@@ -1240,6 +1301,12 @@ export function AdminPanel({
                   onChange={(event) => updateGameForm("languages", event.target.value)}
                   placeholder="Ngôn ngữ: English, Vietnamese..."
                 />
+                <Input
+                  name="fileSize"
+                  value={gameForm.fileSize}
+                  onChange={(event) => updateGameForm("fileSize", event.target.value)}
+                  placeholder="Dung lượng game, ví dụ: 2.5 GB"
+                />
               </div>
 
               <div className="grid gap-4 md:grid-cols-2">
@@ -1673,6 +1740,15 @@ export function AdminPanel({
                       >
                         Trừ 10 điểm
                       </Button>
+                      <Button
+                        type="button"
+                        variant="accent"
+                        size="sm"
+                        onClick={() => deleteReport(report.id)}
+                        className="bg-red-600/20 text-red-500 hover:bg-red-600/40 hover:text-white"
+                      >
+                        Xóa
+                      </Button>
                     </div>
                   </div>
                 ))
@@ -1723,6 +1799,108 @@ export function AdminPanel({
               </Button>
             </form>
             {penaltyMessage ? <p className="text-sm text-primary">{penaltyMessage}</p> : null}
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid gap-6">
+        <Card>
+          <CardContent className="space-y-5 p-6">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <h3 className="font-display text-3xl text-foreground">Quản lý Thành viên</h3>
+                <p className="mt-1 text-sm text-muted-foreground">Theo dõi và phân quyền (VIP, Chức vụ) cho các tài khoản.</p>
+              </div>
+              <Button type="button" variant="secondary" size="sm" onClick={loadUsers} disabled={usersLoading}>
+                {usersLoading ? "Đang tải..." : "Tải lại"}
+              </Button>
+            </div>
+            
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm text-muted-foreground">
+                <thead className="border-b border-white/10 text-xs uppercase text-foreground">
+                  <tr>
+                    <th className="px-4 py-3 font-semibold">Thành viên</th>
+                    <th className="px-4 py-3 font-semibold">Cấp độ & Danh tiếng</th>
+                    <th className="px-4 py-3 font-semibold">Chức vụ</th>
+                    <th className="px-4 py-3 font-semibold">VIP Tier</th>
+                    <th className="px-4 py-3 font-semibold">Hành động</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  {users.length ? (
+                    users.map((user) => (
+                      <tr key={user.id} className="hover:bg-white/5">
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-3">
+                            <Image
+                              src={user.avatar}
+                              alt={user.username}
+                              width={32}
+                              height={32}
+                              className="rounded-full bg-black/40 object-cover"
+                            />
+                            <div>
+                              <p className="font-semibold text-foreground">{user.name}</p>
+                              <p className="text-xs">@{user.username}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3">
+                          <p>Lv {user.level}</p>
+                          <p className="text-xs text-primary">{user.reputation} điểm</p>
+                        </td>
+                        <td className="px-4 py-3">
+                          <select
+                            className="rounded border border-white/10 bg-black/40 px-2 py-1 text-xs text-foreground focus:border-primary/50"
+                            defaultValue={user.role}
+                            id={`role-${user.id}`}
+                          >
+                            <option value="USER">USER</option>
+                            <option value="MODERATOR">MODERATOR</option>
+                            <option value="ADMIN">ADMIN</option>
+                            <option value="SUPER_ADMIN">SUPER_ADMIN</option>
+                          </select>
+                        </td>
+                        <td className="px-4 py-3">
+                          <select
+                            className="rounded border border-white/10 bg-black/40 px-2 py-1 text-xs text-foreground focus:border-primary/50"
+                            defaultValue={user.vipTier ?? 0}
+                            id={`vip-${user.id}`}
+                          >
+                            <option value="0">VIP 0 (Thường)</option>
+                            <option value="1">VIP 1</option>
+                            <option value="2">VIP 2</option>
+                            <option value="3">VIP 3</option>
+                          </select>
+                        </td>
+                        <td className="px-4 py-3">
+                          <Button
+                            type="button"
+                            variant="secondary"
+                            size="sm"
+                            onClick={() => {
+                              const roleEl = document.getElementById(`role-${user.id}`) as HTMLSelectElement;
+                              const vipEl = document.getElementById(`vip-${user.id}`) as HTMLSelectElement;
+                              updateUserRole(user.id, roleEl.value, parseInt(vipEl.value, 10));
+                            }}
+                          >
+                            Lưu
+                          </Button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={5} className="px-4 py-6 text-center text-muted-foreground">
+                        Chưa tải danh sách hoặc không có thành viên nào.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+            {userMessage ? <p className="text-sm text-primary">{userMessage}</p> : null}
           </CardContent>
         </Card>
       </div>

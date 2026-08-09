@@ -145,6 +145,26 @@ export async function getAdminGameReports(limit = 30) {
   }
 }
 
+export async function deleteGameReport(reportId: string) {
+  const memoryIndex = memoryReports.findIndex((r) => r.id === reportId);
+  if (memoryIndex > -1) {
+    memoryReports.splice(memoryIndex, 1);
+  }
+
+  if (prisma) {
+    try {
+      await prisma.gameReport.delete({
+        where: { id: reportId }
+      });
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  return memoryIndex > -1;
+}
+
 export async function moderateGameReport({
   adminNote,
   penaltyPoints,

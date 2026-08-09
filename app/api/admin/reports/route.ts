@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { auth } from "@/auth";
 import { applyRateLimit } from "@/middleware/rate-limit";
-import { getAdminGameReports, moderateGameReport } from "@/services/game-report-service";
+import { getAdminGameReports, moderateGameReport, deleteGameReport } from "@/services/game-report-service";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -72,4 +72,37 @@ export async function PATCH(request: Request) {
         : "Đã cập nhật trạng thái báo cáo.",
     ...result
   });
+}
+
+export async function DELETE(request: Request) {
+  const session = await auth();
+  const role = session?.user?.role ?? "USER";
+
+  if (!canModerate(role)) {
+    return NextResponse.json({ message: "Bạn không có quyền xóa báo cáo lỗi." }, { status: 403 });
+  }
+
+  const limited = applyRateLimit(`${clientKey(request)}:delete`, {
+    max: 20,
+    windowMs: 60_000
+  });
+
+  if (!limited.success) {
+    return NextResponse.json({ message: "Thao tác quá nhanh, thử lại sau một chút." }, { status: 429 });
+  }
+
+  const { searchParams } = new URL(request.url);
+  const id = searchParams.get("id");
+
+  if (!id) {
+    return NextResponse.json({ message: "Thiếu id báo cáo cần xóa." }, { status: 400 });
+  }
+
+  const success = await deleteGameReport(id);
+
+  if (!success) {
+    return NextResponse.json({ message: "Không tìm thấy hoặc không thể xóa báo cáo lỗi này." }, { status: 404 });
+  }
+
+  return NextResponse.json({ message: "Đã xóa báo cáo lỗi thành công." });
 }
