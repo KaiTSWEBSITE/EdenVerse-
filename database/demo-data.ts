@@ -40,7 +40,8 @@ const userSeed = [
     savedGames: ["moonfall-sanctum", "glass-eclipse", "saints-of-afterglow"],
     recentlyViewed: ["cathedral-zero", "vowbound-horizon", "lilac-sin"],
     watchlist: ["seraph-code", "ember-rite"],
-    allowMatureContent: true
+    allowMatureContent: true,
+    vipTier: 0
   },
   {
     id: "user-sol",
@@ -57,7 +58,8 @@ const userSeed = [
     savedGames: ["cathedral-zero", "thorn-sleep"],
     recentlyViewed: ["bloodline-nocture", "ashen-waltz"],
     watchlist: ["echoes-of-the-red-garden"],
-    allowMatureContent: true
+    allowMatureContent: true,
+    vipTier: 0
   },
   {
     id: "user-lyra",
@@ -74,7 +76,8 @@ const userSeed = [
     savedGames: ["heir-of-the-sable-star", "ashen-waltz"],
     recentlyViewed: ["seraph-code", "saints-of-afterglow"],
     watchlist: ["moonfall-sanctum"],
-    allowMatureContent: false
+    allowMatureContent: false,
+    vipTier: 0
   },
   {
     id: "user-riven",
@@ -91,7 +94,8 @@ const userSeed = [
     savedGames: ["crown-of-ashes", "thorn-sleep"],
     recentlyViewed: ["eclipsed-vows", "hollow-vantage"],
     watchlist: ["relics-of-lucent-night"],
-    allowMatureContent: true
+    allowMatureContent: true,
+    vipTier: 0
   },
   {
     id: "user-admin",
@@ -108,7 +112,8 @@ const userSeed = [
     savedGames: ["blackthorn-protocol", "crown-of-ashes"],
     recentlyViewed: ["glass-eclipse", "vowbound-horizon"],
     watchlist: ["seraph-code"],
-    allowMatureContent: true
+    allowMatureContent: true,
+    vipTier: 0
   }
 ] as const satisfies UserProfile[];
 

@@ -19,6 +19,7 @@ function toPublicProfile(user: DatabaseUser): UserProfile {
     role: user.role,
     level: user.level,
     reputation: user.reputation,
+    vipTier: user.vipTier,
     bio: user.bio ?? "Thành viên EdenVerse.",
     favoriteGames: savedGames.slice(0, 4),
     savedGames,

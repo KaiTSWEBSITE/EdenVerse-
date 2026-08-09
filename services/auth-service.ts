@@ -41,6 +41,7 @@ export async function verifyCredentials(email: string, password: string) {
         role: databaseUser.role,
         level: databaseUser.level,
         reputation: databaseUser.reputation,
+        vipTier: databaseUser.vipTier,
         bio: databaseUser.bio ?? "",
         favoriteGames: [],
         savedGames: [],

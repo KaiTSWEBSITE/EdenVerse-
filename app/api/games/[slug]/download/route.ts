@@ -48,7 +48,6 @@ export async function POST(request: Request, { params }: { params: Promise<{ slu
     message: progression
       ? `Đã ghi nhận lượt click tải. +${reputationRewards.download_game} danh tiếng.`
       : "Đã ghi nhận lượt click tải.",
-    downloadUrl: stats.downloadUrl,
     slug,
     title: game.title,
     progression,
