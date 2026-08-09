@@ -46,7 +46,7 @@ export async function GameHero({ game }: { game: Game }) {
 
         {/* Cover card */}
         <Card className="group self-start overflow-hidden transition duration-300 hover:border-primary/20 hover:shadow-card-hover">
-          <div className="relative aspect-[4/5] bg-[#050912]">
+          <div className="relative aspect-video bg-[#050912]">
             <Image
               src={game.coverImage}
               alt=""
@@ -61,7 +61,7 @@ export async function GameHero({ game }: { game: Game }) {
               alt={game.title}
               fill
               style={coverCropStyle}
-              className="object-contain transition duration-500 group-hover:scale-[1.02]"
+              className="object-cover transition duration-500 group-hover:scale-[1.02]"
               sizes="(max-width: 1280px) 100vw, 30vw"
               priority
             />

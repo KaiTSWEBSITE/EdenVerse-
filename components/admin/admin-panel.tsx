@@ -556,7 +556,7 @@ export function AdminPanel({
       adminNoteColor: getSafeAdminNoteColor(gameForm.adminNoteColor),
       fileSize: gameForm.fileSize || "",
       shortDescription: gameForm.shortDescription,
-      tagline: gameForm.shortDescription.slice(0, 140),
+      tagline: gameForm.shortDescription,
       coverImage: gameForm.coverImageUrl,
       coverZoom: Number(gameForm.coverZoom) || 1,
       coverPositionX: Number(gameForm.coverPositionX) || 50,
