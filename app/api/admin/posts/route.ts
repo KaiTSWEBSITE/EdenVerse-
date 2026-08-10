@@ -5,15 +5,9 @@ import { auth } from "@/auth";
 import { prisma } from "@/database/prisma";
 import { applyRateLimit } from "@/middleware/rate-limit";
 
-const deletePostSchema = z.discriminatedUnion("mode", [
-  z.object({
-    mode: z.literal("demo")
-  }),
-  z.object({
-    mode: z.literal("slug"),
-    slug: z.string().trim().min(2).max(140)
-  })
-]);
+const deletePostSchema = z.object({
+  slug: z.string().trim().min(2).max(140)
+});
 
 function getClientKey(request: Request) {
   const forwardedFor = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
@@ -99,41 +93,23 @@ export async function DELETE(request: Request) {
   if (!prisma) {
     return NextResponse.json({
       deletedCount: 0,
-      message:
-        parsed.data.mode === "demo"
-          ? "Đã dọn bài demo trong chế độ không database. Hiện không còn bài demo mặc định."
-          : `Đã nhận yêu cầu xóa bài "${parsed.data.slug}" trong chế độ không database.`
+      message: `Đã nhận yêu cầu xóa bài "${parsed.data.slug}" trong chế độ không database.`
     });
   }
 
-  const result =
-    parsed.data.mode === "demo"
-      ? await prisma.post.deleteMany({
-          where: {
-            OR: [
-              { status: "DEMO" },
-              { slug: { startsWith: "demo-" } },
-              { slug: { startsWith: "edenverse-weekly" } },
-              { title: { contains: "demo", mode: "insensitive" } }
-            ]
-          }
-        })
-      : await prisma.post.deleteMany({
-          where: {
-            slug: parsed.data.slug
-          }
-      });
+  const result = await prisma.post.deleteMany({
+    where: {
+      slug: parsed.data.slug
+    }
+  });
 
   revalidatePath("/");
   revalidatePath("/admin");
 
   return NextResponse.json({
     deletedCount: result.count,
-    message:
-      parsed.data.mode === "demo"
-        ? `Đã xóa ${result.count} bài demo.`
-        : result.count
-          ? `Đã xóa bài "${parsed.data.slug}".`
-          : `Không tìm thấy bài "${parsed.data.slug}".`
+    message: result.count
+      ? `Đã xóa bài "${parsed.data.slug}".`
+      : `Không tìm thấy bài "${parsed.data.slug}".`
   });
 }

@@ -246,14 +246,12 @@ export function AdminPanel({
 }) {
   const [intro, setIntro] = useState(heroIntro);
   const [message, setMessage] = useState("");
-  const [postDeleteMessage, setPostDeleteMessage] = useState("");
-  const [gameDemoMessage, setGameDemoMessage] = useState("");
-  const [postListMessage, setPostListMessage] = useState("");
+  const [postMessage, setPostMessage] = useState("");
+  const [gameListMessage, setGameListMessage] = useState("");
   const [posts, setPosts] = useState<AdminPostSummary[]>([]);
   const [postsLoading, setPostsLoading] = useState(true);
   const [games, setGames] = useState<AdminGameSummary[]>([]);
   const [gamesLoading, setGamesLoading] = useState(true);
-  const [gameListMessage, setGameListMessage] = useState("");
   const [gameDeleteMessage, setGameDeleteMessage] = useState("");
   const [reports, setReports] = useState<AdminGameReportSummary[]>([]);
   const [reportsLoading, setReportsLoading] = useState(false);
@@ -293,9 +291,9 @@ export function AdminPanel({
         setPosts(data.posts);
       }
 
-      setPostListMessage(data.message ?? "");
+      setPostMessage(data.message ?? "");
     } catch {
-      setPostListMessage("Không thể tải danh sách bài viết lúc này.");
+      setPostMessage("Không thể tải danh sách bài viết lúc này.");
     } finally {
       setPostsLoading(false);
     }
@@ -640,63 +638,34 @@ export function AdminPanel({
     setSupportMessage(getAdminApiMessage(data, "Đã gửi yêu cầu cập nhật trang ủng hộ."));
   }
 
-  async function deletePosts(mode: "demo" | "slug", slugOverride?: string) {
-    const slugToDelete = slugOverride ?? postSlug.trim();
-
-    if (mode === "slug" && !slugToDelete) {
-      setPostDeleteMessage("Vui lòng nhập slug bài cần xóa.");
+  async function deletePosts(slugOverride?: string) {
+    const slugToDelete = slugOverride || postSlug.trim();
+    if (!slugToDelete) {
+      setPostMessage("Vui lòng nhập slug bài viết.");
       return;
     }
 
-    const confirmed =
-      mode === "demo"
-        ? window.confirm("Xóa toàn bộ bài demo? Hành động này không thể hoàn tác.")
-        : window.confirm(`Xóa bài "${slugToDelete}"? Hành động này không thể hoàn tác.`);
-
-    if (!confirmed) {
+    if (!window.confirm(`Xóa bài viết "${slugToDelete}"?`)) {
       return;
     }
 
-    setPostDeleteMessage("Đang xử lý yêu cầu xóa bài...");
+    setPostsLoading(true);
+    setPostMessage("Đang xóa...");
 
-    const response = await fetch("/api/admin/posts", {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(mode === "demo" ? { mode } : { mode, slug: slugToDelete })
-    });
-    const data = await response.json();
-    setPostDeleteMessage(data.message ?? "Đã gửi yêu cầu xóa bài.");
-
-    if (response.ok && mode === "slug") {
+    try {
+      const response = await fetch("/api/admin/posts", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug: slugToDelete })
+      });
+      const data = await response.json();
+      setPostMessage(data.message ?? "Đã gửi yêu cầu xóa bài.");
       setPostSlug("");
-      setPosts((currentPosts) => currentPosts.filter((post) => post.slug !== slugToDelete));
-    }
-
-    if (response.ok && mode === "demo") {
-      await loadPosts();
-    }
-  }
-
-  async function deleteDemoGames() {
-    const confirmed = window.confirm(
-      "Xóa hoặc ẩn toàn bộ game demo/mẫu? Hành động này sẽ làm các game mẫu biến mất khỏi trang chủ."
-    );
-
-    if (!confirmed) {
-      return;
-    }
-
-    setGameDemoMessage("Đang dọn game demo/mẫu...");
-
-    const response = await fetch("/api/admin/games/demo", {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" }
-    });
-    const data = await response.json();
-    setGameDemoMessage(data.message ?? "Đã gửi yêu cầu dọn game demo.");
-
-    if (response.ok) {
-      await loadGames();
+      loadPosts();
+    } catch {
+      setPostMessage("Đã xảy ra lỗi khi gửi yêu cầu.");
+    } finally {
+      setPostsLoading(false);
     }
   }
 
@@ -1072,25 +1041,6 @@ export function AdminPanel({
         <CardContent className="space-y-5 p-6">
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div>
-              <p className="text-xs uppercase tracking-[0.2em] text-primary">Dữ liệu demo</p>
-              <h2 className="mt-2 font-display text-4xl text-foreground">Xóa game demo/mẫu khỏi trang web</h2>
-              <p className="mt-2 max-w-2xl text-sm leading-7 text-muted-foreground">
-                Nút này dọn các game mẫu đang hiện ở trang chủ. Nếu chưa có database, hệ thống sẽ ẩn demo bằng cookie trên trình duyệt hiện tại; nếu có database, game demo sẽ bị xóa và fallback mẫu sẽ tắt.
-              </p>
-            </div>
-            <Button type="button" variant="secondary" onClick={deleteDemoGames}>
-              <Trash2 className="h-4 w-4" />
-              Xóa game demo/mẫu
-            </Button>
-          </div>
-          {gameDemoMessage ? <p className="text-sm text-primary">{gameDemoMessage}</p> : null}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="space-y-5 p-6">
-          <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-            <div>
               <p className="text-xs uppercase tracking-[0.2em] text-primary">Game đã đăng</p>
               <h2 className="mt-2 font-display text-4xl text-foreground">Quản lý game thật trên website</h2>
               <p className="mt-2 max-w-2xl text-sm leading-7 text-muted-foreground">
@@ -1160,19 +1110,15 @@ export function AdminPanel({
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div>
               <p className="text-xs uppercase tracking-[0.2em] text-primary">Quản lý bài viết</p>
-              <h2 className="mt-2 font-display text-4xl text-foreground">Xóa bài và dọn bài demo</h2>
+              <h2 className="mt-2 font-display text-4xl text-foreground">Xóa bài viết</h2>
               <p className="mt-2 max-w-2xl text-sm leading-7 text-muted-foreground">
-                Xóa bài viết theo slug hoặc dọn sạch các bài viết demo cũ như `demo-*`, `edenverse-weekly*` và bài có trạng thái `DEMO`.
+                Xóa bài viết theo slug hoặc dọn sạch các bài viết không cần thiết.
               </p>
             </div>
-            <Button type="button" variant="secondary" onClick={() => deletePosts("demo")}>
-              <Trash2 className="h-4 w-4" />
-              Xóa toàn bộ bài viết demo
-            </Button>
           </div>
           <div className="grid gap-3 md:grid-cols-[1fr_auto]">
             <Input value={postSlug} onChange={(event) => setPostSlug(event.target.value)} placeholder="Nhập slug bài cần xóa, ví dụ: edenverse-weekly-1" />
-            <Button type="button" disabled={!postSlug.trim()} onClick={() => deletePosts("slug")}>
+            <Button type="button" disabled={!postSlug.trim()} onClick={() => deletePosts()}>
               Xóa bài này
             </Button>
           </div>
@@ -1207,18 +1153,18 @@ export function AdminPanel({
                         <span>Cập nhật: {formatAdminDate(post.updatedAt)}</span>
                       </div>
                     </div>
-                    <Button type="button" variant="secondary" size="sm" onClick={() => deletePosts("slug", post.slug)}>
+                    <Button type="button" variant="ghost" size="sm" onClick={() => deletePosts(post.slug)}>
                       <Trash2 className="h-4 w-4" />
                       Xóa
                     </Button>
                   </div>
                 ))
               ) : (
-                <PostListNotice text={postListMessage || "Chưa có bài viết nào để xóa."} />
+                <PostListNotice text={postMessage || "Chưa có bài viết nào để xóa."} />
               )}
             </div>
           </div>
-          {postDeleteMessage ? <p className="text-sm text-primary">{postDeleteMessage}</p> : null}
+          {postMessage ? <p className="text-sm text-primary">{postMessage}</p> : null}
         </CardContent>
       </Card>
 
