@@ -35,14 +35,14 @@ export function GameCarousel({ games, emptyText }: { games: Game[]; emptyText: s
         type="button"
         aria-label="Kéo danh sách game sang trái"
         onClick={() => scrollRail(-1)}
-        className="absolute -left-3 top-1/2 z-20 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-amber-200/20 bg-[#2a1a10]/90 text-amber-100 shadow-[0_12px_34px_rgba(0,0,0,0.45)] backdrop-blur transition hover:border-primary/45 hover:bg-[#3a2415] hover:text-primary md:flex"
+        className="absolute -left-4 top-[40%] z-20 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-black/80 text-white shadow-[0_4px_24px_rgba(0,0,0,0.6)] backdrop-blur-md transition hover:border-primary/50 hover:bg-primary/20 hover:text-primary md:flex"
       >
         <ChevronLeft className="h-5 w-5" />
       </button>
 
       <div
         ref={railRef}
-        className="scrollbar-soft flex snap-x snap-mandatory gap-6 overflow-x-auto pb-4 pr-3 scroll-smooth"
+        className="hide-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto pb-6 pr-4 scroll-smooth"
       >
         {games.map((game) => (
           <div
@@ -58,7 +58,7 @@ export function GameCarousel({ games, emptyText }: { games: Game[]; emptyText: s
         type="button"
         aria-label="Kéo danh sách game sang phải"
         onClick={() => scrollRail(1)}
-        className="absolute -right-3 top-1/2 z-20 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-amber-200/20 bg-[#2a1a10]/90 text-amber-100 shadow-[0_12px_34px_rgba(0,0,0,0.45)] backdrop-blur transition hover:border-primary/45 hover:bg-[#3a2415] hover:text-primary md:flex"
+        className="absolute -right-4 top-[40%] z-20 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-black/80 text-white shadow-[0_4px_24px_rgba(0,0,0,0.6)] backdrop-blur-md transition hover:border-primary/50 hover:bg-primary/20 hover:text-primary md:flex"
       >
         <ChevronRight className="h-5 w-5" />
       </button>

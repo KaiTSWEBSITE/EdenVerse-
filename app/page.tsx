@@ -1,5 +1,6 @@
 import { GameSection } from "@/components/home/game-section";
 import { HeroSection } from "@/components/home/hero-section";
+import { CategorySection } from "@/components/home/category-section";
 import { cookies } from "next/headers";
 import {
   getHeroGame,
@@ -37,13 +38,14 @@ export default async function HomePage() {
 
   return (
     <>
-      <HeroSection heroGame={heroGame} intro={cookieHeroIntro || savedHeroIntro} trending={hotGames.slice(0, 4)} />
+      <HeroSection heroGame={heroGame} />
       <GameSection
-        eyebrow="Game Hot"
+        eyebrow="Thịnh hành"
         title="Game được tải nhiều nhất"
         description="Bảng này tự tăng hạng theo số lần người dùng bấm vào link tải game."
         games={hotGames}
       />
+      <CategorySection />
       <GameSection
         eyebrow="Mới ra mắt"
         title="Các trò chơi mới ra mắt"
@@ -51,9 +53,9 @@ export default async function HomePage() {
         games={newGames}
       />
       <GameSection
-        eyebrow="Chất lượng tốt"
-        title="Game có đánh giá và phản hồi ổn định"
-        description="Lọc theo rating cao, số lượt đánh giá ổn định và độ hoàn thiện tổng thể của game."
+        eyebrow="EdenVerse Picks"
+        title="Lựa chọn từ EdenVerse"
+        description="Những tựa game chất lượng cao, hình ảnh đẹp và cốt truyện có chiều sâu do chúng tôi tuyển chọn."
         games={qualityGames}
       />
     </>

@@ -16,7 +16,7 @@ export function GameCard({ game }: { game: Game }) {
   const [saving, setSaving] = useState(false);
 
   const bookmarked = bookmarks.includes(game.slug);
-  const visibleTags = Array.from(new Set(game.tags.filter((tag) => tag !== "18+"))).slice(0, game.mature ? 3 : 4);
+  const visibleTags = Array.from(new Set(game.tags.filter((tag) => tag !== "18+"))).slice(0, 2);
   const coverCropStyle = getCoverCropStyle(game);
 
   async function toggleSave() {
@@ -45,86 +45,38 @@ export function GameCard({ game }: { game: Game }) {
   }
 
   return (
-    <article className="group relative transition duration-300 hover:-translate-y-1.5">
-      <Link
-        href={`/games/${game.slug}`}
-        className="glass-panel relative block overflow-hidden rounded-xl transition duration-300 hover:border-primary/28 hover:shadow-card-hover"
-      >
-        {/* Shimmer sweep on hover */}
-        <div className="pointer-events-none absolute inset-0 z-30 overflow-hidden rounded-xl">
-          <div className="card-shimmer-inner" />
-        </div>
-
-        {/* Top glow line on hover */}
-        <div className="pointer-events-none absolute inset-0 z-20 opacity-0 transition duration-400 group-hover:opacity-100">
-          <div className="absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-primary/70 to-transparent" />
-          <div className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-primary/12 blur-2xl" />
-          <div className="absolute inset-0 rounded-xl ring-1 ring-primary/18" />
-        </div>
-
-        {/* Cover image area */}
-        <div className="relative aspect-[4/5] overflow-hidden bg-[#050912]">
-          {/* Blurred bg */}
-          <Image
-            src={game.coverImage}
-            alt=""
-            fill
-            aria-hidden
-            sizes="(max-width: 768px) 100vw, 33vw"
-            className="scale-110 object-cover opacity-32 blur-2xl transition duration-500 group-hover:opacity-44"
-          />
-          {/* Main cover */}
+    <article className="group relative flex h-full flex-col">
+      <Link href={`/games/${game.slug}`} className="flex h-full flex-col">
+        {/* Cover Image */}
+        <div className="relative aspect-[4/5] w-full overflow-hidden rounded-xl bg-card shadow-sm transition-all duration-300 group-hover:shadow-glow-sm">
+          {/* Main Image */}
           <Image
             src={game.coverImage}
             alt={game.title}
             fill
-            sizes="(max-width: 768px) 100vw, 33vw"
+            sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
             style={coverCropStyle}
-            className="object-contain transition duration-500 ease-out group-hover:scale-[1.04] group-hover:saturate-110"
+            className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
           />
-          {/* Bottom gradient */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/28 to-transparent" />
-          {/* Hover vignette */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 transition duration-400 group-hover:opacity-100" />
-
-          {/* Tags & title */}
-          <div className="absolute inset-x-0 bottom-0 p-5">
-            <div className="mb-3 flex flex-wrap gap-1.5">
-              {visibleTags.map((tag) => (
-                <Badge key={tag} className="border-white/10 bg-black/40 px-2 py-1 text-[9px] leading-none text-white/82">
-                  {tag}
-                </Badge>
-              ))}
-              {game.mature ? (
-                <Badge className="border-accent/32 bg-accent/12 px-2 py-1 text-[9px] leading-none text-accent">
-                  18+
-                </Badge>
-              ) : null}
-            </div>
-            <h3 className="line-clamp-2 break-words py-1 font-display text-2xl leading-[1.24] text-white">
-              {game.title}
-            </h3>
-            <p className="mt-2 line-clamp-3 pb-0.5 text-sm leading-6 text-white/80">
-              {game.shortDescription}
-            </p>
-          </div>
-        </div>
-
-        {/* Bottom stats bar */}
-        <div className="relative z-20 flex items-center justify-between gap-3 border-t border-white/6 px-4 py-3">
-          <div className="flex min-w-0 items-center gap-3 text-sm text-muted-foreground">
-            <span className="inline-flex items-center gap-1.5 text-foreground">
-              <Star className="h-4 w-4 fill-accent text-accent" />
-              {formatRating(game.rating)}
-            </span>
-            <span className="truncate max-w-[120px]">{game.developer}</span>
-            <span className="hidden items-center gap-1.5 sm:inline-flex">
-              <Download className="h-3.5 w-3.5 text-primary/80" />
-              {formatCompactNumber(game.downloads)} tải
-            </span>
+          
+          {/* Dark Overlay (Bottom) for contrast if we put tags there, but we put them top left */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+          
+          {/* Badges Overlay */}
+          <div className="absolute left-2 top-2 flex flex-col items-start gap-1.5">
+            {game.mature && (
+              <Badge className="border-accent/30 bg-accent/90 px-1.5 py-0.5 text-[10px] font-bold text-white shadow-sm backdrop-blur-md">
+                18+
+              </Badge>
+            )}
+            {visibleTags.map((tag) => (
+              <Badge key={tag} className="border-white/10 bg-black/60 px-1.5 py-0.5 text-[10px] text-white/90 backdrop-blur-md">
+                {tag}
+              </Badge>
+            ))}
           </div>
 
-          {/* Bookmark button */}
+          {/* Bookmark Button */}
           <button
             type="button"
             aria-label={bookmarked ? "Bỏ lưu" : "Lưu game"}
@@ -134,14 +86,37 @@ export function GameCard({ game }: { game: Game }) {
               void toggleSave();
             }}
             disabled={saving}
-            className={`rounded-lg border p-2 transition-all duration-200 disabled:cursor-wait disabled:opacity-70 ${
+            className={`absolute right-2 top-2 rounded-full p-1.5 backdrop-blur-md transition-all duration-200 disabled:opacity-50 ${
               bookmarked
-                ? "scale-105 border-primary/45 bg-primary/18 text-primary shadow-glow-sm"
-                : "border-white/10 bg-white/6 text-muted-foreground hover:scale-105 hover:border-primary/28 hover:text-foreground"
+                ? "bg-primary/90 text-white shadow-glow-sm"
+                : "bg-black/40 text-white/70 hover:bg-black/60 hover:text-white"
             }`}
           >
-            <Bookmark className={`h-4 w-4 transition-all duration-200 ${bookmarked ? "fill-current" : ""}`} />
+            <Bookmark className={`h-3.5 w-3.5 ${bookmarked ? "fill-current" : ""}`} />
           </button>
+        </div>
+
+        {/* Info Area (Below Image) */}
+        <div className="mt-3 flex flex-1 flex-col">
+          <h3 className="line-clamp-1 font-display text-base font-semibold text-foreground transition-colors group-hover:text-primary">
+            {game.title}
+          </h3>
+          <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
+            <span className="truncate">{game.developer}</span>
+            <span className="h-1 w-1 rounded-full bg-white/20" />
+            <span className="shrink-0">{game.version}</span>
+          </div>
+          
+          <div className="mt-auto pt-2 flex items-center justify-between text-xs text-muted-foreground">
+            <div className="flex items-center gap-1.5 text-foreground">
+              <Star className="h-3 w-3 fill-accent text-accent" />
+              <span className="font-medium">{formatRating(game.rating)}</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Download className="h-3 w-3" />
+              <span>{formatCompactNumber(game.downloads)}</span>
+            </div>
+          </div>
         </div>
       </Link>
     </article>
