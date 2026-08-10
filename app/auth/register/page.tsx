@@ -73,13 +73,17 @@ export default function RegisterPage() {
 
   return (
     <main className="relative min-h-screen flex items-center justify-center bg-black overflow-hidden mt-[-76px] py-20 px-4">
-      {/* Background Effect */}
+      {/* Background Image */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-[#050510]" />
-        <div className="absolute top-[-20%] left-[-10%] w-[70%] h-[70%] rounded-full bg-primary/20 blur-[120px] mix-blend-screen opacity-50 animate-pulse" style={{ animationDuration: '8s' }} />
-        <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] rounded-full bg-accent/20 blur-[100px] mix-blend-screen opacity-50 animate-pulse" style={{ animationDuration: '10s' }} />
-        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#050510] via-transparent to-transparent" />
+        <Image
+          src="/backgrounds/eden-cathedral.png"
+          alt="EdenVerse Background"
+          fill
+          className="object-cover opacity-30 object-center"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/30" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0)_0%,rgba(0,0,0,0.8)_100%)]" />
       </div>
 
       {/* Register Card */}
