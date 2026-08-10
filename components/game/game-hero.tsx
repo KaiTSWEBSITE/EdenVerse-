@@ -56,7 +56,7 @@ export async function GameHero({ game }: { game: Game }) {
 
       {/* Main Content Container */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row gap-8 lg:gap-12 items-end">
+        <div className="flex flex-col md:flex-row gap-8 lg:gap-12 items-center md:items-start">
           
           {/* Cover Image */}
           <div className="shrink-0 w-48 sm:w-64 md:w-72 lg:w-80 overflow-hidden rounded-xl shadow-[0_0_40px_rgba(0,0,0,0.8)] border border-white/10 relative group">
@@ -124,17 +124,19 @@ export async function GameHero({ game }: { game: Game }) {
             </div>
 
             {/* Actions */}
-            <div className="flex flex-wrap items-center gap-4 pt-2">
-              <DownloadButton
-                slug={game.slug}
-                initialDownloads={trackedDownloads}
-                hasBackup={Boolean(game.downloadUrlAlt)}
-                hasJoyplay={Boolean(game.downloadUrlJoyplay)}
-                hasSeason2={Boolean(game.downloadUrlSeason2)}
-              />
-              <SaveGameButton slug={game.slug} initialSaved={initialSaved} initialBookmarks={game.bookmarks} />
+            <div className="flex flex-wrap items-center gap-4 pt-4">
+              <div className="flex flex-wrap items-center gap-4">
+                <DownloadButton
+                  slug={game.slug}
+                  initialDownloads={trackedDownloads}
+                  hasBackup={Boolean(game.downloadUrlAlt)}
+                  hasJoyplay={Boolean(game.downloadUrlJoyplay)}
+                  hasSeason2={Boolean(game.downloadUrlSeason2)}
+                />
+                <SaveGameButton slug={game.slug} initialSaved={initialSaved} initialBookmarks={game.bookmarks} />
+              </div>
               
-              <div className="ml-auto">
+              <div className="w-full sm:w-auto mt-4 sm:mt-0">
                 <GameStarRating
                   slug={game.slug}
                   initialRating={game.rating}
