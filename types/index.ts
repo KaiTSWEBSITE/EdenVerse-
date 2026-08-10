@@ -47,6 +47,7 @@ export interface Game {
   featured: boolean;
   hero: boolean;
   coverImage: string;
+  coverAspectRatio?: string;
   coverZoom?: number;
   coverPositionX?: number;
   coverPositionY?: number;

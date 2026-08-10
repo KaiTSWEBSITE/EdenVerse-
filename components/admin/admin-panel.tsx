@@ -110,6 +110,7 @@ type AdminGameSummary = {
   downloadsCount: number;
   reviewCount: number;
   coverImage: string;
+  coverAspectRatio?: string;
   coverZoom: number;
   coverPositionX: number;
   coverPositionY: number;
@@ -162,6 +163,7 @@ type GameFormState = {
   fileSize: string;
   description: string;
   coverImageUrl: string;
+  coverAspectRatio: string;
   coverZoom: string;
   coverPositionX: string;
   coverPositionY: string;
@@ -192,6 +194,7 @@ const emptyGameFormState: GameFormState = {
   shortDescription: "",
   description: "",
   coverImageUrl: "",
+  coverAspectRatio: "aspect-[4/5]",
   coverZoom: "1",
   coverPositionX: "50",
   coverPositionY: "50",
@@ -494,6 +497,7 @@ export function AdminPanel({
       shortDescription: game.shortDescription,
       description: game.description,
       coverImageUrl: game.coverImage,
+      coverAspectRatio: game.coverAspectRatio || "aspect-[4/5]",
       coverZoom: String(game.coverZoom ?? 1),
       coverPositionX: String(game.coverPositionX ?? 50),
       coverPositionY: String(game.coverPositionY ?? 50),
@@ -558,6 +562,7 @@ export function AdminPanel({
       shortDescription: gameForm.shortDescription,
       tagline: gameForm.shortDescription,
       coverImage: gameForm.coverImageUrl,
+      coverAspectRatio: gameForm.coverAspectRatio,
       coverZoom: Number(gameForm.coverZoom) || 1,
       coverPositionX: Number(gameForm.coverPositionX) || 50,
       coverPositionY: Number(gameForm.coverPositionY) || 50,
@@ -1363,9 +1368,25 @@ export function AdminPanel({
                 <div className="space-y-4 rounded-xl border border-white/10 bg-black/18 p-4">
                   <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
                     <div>
-                      <p className="text-sm font-semibold text-foreground">Cắt ảnh cover riêng cho game này</p>
+                      <p className="text-sm font-semibold text-foreground">Tỷ lệ khung ảnh (Hero Cover)</p>
                       <p className="mt-1 text-xs leading-6 text-muted-foreground">
-                        Mặc định để Zoom 1.00, ngang 50, dọc 50. Chỉ tăng zoom khi ảnh gốc có viền đen/thừa như bị dư canvas.
+                        Chọn tỷ lệ hiển thị khung ảnh chính trong trang chi tiết game.
+                      </p>
+                      <select
+                        name="coverAspectRatio"
+                        value={gameForm.coverAspectRatio}
+                        onChange={(event) => updateGameForm("coverAspectRatio", event.target.value)}
+                        className="mt-3 w-full rounded border border-white/10 bg-black/40 px-3 py-2 text-sm text-foreground focus:border-primary/50"
+                      >
+                        <option value="aspect-[4/5]">Dọc (4:5)</option>
+                        <option value="aspect-square">Vuông (1:1)</option>
+                        <option value="aspect-video">Ngang (16:9)</option>
+                      </select>
+                    </div>
+                    <div className="mt-6 border-t border-white/10 pt-6">
+                      <p className="text-sm font-semibold text-foreground">Cắt ảnh cover (Zoom/Căn lề)</p>
+                      <p className="mt-1 text-xs leading-6 text-muted-foreground">
+                        Mặc định để Zoom 1.00, ngang 50, dọc 50. Chỉ tăng zoom khi ảnh gốc có viền đen/thừa.
                       </p>
                     </div>
                     <Button

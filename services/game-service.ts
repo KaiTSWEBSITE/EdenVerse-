@@ -86,6 +86,7 @@ function mapGameRecord(game: GameRecord): Game {
     featured: game.featured,
     hero: game.hero,
     coverImage: game.coverImage,
+    coverAspectRatio: game.coverAspectRatio,
     coverZoom: game.coverZoom,
     coverPositionX: game.coverPositionX,
     coverPositionY: game.coverPositionY,

@@ -110,9 +110,10 @@ model Game {
   featured        Boolean        @default(false)
   hero            Boolean        @default(false)
   coverImage      String
-  coverZoom       Float          @default(1)
-  coverPositionX  Int            @default(50)
-  coverPositionY  Int            @default(50)
+  coverAspectRatio String      @default("aspect-[4/5]")
+  coverZoom       Float        @default(1)
+  coverPositionX  Int          @default(50)
+  coverPositionY  Int          @default(50)
   bannerImage     String
   gallery         Json
   platforms       Json           @default("[]")
