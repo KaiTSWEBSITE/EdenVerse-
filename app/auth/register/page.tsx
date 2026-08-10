@@ -4,8 +4,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import Image from "next/image";
+import { ArrowRight, Sparkles } from "lucide-react";
 
 function getRegisterMessage(data: unknown, fallback: string) {
   if (!data || typeof data !== "object") {
@@ -27,6 +28,7 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [username, setUsername] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
   const router = useRouter();
 
   async function submitRegister(event: FormEvent<HTMLFormElement>) {
@@ -37,6 +39,7 @@ export default function RegisterPage() {
     }
 
     setSubmitting(true);
+    setIsSuccess(false);
     setMessage("Đang tạo tài khoản...");
 
     try {
@@ -52,13 +55,16 @@ export default function RegisterPage() {
       const data = await response.json();
 
       if (response.ok) {
-        setMessage(data.message ?? "Tạo tài khoản thành công. Đang chuyển sang đăng nhập...");
-        window.setTimeout(() => router.push("/auth/login"), 700);
+        setIsSuccess(true);
+        setMessage(data.message ?? "Tạo tài khoản thành công! Đang chuyển sang đăng nhập...");
+        window.setTimeout(() => router.push("/auth/login"), 1000);
         return;
       }
 
+      setIsSuccess(false);
       setMessage(getRegisterMessage(data, "Không thể tạo tài khoản lúc này."));
     } catch {
+      setIsSuccess(false);
       setMessage("Không kết nối được máy chủ đăng ký. Kiểm tra mạng rồi thử lại.");
     } finally {
       setSubmitting(false);
@@ -66,59 +72,97 @@ export default function RegisterPage() {
   }
 
   return (
-    <section className="mx-auto max-w-xl px-4 py-20 sm:px-6 lg:px-8">
-      <Card>
-        <CardContent className="space-y-6 p-8">
-          <div>
-            <p className="text-xs uppercase tracking-[0.22em] text-primary">Đăng ký</p>
-            <h1 className="mt-2 font-display text-5xl text-foreground">Gia nhập EdenVerse</h1>
-            <p className="mt-3 text-sm leading-7 text-muted-foreground">
-              Tạo tài khoản bằng email. Mật khẩu cần tối thiểu 8 ký tự, có chữ thường, chữ hoa và số.
+    <main className="relative min-h-screen flex items-center justify-center bg-black overflow-hidden mt-[-76px] py-20 px-4">
+      {/* Background Image */}
+      <div className="absolute inset-0 z-0">
+        <Image
+          src="/images/auth-bg.jpg" // Uses the same background as login
+          alt="EdenVerse Background"
+          fill
+          className="object-cover opacity-30 object-center"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/30" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0)_0%,rgba(0,0,0,0.8)_100%)]" />
+      </div>
+
+      {/* Register Card */}
+      <div className="relative z-10 w-full max-w-md">
+        <div className="glass-panel p-8 sm:p-10 rounded-[28px] border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.8)] backdrop-blur-xl bg-black/40">
+          <div className="text-center mb-8">
+            <h1 className="font-display text-4xl font-bold text-white mb-2">
+              Đăng Ký Tài Khoản
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Gia nhập EdenVerse để lưu trữ game của riêng bạn
             </p>
           </div>
 
-          <form onSubmit={submitRegister} className="space-y-4">
-            <Input
-              autoComplete="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="Email"
-              type="email"
-              required
-            />
-            <Input
-              autoComplete="username"
-              value={username}
-              onChange={(event) => setUsername(event.target.value)}
-              placeholder="Tên người dùng, ví dụ kai_user"
-              required
-            />
-            <Input
-              autoComplete="new-password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              type="password"
-              placeholder="Mật khẩu"
-              required
-            />
-            <p className="text-xs leading-6 text-muted-foreground">
-              Username chỉ dùng chữ không dấu, số, gạch dưới hoặc gạch ngang. Không dùng khoảng trắng.
-            </p>
-            <Button className="w-full" disabled={submitting} type="submit">
-              {submitting ? "Đang tạo..." : "Tạo tài khoản"}
-            </Button>
-            {message ? (
-              <p className="whitespace-pre-line rounded-lg border border-primary/20 bg-primary/8 px-4 py-3 text-sm text-primary">
+          <form onSubmit={submitRegister} className="space-y-5">
+            {message && (
+              <div className={`rounded-lg p-3 text-center text-sm whitespace-pre-line border ${isSuccess ? "bg-primary/10 border-primary/20 text-primary" : "bg-red-500/10 border-red-500/20 text-red-400"}`}>
                 {message}
-              </p>
-            ) : null}
+              </div>
+            )}
+
+            <div className="space-y-4">
+              <div className="space-y-1">
+                <label className="text-xs uppercase tracking-[0.15em] text-muted-foreground ml-1">Email</label>
+                <Input
+                  autoComplete="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  placeholder="name@example.com"
+                  type="email"
+                  required
+                  className="h-12 bg-white/5 border-white/10 focus-visible:ring-primary focus-visible:border-primary px-4 rounded-xl text-white placeholder:text-muted-foreground"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs uppercase tracking-[0.15em] text-muted-foreground ml-1">Tên người dùng (Username)</label>
+                <Input
+                  autoComplete="username"
+                  value={username}
+                  onChange={(event) => setUsername(event.target.value)}
+                  placeholder="Ví dụ: edengamer"
+                  required
+                  className="h-12 bg-white/5 border-white/10 focus-visible:ring-primary focus-visible:border-primary px-4 rounded-xl text-white placeholder:text-muted-foreground"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs uppercase tracking-[0.15em] text-muted-foreground ml-1">Mật khẩu</label>
+                <Input
+                  autoComplete="new-password"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  type="password"
+                  placeholder="Tối thiểu 8 ký tự, có chữ và số"
+                  required
+                  className="h-12 bg-white/5 border-white/10 focus-visible:ring-primary focus-visible:border-primary px-4 rounded-xl text-white placeholder:text-muted-foreground"
+                />
+              </div>
+            </div>
+
+            <Button
+              type="submit"
+              disabled={submitting}
+              className="w-full h-12 rounded-xl bg-primary hover:bg-primary/90 text-white font-semibold text-base shadow-[0_0_20px_rgba(87,188,255,0.3)] transition-all mt-4"
+            >
+              {submitting ? "Đang xử lý..." : "Tạo tài khoản mới"}
+              {!submitting && <ArrowRight className="ml-2 h-4 w-4" />}
+            </Button>
           </form>
 
-          <Link href="/auth/login" className="text-sm text-muted-foreground hover:text-foreground">
-            Đã có tài khoản? Đăng nhập
-          </Link>
-        </CardContent>
-      </Card>
-    </section>
+          <div className="mt-8 text-center text-sm text-muted-foreground">
+            Đã có tài khoản?{" "}
+            <Link href="/auth/login" className="font-semibold text-white hover:text-primary transition underline underline-offset-4">
+              Đăng nhập tại đây
+            </Link>
+          </div>
+        </div>
+      </div>
+    </main>
   );
 }

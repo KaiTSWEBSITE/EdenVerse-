@@ -6,8 +6,9 @@ import { getSession, signIn, useSession } from "next-auth/react";
 import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import Image from "next/image";
+import { Sparkles, ArrowRight } from "lucide-react";
 
 function getSafeCallbackUrl() {
   const params = new URLSearchParams(window.location.search);
@@ -55,13 +56,13 @@ export default function LoginPage() {
     event.preventDefault();
 
     if (!email.trim() || !password) {
-      setError("Nhập email và mật khẩu trước đã nhé.");
+      setError("Vui lòng điền đủ email và mật khẩu.");
       return;
     }
 
     setSubmitting(true);
     setError("");
-    setSuccess("Đang kiểm tra tài khoản...");
+    setSuccess("Đang xác thực...");
 
     try {
       const result = await signIn("credentials", {
@@ -83,12 +84,12 @@ export default function LoginPage() {
       const callbackUrl = getSafeCallbackUrl();
       const destination = isAdmin ? "/admin" : callbackUrl === "/profile" ? getProfileUrl(username) : callbackUrl;
 
-      setSuccess(isAdmin ? "Đăng nhập admin thành công, đang mở khu quản trị..." : "Đăng nhập thành công, đang mở hồ sơ của bạn...");
+      setSuccess(isAdmin ? "Đang mở khu quản trị..." : "Đăng nhập thành công!");
       router.push(destination as Route);
       router.refresh();
     } catch {
       setSuccess("");
-      setError("Không thể đăng nhập lúc này, thử tải lại trang rồi đăng nhập lại.");
+      setError("Có lỗi xảy ra, vui lòng thử lại.");
     } finally {
       setSubmitting(false);
     }
@@ -96,66 +97,110 @@ export default function LoginPage() {
 
   if (status === "loading" || status === "authenticated") {
     return (
-      <section className="mx-auto max-w-xl px-4 py-20 sm:px-6 lg:px-8">
-        <Card>
-          <CardContent className="space-y-4 p-8">
-            <p className="text-xs uppercase tracking-[0.22em] text-primary">Đăng nhập</p>
-            <h1 className="font-display text-4xl text-foreground">Đang kiểm tra phiên đăng nhập...</h1>
-            <p className="text-sm leading-7 text-muted-foreground">
-              Nếu là admin, hệ thống sẽ đưa bạn vào khu quản trị. Nếu là người dùng, hệ thống sẽ mở hồ sơ cá nhân.
-            </p>
-          </CardContent>
-        </Card>
-      </section>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-black">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+      </div>
     );
   }
 
   return (
-    <section className="mx-auto max-w-xl px-4 py-20 sm:px-6 lg:px-8">
-      <Card>
-        <CardContent className="space-y-6 p-8">
-          <div>
-            <p className="text-xs uppercase tracking-[0.22em] text-primary">Tài khoản</p>
-            <h1 className="mt-2 font-display text-5xl text-foreground">Chào mừng trở lại</h1>
-            <p className="mt-3 text-sm leading-7 text-muted-foreground">
-              Đăng nhập để lưu game yêu thích, chỉnh hồ sơ và theo dõi các bản cập nhật mới nhất trên EdenVerse. Nếu tài khoản của bạn có quyền
-              admin, hệ thống sẽ tự mở khu quản trị.
+    <main className="relative min-h-screen flex items-center justify-center bg-black overflow-hidden mt-[-76px] py-20 px-4">
+      {/* Background Image */}
+      <div className="absolute inset-0 z-0">
+        <Image
+          src="/images/auth-bg.jpg" // We will use a generic placeholder or an atmospheric background
+          alt="EdenVerse Background"
+          fill
+          className="object-cover opacity-30 object-center"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/30" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0)_0%,rgba(0,0,0,0.8)_100%)]" />
+      </div>
+
+      {/* Login Card */}
+      <div className="relative z-10 w-full max-w-md">
+        <div className="glass-panel p-8 sm:p-10 rounded-[28px] border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.8)] backdrop-blur-xl bg-black/40">
+          <div className="text-center mb-8">
+            <h1 className="font-display text-4xl font-bold text-white mb-2 flex items-center justify-center gap-2">
+              Eden<span className="text-primary">Verse</span>
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Đăng nhập để lưu game và tham gia cộng đồng
             </p>
           </div>
 
-          <form onSubmit={submitLogin} className="space-y-4">
-            <Input value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Email" />
-            <Input value={password} onChange={(event) => setPassword(event.target.value)} type="password" placeholder="Mật khẩu" />
-            <label className="flex items-center gap-3 text-sm text-muted-foreground">
+          <form onSubmit={submitLogin} className="space-y-5">
+            {error && (
+              <div className="rounded-lg bg-red-500/10 border border-red-500/20 p-3 text-center text-sm text-red-400">
+                {error}
+              </div>
+            )}
+            {success && (
+              <div className="rounded-lg bg-primary/10 border border-primary/20 p-3 text-center text-sm text-primary">
+                {success}
+              </div>
+            )}
+
+            <div className="space-y-4">
+              <div className="space-y-1">
+                <label className="text-xs uppercase tracking-[0.15em] text-muted-foreground ml-1">Email</label>
+                <Input
+                  type="email"
+                  placeholder="name@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="h-12 bg-white/5 border-white/10 focus-visible:ring-primary focus-visible:border-primary px-4 rounded-xl text-white placeholder:text-muted-foreground"
+                />
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center justify-between ml-1">
+                  <label className="text-xs uppercase tracking-[0.15em] text-muted-foreground">Mật khẩu</label>
+                  <Link href="/auth/forgot-password" className="text-xs text-primary hover:text-primary/80 transition">
+                    Quên mật khẩu?
+                  </Link>
+                </div>
+                <Input
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="h-12 bg-white/5 border-white/10 focus-visible:ring-primary focus-visible:border-primary px-4 rounded-xl text-white placeholder:text-muted-foreground"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 pt-2">
               <input
-                checked={rememberMe}
-                onChange={(event) => setRememberMe(event.target.checked)}
+                id="remember"
                 type="checkbox"
-                className="h-4 w-4 rounded border-white/20 bg-black/40"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="rounded border-white/20 bg-white/5 text-primary focus:ring-primary/50 focus:ring-offset-0 cursor-pointer w-4 h-4"
               />
-              Giữ đăng nhập trên thiết bị này
-            </label>
-            {success ? <p className="rounded-lg border border-primary/20 bg-primary/8 px-4 py-3 text-sm text-primary">{success}</p> : null}
-            {error ? <p className="rounded-lg border border-red-400/20 bg-red-500/8 px-4 py-3 text-sm text-red-300">{error}</p> : null}
-            <Button className="w-full" disabled={submitting} type="submit">
-              {submitting ? "Đang kiểm tra..." : "Đăng nhập"}
+              <label htmlFor="remember" className="text-sm text-muted-foreground cursor-pointer select-none">
+                Ghi nhớ đăng nhập
+              </label>
+            </div>
+
+            <Button
+              type="submit"
+              disabled={submitting}
+              className="w-full h-12 rounded-xl bg-primary hover:bg-primary/90 text-white font-semibold text-base shadow-[0_0_20px_rgba(87,188,255,0.3)] transition-all mt-4"
+            >
+              {submitting ? "Đang xử lý..." : "Đăng nhập ngay"}
+              {!submitting && <ArrowRight className="ml-2 h-4 w-4" />}
             </Button>
           </form>
 
-          <div className="flex items-center justify-between text-sm text-muted-foreground">
-            <Link href="/auth/register" className="hover:text-foreground">
-              Tạo tài khoản
-            </Link>
-            <Link href="/auth/forgot-password" className="hover:text-foreground">
-              Quên mật khẩu
+          <div className="mt-8 text-center text-sm text-muted-foreground">
+            Chưa có tài khoản?{" "}
+            <Link href="/auth/register" className="font-semibold text-white hover:text-primary transition underline underline-offset-4">
+              Tạo tài khoản mới
             </Link>
           </div>
-
-          <p className="rounded-xl border border-white/8 bg-white/5 px-4 py-3 text-xs leading-6 text-muted-foreground">
-            Tài khoản quản trị được bảo vệ bằng mật khẩu riêng rất mạnh và quyền trong database. Không cần nhập mã cổng ở trang này nữa.
-          </p>
-        </CardContent>
-      </Card>
-    </section>
+        </div>
+      </div>
+    </main>
   );
 }
