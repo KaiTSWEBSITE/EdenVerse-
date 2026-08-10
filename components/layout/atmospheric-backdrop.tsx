@@ -68,7 +68,7 @@ const PARTICLES = Array.from({ length: 12 }, (_, i) => ({
 
 export function AtmosphericBackdrop() {
   return (
-    <div aria-hidden className="pointer-events-none fixed inset-0 overflow-hidden bg-black">
+    <div aria-hidden className="pointer-events-none fixed inset-0 overflow-hidden bg-noir-bg0">
       {/* Background image */}
       <div className="absolute inset-0 scale-[1.035]">
         <Image
@@ -77,15 +77,21 @@ export function AtmosphericBackdrop() {
           fill
           priority
           sizes="100vw"
-          className="object-cover object-center opacity-52"
+          className="object-cover object-center opacity-30 mix-blend-luminosity"
         />
       </div>
+
+      {/* Noise Texture */}
+      <div 
+        className="absolute inset-0 opacity-[0.02]"
+        style={{ backgroundImage: "url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E')" }}
+      />
 
       {/* Vignette */}
       <div className="absolute inset-0 vignette-overlay" />
 
       {/* Base overlay */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_14%,rgba(138,43,226,0.12),transparent_22%),linear-gradient(90deg,rgba(4,6,11,0.85),rgba(4,6,11,0.3)_48%,rgba(4,6,11,0.9))]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(139,92,246,0.08),transparent_25%),linear-gradient(180deg,rgba(5,6,10,0.4)_0%,rgba(5,6,10,0.9)_100%)]" />
 
       {/* Fog layer */}
       <div className="fog-layer absolute inset-0 opacity-45" />

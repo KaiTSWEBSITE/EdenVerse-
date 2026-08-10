@@ -43,13 +43,13 @@ export function Header() {
   return (
     <header
       className={cn(
-        "sticky top-0 z-40 transition-all duration-300 border-b",
+        "fixed top-0 inset-x-0 z-40 transition-all duration-500",
         isScrolled
-          ? "bg-[rgba(7,11,20,0.85)] backdrop-blur-xl border-white/5 shadow-sm"
-          : "bg-transparent border-transparent"
+          ? "top-2 mx-4 sm:mx-6 lg:mx-8 rounded-2xl bg-[rgba(14,17,26,0.7)] backdrop-blur-xl border border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.3)] py-1"
+          : "bg-transparent border-transparent py-3"
       )}
     >
-      <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 sm:px-6 lg:px-8">
+      <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 sm:px-6 lg:px-8">
         <Logo className="shrink-0" />
 
         {/* Desktop nav */}
@@ -61,16 +61,13 @@ export function Header() {
                 key={item.href}
                 href={item.href as Route}
                 className={cn(
-                  "relative rounded-lg px-3 py-2 text-sm transition-all duration-200 hover:bg-white/6",
+                  "relative rounded-full px-4 py-2 text-sm font-medium transition-all duration-300",
                   active
-                    ? "text-foreground"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "bg-white/10 text-white shadow-[0_0_15px_rgba(139,92,246,0.3)]"
+                    : "text-muted-foreground hover:bg-white/5 hover:text-white"
                 )}
               >
                 {item.label}
-                {active && (
-                  <span className="absolute inset-x-3 bottom-0.5 h-px rounded-full bg-gradient-to-r from-primary/80 via-primary to-accent/60" />
-                )}
               </Link>
             );
           })}

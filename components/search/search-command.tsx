@@ -77,6 +77,21 @@ export function SearchCommand({
     };
   }, [debounced]);
 
+  // Global Ctrl+K shortcut listener
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+        e.preventDefault();
+        const input = document.getElementById("main-search-input");
+        if (input) {
+          input.focus();
+        }
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   const showSuggestions = isFocused && (suggestions.length > 0 || debounced.trim().length > 0);
 
   return (
@@ -87,6 +102,7 @@ export function SearchCommand({
       >
         <Search className={`pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 transition-colors duration-200 ${isFocused ? "text-primary" : "text-muted-foreground"}`} />
         <Input
+          id="main-search-input"
           value={query}
           onFocus={() => setIsFocused(true)}
           onChange={(event) => setQuery(event.target.value)}
@@ -97,6 +113,13 @@ export function SearchCommand({
             large ? "h-14 rounded-xl pl-12 text-base shadow-[0_4px_24px_rgba(0,0,0,0.2)]" : "pl-11 rounded-lg"
           )}
         />
+        {!isFocused && !query && !large && (
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 hidden md:flex items-center gap-1 pointer-events-none opacity-60">
+            <kbd className="inline-flex h-5 items-center gap-1 rounded border border-white/10 bg-white/5 px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
+              <span className="text-xs">⌘</span>K
+            </kbd>
+          </div>
+        )}
         {query ? (
           <button
             type="button"
