@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Download, Star, Tag, Play } from "lucide-react";
+import { Download, Star, Tag } from "lucide-react";
 import { auth } from "@/auth";
 import { prisma } from "@/database/prisma";
 import type { Game } from "@/types";
@@ -8,7 +8,6 @@ import { formatCompactNumber, formatDate, formatRating } from "@/lib/utils";
 import { getTrackedDownloadCount } from "@/services/download-service";
 import { Badge } from "@/components/ui/badge";
 import { DownloadButton } from "@/components/game/download-button";
-import { GameBookmarkStatCard } from "@/components/game/game-bookmark-stat-card";
 import { GameStarRating } from "@/components/game/game-star-rating";
 import { SaveGameButton } from "@/components/game/save-game-button";
 

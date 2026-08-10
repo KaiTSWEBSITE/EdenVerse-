@@ -99,7 +99,7 @@ function FilterGroup({
           return (
             <Link
               key={option}
-              href={href}
+              href={href as any}
               className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs uppercase tracking-[0.1em] transition-all duration-200 ${
                 isActive
                   ? "border-primary/50 bg-primary/20 text-primary shadow-glow-sm"
