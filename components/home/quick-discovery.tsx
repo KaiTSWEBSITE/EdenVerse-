@@ -3,8 +3,8 @@ import { Sparkles, Flame, Clock, Heart, Gamepad2, Swords, Ghost, Laugh, BookOpen
 import { cn } from "@/lib/utils";
 
 const CATEGORIES = [
-  { id: "hot", label: "Đang thịnh hành", icon: Flame, href: "/search?sort=hot", color: "text-orange-500" },
-  { id: "new", label: "Mới cập nhật", icon: Clock, href: "/search?sort=new", color: "text-blue-400" },
+  { id: "hot", label: "Đang thịnh hành", icon: Flame, href: "/search?sort=trending", color: "text-orange-500" },
+  { id: "new", label: "Mới cập nhật", icon: Clock, href: "/search?sort=updated", color: "text-blue-400" },
   { id: "rpg", label: "Nhập vai", icon: Swords, href: "/search?q=RPG", color: "text-purple-400" },
   { id: "action", label: "Hành động", icon: Gamepad2, href: "/search?q=Action", color: "text-red-400" },
   { id: "horror", label: "Kinh dị", icon: Ghost, href: "/search?q=Horror", color: "text-gray-400" },
