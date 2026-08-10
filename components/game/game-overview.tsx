@@ -50,6 +50,17 @@ export function GameOverview({ game }: { game: Game }) {
               )}
             </div>
           </div>
+          {game.adminNote && (
+            <div className="rounded-xl border border-accent/30 bg-accent/10 p-6 mt-6 shadow-[0_0_20px_rgba(255,105,180,0.1)]">
+              <h3 className="flex items-center gap-2 text-sm uppercase tracking-[0.15em] text-accent font-bold mb-3">
+                <AlertTriangle className="h-5 w-5" />
+                Ghi chú từ Quản trị viên
+              </h3>
+              <p className={`whitespace-pre-line text-sm leading-relaxed ${ADMIN_NOTE_FALLBACK_COLOR}`}>
+                {game.adminNote}
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Right Column: Specs & Admin Note */}
@@ -103,17 +114,6 @@ export function GameOverview({ game }: { game: Game }) {
             </CardContent>
           </Card>
 
-          {game.adminNote && (
-            <div className="rounded-xl border border-accent/20 bg-accent/5 p-5">
-              <h3 className="flex items-center gap-2 text-xs uppercase tracking-[0.1em] text-accent/80 mb-3">
-                <AlertTriangle className="h-4 w-4" />
-                Ghi chú từ Quản trị viên
-              </h3>
-              <p className={`whitespace-pre-line text-sm leading-relaxed ${ADMIN_NOTE_FALLBACK_COLOR}`}>
-                {game.adminNote}
-              </p>
-            </div>
-          )}
         </aside>
         
       </div>
