@@ -38,27 +38,40 @@ export default async function SearchPage({
         title="Tìm theo tên, developer, engine, tag hoặc mood"
         description="Hệ thống tìm kiếm ưu tiên tên game, thể loại, tag và developer để bạn lọc game nhanh hơn."
       />
-      <div className="grid gap-6 xl:grid-cols-[320px_1fr]">
+      <div className="grid gap-8 lg:grid-cols-[280px_1fr] xl:grid-cols-[320px_1fr]">
         <SearchFilters
-          activeGenre={parsed.genre}
-          activeEngine={parsed.engine}
-          activeTag={parsed.tag}
+          currentParams={parsed}
           genreOptions={genreOptions}
           engineOptions={engineOptions}
           tagOptions={tagOptions}
         />
-        <div className="space-y-5">
-          <div className="glass-panel rounded-[28px] p-6">
-            <p className="text-sm text-muted-foreground">
-              <span className="font-semibold text-foreground">{games.length}</span> kết quả
-              {parsed.q ? ` cho "${parsed.q}"` : ""}.
+        
+        <div className="space-y-6">
+          <div className="flex items-center justify-between border-b border-white/10 pb-4">
+            <h2 className="text-xl font-display font-semibold text-foreground">
+              Kết quả tìm kiếm
+              {parsed.q ? (
+                <span className="text-primary ml-2">"{parsed.q}"</span>
+              ) : null}
+            </h2>
+            <p className="text-sm text-muted-foreground bg-black/40 px-3 py-1.5 rounded-full border border-white/5">
+              <span className="font-bold text-white mr-1">{games.length}</span> 
+              game
             </p>
           </div>
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {games.map((game) => (
-              <GameCard key={game.slug} game={game} />
-            ))}
-          </div>
+          
+          {games.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-20 text-center rounded-2xl bg-black/20 border border-white/5">
+              <p className="text-muted-foreground text-lg mb-2">Không tìm thấy tựa game nào phù hợp.</p>
+              <p className="text-sm text-muted-foreground/60">Hãy thử thay đổi từ khóa hoặc bộ lọc của bạn.</p>
+            </div>
+          ) : (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {games.map((game) => (
+                <GameCard key={game.slug} game={game} />
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </section>
