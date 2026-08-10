@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Download, Star, Tag } from "lucide-react";
+import { Download, Star, Tag, Play } from "lucide-react";
 import { auth } from "@/auth";
 import { prisma } from "@/database/prisma";
 import type { Game } from "@/types";
@@ -7,7 +7,6 @@ import { getCoverCropStyle } from "@/lib/cover-crop";
 import { formatCompactNumber, formatDate, formatRating } from "@/lib/utils";
 import { getTrackedDownloadCount } from "@/services/download-service";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import { DownloadButton } from "@/components/game/download-button";
 import { GameBookmarkStatCard } from "@/components/game/game-bookmark-stat-card";
 import { GameStarRating } from "@/components/game/game-star-rating";
@@ -41,113 +40,92 @@ export async function GameHero({ game }: { game: Game }) {
   const initialSaved = await getInitialSavedState(game.slug);
 
   return (
-    <section className="mx-auto max-w-7xl px-4 pt-14 sm:px-6 lg:px-8">
-      <div className="grid gap-6 xl:grid-cols-[0.62fr_1.38fr]">
+    <section className="relative w-full overflow-hidden bg-black mt-[-76px] min-h-[90vh] flex flex-col justify-end pb-12 pt-32">
+      {/* Massive blurred background */}
+      <div className="absolute inset-0 z-0">
+        <Image
+          src={game.bannerImage || game.coverImage}
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-top opacity-40 blur-xl scale-110 saturate-150"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-black/80" />
+      </div>
 
-        {/* Cover card */}
-        <Card className="group self-start overflow-hidden transition duration-300 hover:border-primary/20 hover:shadow-card-hover">
-          <div className={`relative ${game.coverAspectRatio || "aspect-[4/5]"} bg-[#050912]`}>
-            <Image
-              src={game.coverImage}
-              alt=""
-              fill
-              aria-hidden
-              className="scale-110 object-cover opacity-30 blur-2xl"
-              sizes="(max-width: 1280px) 100vw, 30vw"
-              priority
-            />
-            <Image
-              src={game.coverImage}
-              alt={game.title}
-              fill
-              style={coverCropStyle}
-              className="object-contain transition duration-500 group-hover:scale-[1.02]"
-              sizes="(max-width: 1280px) 100vw, 30vw"
-              priority
-            />
-            {/* Cinematic overlay */}
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 transition duration-400 group-hover:opacity-100" />
-            <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/8" />
-          </div>
-        </Card>
-
-        {/* Detail card */}
-        <Card>
-          <CardContent className="space-y-8 p-8">
-            {/* Genre badges */}
-            <div className="flex flex-wrap gap-2">
-              {game.genres.map((genre) => (
-                <Badge
-                  key={genre}
-                  className="transition duration-200 hover:border-primary/35 hover:shadow-glow-sm"
-                >
-                  {genre}
-                </Badge>
-              ))}
-              {game.mature ? (
-                <Badge className="border-accent/30 bg-accent/10 text-accent transition hover:border-accent/48">
-                  18+ Mature
-                </Badge>
-              ) : null}
+      {/* Main Content Container */}
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col md:flex-row gap-8 lg:gap-12 items-end">
+          
+          {/* Cover Image */}
+          <div className="shrink-0 w-48 sm:w-64 md:w-72 lg:w-80 overflow-hidden rounded-xl shadow-[0_0_40px_rgba(0,0,0,0.8)] border border-white/10 relative group">
+            <div className={`relative ${game.coverAspectRatio || "aspect-[4/5]"} w-full`}>
+              <Image
+                src={game.coverImage}
+                alt={game.title}
+                fill
+                sizes="(max-width: 768px) 100vw, 30vw"
+                style={coverCropStyle}
+                priority
+                className="object-cover transition duration-500 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 ring-1 ring-inset ring-white/10 rounded-xl pointer-events-none" />
             </div>
+          </div>
 
-            {/* Title & tagline */}
+          {/* Game Info */}
+          <div className="flex-1 space-y-6 pb-2">
             <div className="space-y-3">
-              <h1 className="break-words py-2 font-display text-5xl leading-[1.24] sm:text-6xl sm:leading-[1.2]">
-                <span className="text-gradient-title">{game.title}</span>
+              <div className="flex flex-wrap gap-2">
+                {game.genres.slice(0, 3).map((genre) => (
+                  <Badge key={genre} className="bg-white/10 text-white hover:bg-white/20 border-transparent backdrop-blur-md">
+                    {genre}
+                  </Badge>
+                ))}
+                {game.mature && (
+                  <Badge className="bg-accent/80 text-white hover:bg-accent/90 border-transparent backdrop-blur-md">
+                    18+ Mature
+                  </Badge>
+                )}
+              </div>
+              
+              <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight drop-shadow-lg">
+                {game.title}
               </h1>
-              <p className="whitespace-pre-line break-words text-sm uppercase leading-7 tracking-[0.22em] text-primary">
+              
+              <p className="text-lg text-primary font-medium tracking-wide uppercase">
                 {game.tagline}
               </p>
-              <p className="max-w-4xl whitespace-pre-line text-base leading-8 text-muted-foreground">
-                {game.description}
-              </p>
             </div>
 
-            {/* Stat cards */}
-            <div className="grid gap-4 md:grid-cols-4">
-              {/* Rating */}
-              <Card className="bg-black/18 transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/28 hover:shadow-glow-sm group/stat">
-                <CardContent className="space-y-2">
-                  <span className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.22em] text-muted-foreground">
-                    <Star className="h-4 w-4 text-accent transition duration-300 group-hover/stat:drop-shadow-[0_0_6px_rgba(209,160,88,0.6)]" />
-                    Đánh giá
-                  </span>
-                  <p className="font-display text-4xl text-foreground">{formatRating(game.rating)}</p>
-                  <p className="text-sm text-muted-foreground">{formatCompactNumber(game.reviewCount)} lượt đánh giá</p>
-                </CardContent>
-              </Card>
+            <p className="text-base text-white/70 line-clamp-3 max-w-3xl">
+              {game.shortDescription}
+            </p>
 
-              {/* Bookmark (dynamic) */}
-              <GameBookmarkStatCard slug={game.slug} initialBookmarks={game.bookmarks} />
-
-              {/* Downloads */}
-              <Card className="bg-black/18 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/28 hover:shadow-glow-sm group/stat">
-                <CardContent className="space-y-2">
-                  <span className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.22em] text-muted-foreground">
-                    <Download className="h-4 w-4 text-primary transition duration-300 group-hover/stat:drop-shadow-[0_0_6px_rgba(87,188,255,0.6)]" />
-                    Lượt tải
-                  </span>
-                  <p className="font-display text-4xl text-foreground">{formatCompactNumber(trackedDownloads)}</p>
-                  <p className="text-sm text-muted-foreground">lượt click tải</p>
-                </CardContent>
-              </Card>
-
-              {/* Updated date */}
-              <Card className="bg-black/18 transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/28 hover:shadow-glow-sm group/stat">
-                <CardContent className="space-y-2">
-                  <span className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.22em] text-muted-foreground">
-                    <Tag className="h-4 w-4 text-accent transition duration-300 group-hover/stat:drop-shadow-[0_0_6px_rgba(209,160,88,0.6)]" />
-                    Cập nhật
-                  </span>
-                  <p className="font-display text-2xl leading-tight text-foreground">{formatDate(game.updatedAt)}</p>
-                  <p className="break-words text-sm leading-5 text-muted-foreground">{game.version}</p>
-                </CardContent>
-              </Card>
+            {/* Micro Stats */}
+            <div className="flex flex-wrap items-center gap-6 text-sm text-white/80 py-2">
+              <div className="flex items-center gap-2">
+                <Star className="h-4 w-4 text-accent fill-accent" />
+                <span className="font-bold text-white">{formatRating(game.rating)}</span>
+                <span>({formatCompactNumber(game.reviewCount)})</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Download className="h-4 w-4 text-primary" />
+                <span className="font-bold text-white">{formatCompactNumber(trackedDownloads)}</span> tải
+              </div>
+              <div className="flex items-center gap-2">
+                <Tag className="h-4 w-4 text-muted-foreground" />
+                <span>Cập nhật: <span className="text-white">{formatDate(game.updatedAt)}</span></span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="bg-white/10 px-2 py-0.5 rounded text-xs">{game.version}</span>
+              </div>
             </div>
 
-            {/* Action buttons */}
-            <div className="flex flex-wrap gap-3">
+            {/* Actions */}
+            <div className="flex flex-wrap items-center gap-4 pt-2">
               <DownloadButton
                 slug={game.slug}
                 initialDownloads={trackedDownloads}
@@ -156,15 +134,17 @@ export async function GameHero({ game }: { game: Game }) {
                 hasSeason2={Boolean(game.downloadUrlSeason2)}
               />
               <SaveGameButton slug={game.slug} initialSaved={initialSaved} initialBookmarks={game.bookmarks} />
+              
+              <div className="ml-auto">
+                <GameStarRating
+                  slug={game.slug}
+                  initialRating={game.rating}
+                  initialReviewCount={game.reviewCount}
+                />
+              </div>
             </div>
-
-            <GameStarRating
-              slug={game.slug}
-              initialRating={game.rating}
-              initialReviewCount={game.reviewCount}
-            />
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </section>
   );
