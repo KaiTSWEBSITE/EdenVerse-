@@ -4,6 +4,7 @@ import { AtmosphericBackdrop } from "@/components/layout/atmospheric-backdrop";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
 import { AppProviders } from "@/context/providers";
+import { LenisProvider } from "@/components/layout/lenis-provider";
 import { siteConfig } from "@/config/site";
 import "@/app/globals.css";
 
@@ -56,12 +57,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="vi">
       <body className={`${display.variable} ${body.variable}`}>
         <AppProviders>
-          <AtmosphericBackdrop />
-          <div className="relative z-10 min-h-screen">
-            <Header />
-            <main>{children}</main>
-            <Footer />
-          </div>
+          <LenisProvider>
+            <AtmosphericBackdrop />
+            <div className="relative z-10 min-h-screen">
+              <Header />
+              <main>{children}</main>
+              <Footer />
+            </div>
+          </LenisProvider>
         </AppProviders>
       </body>
     </html>
