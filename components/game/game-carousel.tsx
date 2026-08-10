@@ -47,7 +47,7 @@ export function GameCarousel({ games, emptyText }: { games: Game[]; emptyText: s
         {games.map((game) => (
           <div
             key={game.slug}
-            className="w-[min(82vw,18rem)] shrink-0 snap-start sm:w-[18rem] md:w-[calc((100%_-_1.5rem)/2)] xl:w-[calc((100%_-_4.5rem)/4)]"
+            className="w-[min(82vw,16rem)] shrink-0 snap-start sm:w-[16rem] md:w-[calc((100%_-_1rem)/2)] lg:w-[calc((100%_-_3rem)/4)] xl:w-[calc((100%_-_4rem)/5)] 2xl:w-[calc((100%_-_5rem)/6)]"
           >
             <GameCard game={game} />
           </div>

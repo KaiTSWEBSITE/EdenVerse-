@@ -66,7 +66,7 @@ export default async function SearchPage({
               <p className="text-sm text-muted-foreground/60">Hãy thử thay đổi từ khóa hoặc bộ lọc của bạn.</p>
             </div>
           ) : (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="grid gap-6 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
               {games.map((game) => (
                 <GameCard key={game.slug} game={game} />
               ))}
