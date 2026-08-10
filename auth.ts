@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { loginSchema } from "@/lib/validators";
+import { applyRateLimit } from "@/middleware/rate-limit";
 import { verifyCredentials } from "@/services/auth-service";
 
 const authSecret =
@@ -48,6 +49,13 @@ const providers = [
 
       if (!parsed.success) {
         return null;
+      }
+
+      // Rate limit login attempts based on email
+      const rateLimitKey = `login-attempt:${parsed.data.email}`;
+      const limited = applyRateLimit(rateLimitKey, { max: 10, windowMs: 15 * 60_000 }); // 10 attempts per 15 minutes
+      if (!limited.success) {
+        throw new Error("Bạn đăng nhập sai quá nhiều lần. Vui lòng thử lại sau 15 phút.");
       }
 
       const user = await verifyCredentials(parsed.data.email, parsed.data.password);

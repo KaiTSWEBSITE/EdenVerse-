@@ -1,35 +1,48 @@
 :root {
-  --background: 225 35% 4%; /* Cực tối, hơi xanh đen */
-  --foreground: 210 20% 98%; /* Trắng sáng */
-  --card: 225 30% 8%; /* Nhạt hơn nền một chút */
-  --card-foreground: 210 20% 95%;
-  --primary: 270 90% 65%; /* Tím Violet Electric */
+  /* Noir Aurora Design Tokens */
+  --bg-0: #05060A;
+  --bg-1: #090B12;
+  --surface: #0E111A;
+  --surface-elevated: #141824;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --text-primary: #F7F8FC;
+  --text-secondary: #A7ADBD;
+  --purple-accent: #8B5CF6;
+  --pink-accent: #EC4899;
+  --cyan-accent: #22D3EE;
+  --success: #22C55E;
+  --warning: #F59E0B;
+  --danger: #EF4444;
+
+  /* HSL Mapping for standard Tailwind/Shadcn classes */
+  --background: 228 33% 4%; /* #05060A */
+  --foreground: 228 50% 98%; /* #F7F8FC */
+  --card: 225 30% 8%; /* #0E111A */
+  --card-foreground: 228 50% 98%;
+  --primary: 258 90% 66%; /* #8B5CF6 */
   --primary-foreground: 0 0% 100%;
-  --secondary: 225 25% 12%;
-  --secondary-foreground: 210 20% 85%;
-  --muted: 225 25% 10%;
-  --muted-foreground: 215 15% 60%;
-  --accent: 320 90% 65%; /* Hồng Neon (Accent phụ) */
+  --secondary: 225 24% 12%; /* #141824 */
+  --secondary-foreground: 223 15% 70%; /* #A7ADBD */
+  --muted: 225 24% 12%;
+  --muted-foreground: 223 15% 70%;
+  --accent: 330 81% 60%; /* #EC4899 */
   --accent-foreground: 0 0% 100%;
-  --border: 225 20% 14%; /* Border mờ */
-  --input: 225 25% 12%;
-  --ring: 270 90% 65%;
+  --border: 0 0% 100%;
+  --input: 225 24% 12%;
+  --ring: 258 90% 66%;
 }
 
 body {
   min-height: 100vh;
-  background:
-    linear-gradient(180deg, rgba(4, 5, 10, 0.9), rgba(6, 7, 10, 0.98)),
-    hsl(var(--background));
+  background: var(--bg-0);
 }
 
 .glass-panel {
-  background: linear-gradient(135deg, rgba(12, 17, 28, 0.78), rgba(6, 9, 16, 0.66));
-  border: 1px solid rgba(142, 201, 255, 0.14);
+  background: rgba(14, 17, 26, 0.6);
+  border: 1px solid var(--border-subtle);
   box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.02),
-    0 16px 44px rgba(4, 7, 14, 0.34);
-  backdrop-filter: blur(12px);
+    0 16px 44px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(16px);
 }
 
 .vignette-overlay {

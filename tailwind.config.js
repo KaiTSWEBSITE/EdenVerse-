@@ -37,6 +37,21 @@ module.exports = {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))"
+        },
+        noir: {
+          bg0: "var(--bg-0)",
+          bg1: "var(--bg-1)",
+          surface: "var(--surface)",
+          surfaceElevated: "var(--surface-elevated)",
+          borderSubtle: "var(--border-subtle)",
+          textPrimary: "var(--text-primary)",
+          textSecondary: "var(--text-secondary)",
+          purple: "var(--purple-accent)",
+          pink: "var(--pink-accent)",
+          cyan: "var(--cyan-accent)",
+          success: "var(--success)",
+          warning: "var(--warning)",
+          danger: "var(--danger)"
         }
       },
       boxShadow: {
@@ -47,9 +62,9 @@ module.exports = {
       },
       backgroundImage: {
         aurora:
-          "radial-gradient(circle at top, rgba(138, 43, 226, 0.15), transparent 45%), radial-gradient(circle at bottom left, rgba(255, 105, 180, 0.08), transparent 40%)",
+          "radial-gradient(circle at top, rgba(139, 92, 246, 0.08), transparent 45%), radial-gradient(circle at bottom left, rgba(236, 72, 153, 0.05), transparent 40%)",
         "panel-gradient":
-          "linear-gradient(135deg, rgba(7, 11, 20, 0.88), rgba(9, 14, 25, 0.72))"
+          "linear-gradient(135deg, rgba(14, 17, 26, 0.88), rgba(9, 11, 18, 0.72))"
       },
       fontFamily: {
         display: ["var(--font-display)"],
