@@ -26,30 +26,6 @@ export function GameOverview({ game }: { game: Game }) {
           
           <div className="h-px bg-white/10" />
 
-          {/* Download Information */}
-          <div id="download" className="space-y-4">
-            <h2 className="flex items-center gap-2 font-display text-2xl font-bold text-foreground">
-              <DownloadCloud className="h-5 w-5 text-primary" />
-              Khu vực tải game
-            </h2>
-            <div className="rounded-xl border border-white/5 bg-black/20 p-5 space-y-3 text-sm text-muted-foreground leading-relaxed">
-              <p>Mỗi lần bấm nút tải, EdenVerse sẽ ghi nhận một lượt click. Bảng Game Hot dùng số liệu này để tự sắp xếp game nổi bật.</p>
-              <ul className="list-disc pl-5 space-y-2">
-                {game.downloadUrlAlt && (
-                  <li><strong className="text-white">Link dự phòng:</strong> Đổi mirror khi link chính quá tải hoặc lỗi.</li>
-                )}
-                {game.downloadUrlJoyplay && (
-                  <li><strong className="text-white">JoyPlay:</strong> Hỗ trợ link tải riêng cho người chơi trên Android thông qua app JoyPlay.</li>
-                )}
-                {game.downloadUrlSeason2 && (
-                  <li><strong className="text-white">Season 2:</strong> Có link riêng biệt cho bản cài đặt hoặc chương tiếp theo.</li>
-                )}
-              </ul>
-              {!game.downloadUrlAlt && !game.downloadUrlJoyplay && !game.downloadUrlSeason2 && (
-                <p>Game hiện tại chỉ hỗ trợ một đường dẫn tải xuống duy nhất.</p>
-              )}
-            </div>
-          </div>
           {game.adminNote && (
             <div className="rounded-xl border border-accent/30 bg-accent/10 p-6 mt-6 shadow-[0_0_20px_rgba(255,105,180,0.1)]">
               <h3 className="flex items-center gap-2 text-sm uppercase tracking-[0.15em] text-accent font-bold mb-3">
@@ -63,8 +39,31 @@ export function GameOverview({ game }: { game: Game }) {
           )}
         </div>
 
-        {/* Right Column: Specs & Admin Note */}
-        <aside className="space-y-6">
+        {/* Right Column: Sticky Sidebar (Specs & Download) */}
+        <aside className="space-y-6 lg:sticky lg:top-24 h-fit">
+          <Card className="bg-noir-surfaceElevated border-white/5 shadow-[0_8px_30px_rgba(0,0,0,0.4)]">
+            <CardContent className="p-6 space-y-5">
+              <h3 className="flex items-center gap-2 font-display font-semibold text-lg border-b border-white/10 pb-3">
+                <DownloadCloud className="h-5 w-5 text-primary" />
+                Thông tin tải xuống
+              </h3>
+              <div className="space-y-3 text-sm text-muted-foreground leading-relaxed">
+                <p>Mỗi lần bấm nút tải, EdenVerse sẽ ghi nhận một lượt click để xếp hạng Game Hot.</p>
+                <ul className="list-disc pl-5 space-y-2">
+                  {game.downloadUrlAlt && (
+                    <li><strong className="text-white">Link dự phòng:</strong> Đổi mirror khi quá tải.</li>
+                  )}
+                  {game.downloadUrlJoyplay && (
+                    <li><strong className="text-white">JoyPlay:</strong> Hỗ trợ Android qua app JoyPlay.</li>
+                  )}
+                  {game.downloadUrlSeason2 && (
+                    <li><strong className="text-white">Season 2:</strong> Link riêng cho chương tiếp theo.</li>
+                  )}
+                </ul>
+              </div>
+            </CardContent>
+          </Card>
+
           <Card className="bg-black/20 border-white/5 shadow-none">
             <CardContent className="p-6 space-y-5">
               <h3 className="font-display font-semibold text-lg border-b border-white/10 pb-3">Chi Tiết Kỹ Thuật</h3>

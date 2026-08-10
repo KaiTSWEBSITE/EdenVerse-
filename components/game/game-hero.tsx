@@ -39,7 +39,7 @@ export async function GameHero({ game }: { game: Game }) {
   const initialSaved = await getInitialSavedState(game.slug);
 
   return (
-    <section className="relative w-full overflow-hidden bg-black mt-[-76px] min-h-[90vh] flex flex-col justify-end pb-12 pt-32">
+    <section className="relative w-full overflow-hidden bg-noir-bg0 mt-[-76px] min-h-[85vh] flex flex-col justify-end pb-12 pt-32">
       {/* Massive blurred background */}
       <div className="absolute inset-0 z-0">
         <Image
@@ -50,8 +50,8 @@ export async function GameHero({ game }: { game: Game }) {
           sizes="100vw"
           className="object-cover object-top opacity-40 blur-xl scale-110 saturate-150"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-black/80" />
+        <div className="absolute inset-0 bg-gradient-to-t from-noir-bg0 via-noir-bg0/80 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-noir-bg0 via-noir-bg0/50 to-noir-bg0/80" />
       </div>
 
       {/* Main Content Container */}
@@ -59,8 +59,8 @@ export async function GameHero({ game }: { game: Game }) {
         <div className="flex flex-col md:flex-row gap-8 lg:gap-12 items-center md:items-start">
           
           {/* Cover Image */}
-          <div className="shrink-0 w-48 sm:w-64 md:w-72 lg:w-80 overflow-hidden rounded-xl shadow-[0_0_40px_rgba(0,0,0,0.8)] border border-white/10 relative group">
-            <div className={`relative ${game.coverAspectRatio || "aspect-[4/5]"} w-full`}>
+          <div className="shrink-0 w-3/4 mx-auto sm:w-64 md:w-72 lg:w-80 overflow-hidden rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.6)] ring-1 ring-white/10 relative group">
+            <div className={`relative ${game.coverAspectRatio || "aspect-[2/3]"} w-full`}>
               <Image
                 src={game.coverImage}
                 alt={game.title}
@@ -75,9 +75,9 @@ export async function GameHero({ game }: { game: Game }) {
           </div>
 
           {/* Game Info */}
-          <div className="flex-1 space-y-6 pb-2">
-            <div className="space-y-3">
-              <div className="flex flex-wrap gap-2">
+          <div className="flex-1 space-y-6 pb-2 text-center md:text-left">
+            <div className="space-y-4">
+              <div className="flex flex-wrap justify-center md:justify-start gap-2">
                 {game.genres.slice(0, 3).map((genre) => (
                   <Badge key={genre} className="bg-white/10 text-white hover:bg-white/20 border-transparent backdrop-blur-md">
                     {genre}
@@ -104,7 +104,7 @@ export async function GameHero({ game }: { game: Game }) {
             </p>
 
             {/* Micro Stats */}
-            <div className="flex flex-wrap items-center gap-6 text-sm text-white/80 py-2">
+            <div className="flex flex-wrap justify-center md:justify-start items-center gap-6 text-sm text-white/80 py-2">
               <div className="flex items-center gap-2">
                 <Star className="h-4 w-4 text-accent fill-accent" />
                 <span className="font-bold text-white">{formatRating(game.rating)}</span>
@@ -124,8 +124,8 @@ export async function GameHero({ game }: { game: Game }) {
             </div>
 
             {/* Actions */}
-            <div className="flex flex-wrap items-center gap-4 pt-4">
-              <div className="flex flex-wrap items-center gap-4">
+            <div className="flex flex-wrap justify-center md:justify-start items-center gap-4 pt-4">
+              <div className="flex flex-wrap justify-center md:justify-start items-center gap-4">
                 <DownloadButton
                   slug={game.slug}
                   initialDownloads={trackedDownloads}
