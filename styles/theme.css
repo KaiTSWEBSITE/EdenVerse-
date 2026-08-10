@@ -1,19 +1,19 @@
 :root {
-  --background: 228 34% 6%;
-  --foreground: 42 31% 90%;
-  --card: 224 30% 11%;
-  --card-foreground: 42 31% 92%;
-  --primary: 353 89% 56%; /* Gothic Crimson */
+  --background: 225 35% 4%; /* Cực tối, hơi xanh đen */
+  --foreground: 210 20% 98%; /* Trắng sáng */
+  --card: 225 30% 8%; /* Nhạt hơn nền một chút */
+  --card-foreground: 210 20% 95%;
+  --primary: 270 90% 65%; /* Tím Violet Electric */
   --primary-foreground: 0 0% 100%;
-  --secondary: 220 24% 12%;
-  --secondary-foreground: 0 0% 80%;
-  --muted: 220 24% 10%;
-  --muted-foreground: 220 10% 60%;
-  --accent: 0 0% 74%; /* Silver */
-  --accent-foreground: 228 36% 8%;
-  --border: 353 40% 22%;
-  --input: 220 24% 12%;
-  --ring: 353 89% 56%;
+  --secondary: 225 25% 12%;
+  --secondary-foreground: 210 20% 85%;
+  --muted: 225 25% 10%;
+  --muted-foreground: 215 15% 60%;
+  --accent: 320 90% 65%; /* Hồng Neon (Accent phụ) */
+  --accent-foreground: 0 0% 100%;
+  --border: 225 20% 14%; /* Border mờ */
+  --input: 225 25% 12%;
+  --ring: 270 90% 65%;
 }
 
 body {
@@ -40,15 +40,15 @@ body {
 
 .fog-layer {
   background:
-    radial-gradient(circle at 18% 74%, rgba(69, 167, 255, 0.08), transparent 28%),
-    radial-gradient(circle at 78% 24%, rgba(255, 207, 120, 0.045), transparent 24%);
+    radial-gradient(circle at 18% 74%, rgba(138, 43, 226, 0.05), transparent 28%),
+    radial-gradient(circle at 78% 24%, rgba(255, 105, 180, 0.03), transparent 24%);
   filter: blur(28px);
 }
 
 .ray-layer {
   background:
-    linear-gradient(101deg, transparent 46%, rgba(122, 210, 255, 0.12) 50%, transparent 54%),
-    linear-gradient(88deg, transparent 61%, rgba(180, 232, 255, 0.055) 66%, transparent 73%);
+    linear-gradient(101deg, transparent 46%, rgba(138, 43, 226, 0.08) 50%, transparent 54%),
+    linear-gradient(88deg, transparent 61%, rgba(255, 105, 180, 0.04) 66%, transparent 73%);
   mix-blend-mode: screen;
 }
 
@@ -92,8 +92,8 @@ body {
 /* ─── Glow badge ─────────────────────────────────────────────── */
 .glow-badge {
   box-shadow:
-    0 0 10px hsl(var(--primary) / 0.24),
-    0 0 24px hsl(var(--primary) / 0.09);
+    0 0 8px hsl(var(--primary) / 0.15),
+    0 0 16px hsl(var(--primary) / 0.05);
 }
 
 /* ─── Aurora line ────────────────────────────────────────────── */

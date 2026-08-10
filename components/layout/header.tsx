@@ -5,7 +5,7 @@ import type { Route } from "next";
 import { ExternalLink, Menu, MessageCircle, ShieldCheck, UserRound } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { primaryNavigation } from "@/config/navigation";
 import { siteConfig } from "@/config/site";
@@ -16,12 +16,19 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 export function Header() {
   const [open, setOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const { data: session, status } = useSession();
   const pathname = usePathname();
   const username = session?.user?.username;
   const isAdmin = ["ADMIN", "SUPER_ADMIN"].includes(session?.user?.role ?? "");
   const canOpenAdmin = isAdmin;
   const visibleNavigation = primaryNavigation.filter((item) => item.href !== "/admin" || canOpenAdmin);
+
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   function isActiveLink(href: string) {
     if (href === "/") return pathname === "/";
@@ -34,7 +41,14 @@ export function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-40 bg-[rgba(4,6,11,0.76)] backdrop-blur-2xl">
+    <header
+      className={cn(
+        "sticky top-0 z-40 transition-all duration-300 border-b",
+        isScrolled
+          ? "bg-[rgba(7,11,20,0.85)] backdrop-blur-xl border-white/5 shadow-sm"
+          : "bg-transparent border-transparent"
+      )}
+    >
       <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 sm:px-6 lg:px-8">
         <Logo className="shrink-0" />
 

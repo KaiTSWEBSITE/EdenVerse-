@@ -17,7 +17,7 @@ export function Footer() {
             height: 220,
             left: "70%",
             top: "10%",
-            background: "rgba(229,57,53,0.06)",
+            background: "rgba(138, 43, 226, 0.08)",
             filter: "blur(80px)"
           }}
         />
@@ -28,7 +28,7 @@ export function Footer() {
             height: 180,
             left: "4%",
             top: "50%",
-            background: "rgba(189,189,189,0.04)",
+            background: "rgba(255, 105, 180, 0.05)",
             filter: "blur(70px)",
             animationDelay: "2s"
           }}
@@ -37,9 +37,9 @@ export function Footer() {
         <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/18 to-transparent" />
       </div>
 
-      <div className="relative mx-auto grid max-w-7xl gap-10 bg-black/38 px-4 py-14 sm:px-6 lg:grid-cols-[1.5fr_repeat(2,minmax(0,1fr))] lg:px-8">
+      <div className="relative mx-auto grid max-w-7xl gap-8 bg-black/38 px-4 py-10 sm:px-6 lg:grid-cols-[1.5fr_repeat(2,minmax(0,1fr))] lg:px-8 border-t border-white/5">
         {/* Brand column */}
-        <div className="space-y-5">
+        <div className="space-y-4">
           <Logo />
           <p className="max-w-md text-sm leading-7 text-muted-foreground">{siteConfig.description}</p>
 

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display } from "next/font/google";
+import { Inter, Outfit } from "next/font/google";
 import { AtmosphericBackdrop } from "@/components/layout/atmospheric-backdrop";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
@@ -7,10 +7,10 @@ import { AppProviders } from "@/context/providers";
 import { siteConfig } from "@/config/site";
 import "@/app/globals.css";
 
-const display = Playfair_Display({
-  subsets: ["latin", "vietnamese"],
+const display = Outfit({
+  subsets: ["latin"],
   variable: "--font-display",
-  weight: ["400", "500", "600", "700", "900"],
+  weight: ["400", "500", "600", "700", "800", "900"],
   display: "swap"
 });
 

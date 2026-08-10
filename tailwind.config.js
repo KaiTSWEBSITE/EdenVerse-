@@ -40,16 +40,16 @@ module.exports = {
         }
       },
       boxShadow: {
-        glow: "0 0 0 1px rgba(229, 57, 53, 0.12), 0 12px 40px rgba(26, 7, 7, 0.45)",
-        "glow-strong": "0 0 24px rgba(229, 57, 53, 0.22), 0 18px 60px rgba(26, 7, 7, 0.72)",
-        "glow-sm": "0 0 0 1px rgba(229, 57, 53, 0.08), 0 4px 20px rgba(26, 7, 7, 0.35)",
-        "card-hover": "0 28px 64px rgba(0, 0, 0, 0.52), 0 0 0 1px rgba(229, 57, 53, 0.18)"
+        glow: "0 0 0 1px rgba(138, 43, 226, 0.1), 0 12px 30px rgba(0, 0, 0, 0.35)",
+        "glow-strong": "0 0 20px rgba(138, 43, 226, 0.2), 0 18px 45px rgba(0, 0, 0, 0.5)",
+        "glow-sm": "0 0 0 1px rgba(138, 43, 226, 0.05), 0 4px 15px rgba(0, 0, 0, 0.25)",
+        "card-hover": "0 20px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(138, 43, 226, 0.15)"
       },
       backgroundImage: {
         aurora:
-          "radial-gradient(circle at top, rgba(229, 57, 53, 0.18), transparent 45%), radial-gradient(circle at bottom left, rgba(189, 189, 189, 0.08), transparent 40%)",
+          "radial-gradient(circle at top, rgba(138, 43, 226, 0.15), transparent 45%), radial-gradient(circle at bottom left, rgba(255, 105, 180, 0.08), transparent 40%)",
         "panel-gradient":
-          "linear-gradient(135deg, rgba(11, 16, 27, 0.88), rgba(14, 22, 34, 0.72))"
+          "linear-gradient(135deg, rgba(7, 11, 20, 0.88), rgba(9, 14, 25, 0.72))"
       },
       fontFamily: {
         display: ["var(--font-display)"],
