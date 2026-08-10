@@ -14,7 +14,7 @@ export function HeroSection({ heroGame }: { heroGame: Game | null }) {
   const bannerImage = heroGame.coverImage;
 
   return (
-    <section className="relative w-full h-[70vh] min-h-[500px] max-h-[800px] flex items-end pb-12 pt-32 overflow-hidden bg-black mt-[-76px]">
+    <section className="relative w-full h-[70vh] min-h-[500px] max-h-[800px] flex items-end pb-12 pt-32 overflow-hidden bg-noir-bg0 mt-[-76px]">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <Image
@@ -28,8 +28,8 @@ export function HeroSection({ heroGame }: { heroGame: Game | null }) {
       </div>
 
       {/* Overlays for readability */}
-      <div className="absolute inset-0 z-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
-      <div className="absolute inset-0 z-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
+      <div className="absolute inset-0 z-0 bg-gradient-to-t from-noir-bg0 via-noir-bg0/60 to-transparent" />
+      <div className="absolute inset-0 z-0 bg-gradient-to-r from-noir-bg0/90 via-noir-bg0/40 to-transparent" />
       
       {/* Content Container */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -47,11 +47,11 @@ export function HeroSection({ heroGame }: { heroGame: Game | null }) {
             {heroGame.mature && (
               <Badge className="bg-accent/80 text-white hover:bg-accent/90 border-transparent">18+</Badge>
             )}
-            <span className="flex items-center gap-1.5 bg-black/40 px-2 py-1 rounded backdrop-blur-md">
-              <Star className="h-3.5 w-3.5 text-accent fill-accent" />
+            <span className="flex items-center gap-1.5 bg-white/5 px-2 py-1 rounded backdrop-blur-md border border-white/10">
+              <Star className="h-3.5 w-3.5 text-noir-warning fill-noir-warning" />
               {formatRating(heroGame.rating)}
             </span>
-            <span className="flex items-center gap-1.5 bg-black/40 px-2 py-1 rounded backdrop-blur-md">
+            <span className="flex items-center gap-1.5 bg-white/5 px-2 py-1 rounded backdrop-blur-md border border-white/10">
               <Download className="h-3.5 w-3.5 text-primary" />
               {formatCompactNumber(heroGame.downloads)} Tải về
             </span>

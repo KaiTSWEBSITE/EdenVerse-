@@ -48,7 +48,7 @@ export function GameCard({ game }: { game: Game }) {
     <article className="group relative flex h-full flex-col">
       <Link href={`/games/${game.slug}`} className="flex h-full flex-col">
         {/* Cover Image */}
-        <div className="relative aspect-[4/5] w-full overflow-hidden rounded-xl bg-card shadow-sm transition-all duration-300 group-hover:shadow-glow-sm">
+        <div className="relative aspect-[2/3] w-full overflow-hidden rounded-xl bg-noir-surface shadow-sm transition-all duration-300 group-hover:shadow-[0_8px_30px_rgba(139,92,246,0.15)] group-hover:-translate-y-1">
           {/* Main Image */}
           <Image
             src={game.coverImage}
@@ -59,8 +59,8 @@ export function GameCard({ game }: { game: Game }) {
             className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
           />
           
-          {/* Dark Overlay (Bottom) for contrast if we put tags there, but we put them top left */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+          {/* Dark Overlay (Bottom) for contrast */}
+          <div className="absolute inset-0 bg-gradient-to-t from-noir-bg0/90 via-noir-bg0/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
           
           {/* Badges Overlay */}
           <div className="absolute left-2 top-2 flex flex-col items-start gap-1.5">

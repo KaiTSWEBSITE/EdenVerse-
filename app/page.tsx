@@ -1,5 +1,6 @@
 import { GameSection } from "@/components/home/game-section";
 import { HeroSection } from "@/components/home/hero-section";
+import { QuickDiscovery } from "@/components/home/quick-discovery";
 import { CategorySection } from "@/components/home/category-section";
 import { cookies } from "next/headers";
 import {
@@ -39,6 +40,7 @@ export default async function HomePage() {
   return (
     <>
       <HeroSection heroGame={heroGame} />
+      <QuickDiscovery />
       <GameSection
         eyebrow="Thịnh hành"
         title="Game được tải nhiều nhất"
