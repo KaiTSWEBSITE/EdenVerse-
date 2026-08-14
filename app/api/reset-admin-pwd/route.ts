@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { prisma } from "@/database/prisma";
 import bcrypt from "bcryptjs";
 
 export const dynamic = "force-dynamic";
@@ -13,7 +13,11 @@ export async function GET(req: Request) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const admins = await db.user.findMany({
+    if (!prisma) {
+      return new NextResponse("Database not connected", { status: 500 });
+    }
+
+    const admins = await prisma.user.findMany({
       where: {
         role: { in: ["ADMIN", "SUPER_ADMIN"] }
       }
@@ -29,7 +33,7 @@ export async function GET(req: Request) {
 
     const updated = [];
     for (const admin of admins) {
-      await db.user.update({
+      await prisma.user.update({
         where: { id: admin.id },
         data: { passwordHash: hash }
       });
