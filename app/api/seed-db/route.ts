@@ -18,10 +18,26 @@ export async function GET(req: Request) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const client = prisma;
-    if (!client) {
+    let connectionUrl = process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL;
+    if (!connectionUrl) {
       return NextResponse.json({ message: "No DATABASE_URL detected." }, { status: 500 });
     }
+    
+    // Add connection timeout parameter to fix Neon sleep wake-up timeout
+    if (connectionUrl.includes("?")) {
+      connectionUrl += "&connect_timeout=30&pool_timeout=30";
+    } else {
+      connectionUrl += "?connect_timeout=30&pool_timeout=30";
+    }
+
+    const { PrismaClient } = require("@prisma/client");
+    const client = new PrismaClient({
+      datasources: {
+        db: {
+          url: connectionUrl
+        }
+      }
+    });
 
     const categories = [
       "Visual Novel", "Sandbox", "RPG", "Story Rich", "Dating Sim", 
