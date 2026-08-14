@@ -1,19 +1,21 @@
 import { spawnSync } from "node:child_process";
 
 function run(command, args, options = {}) {
+  const { ignoreError, ...spawnOptions } = options;
   const result = spawnSync(command, args, {
     stdio: "inherit",
     shell: process.platform === "win32",
-    ...options
+    ...spawnOptions
   });
 
   if (result.error) {
     console.error(result.error.message);
-    process.exit(1);
+    if (!ignoreError) process.exit(1);
   }
 
   if (result.status !== 0) {
-    process.exit(result.status ?? 1);
+    if (!ignoreError) process.exit(result.status ?? 1);
+    else console.warn(`Command ${command} ${args.join(" ")} failed with status ${result.status}, but continuing...`);
   }
 }
 
@@ -28,7 +30,8 @@ if (shouldRunMigrations) {
     process.env.DATABASE_URL = process.env.DATABASE_URL_UNPOOLED;
   }
 
-  run("npx", ["prisma", "db", "push", "--accept-data-loss"]);
+  console.log("Attempting to push schema to database...");
+  run("npx", ["prisma", "db", "push", "--accept-data-loss"], { ignoreError: true });
   process.env.DATABASE_URL = runtimeDatabaseUrl;
 }
 
