@@ -154,8 +154,8 @@ export async function GET(req: Request) {
       );
     }
 
-    const gameMap = new Map((await client.game.findMany()).map((game) => [game.slug, game]));
-    const userMap = new Map(userRecords.map((user) => [user.username, user]));
+    const gameMap = new Map((await client.game.findMany()).map((game: any) => [game.slug, game]));
+    const userMap = new Map(userRecords.map((user: any) => [user.username, user]));
 
     // Re-seed reviews
     for (const review of demoReviews) {
