@@ -104,6 +104,18 @@ export default async function middleware(request: NextRequest) {
     response.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
   }
 
+  // --- MAINTENANCE MODE ---
+  // Redirect all traffic to /maintenance
+  if (
+    pathname !== "/maintenance" &&
+    !pathname.startsWith("/api") &&
+    !pathname.startsWith("/_next") &&
+    !pathname.startsWith("/static")
+  ) {
+    return NextResponse.redirect(new URL("/maintenance", request.url));
+  }
+  // ------------------------
+
   // Block sensitive file/path access attempts
   if (blockedPathPatterns.some((pattern) => pattern.test(pathname))) {
     return securityJson("Yeu cau bi chan boi EdenVerse Shield.", 404);
